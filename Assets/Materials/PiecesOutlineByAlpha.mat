@@ -1,0 +1,158 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PiecesOutlineByAlpha
+  m_Shader: {fileID: 4800000, guid: 618ca4db3f8e24640bc7a2214f6326d4, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _ALPHAPREMULTIPLY_ON
+  - _FORCE_LOD0_ON
+  - _GLOSSYREFLECTIONS_OFF
+  - _SPECULARHIGHLIGHTS_OFF
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 3, y: 0.2}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 3, y: 0.2}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - PixelSnap: 0
+    - _AlphaMul: 0.28
+    - _AlphaThreshold: 0.318
+    - _AmbientCol: 0
+    - _BumpScale: 1
+    - _Clipped: 0
+    - _ColBright: 0
+    - _ColIntense: 1
+    - _ColorMask: 15
+    - _Curve: 8
+    - _Cutoff: 0.5
+    - _Darkness: 0.61
+    - _DetailNormalMapScale: 1
+    - _DitherStrength: 0.41
+    - _DstBlend: 10
+    - _EdgeSoftnessPx: 14.2
+    - _EnableExternalAlpha: 0
+    - _End01: 0.87
+    - _FORCE_LOD0: 1
+    - _Feather: 0.397
+    - _FogDensity: 2
+    - _FogEnd: 0.61
+    - _FogStart: 0.38
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 0
+    - _GradEnd: 1
+    - _GradStart: 0.32
+    - _Intensity: 0.92
+    - _Lumin: 0.54
+    - _MaxDarkness: 0
+    - _MaxLight: 1
+    - _MaxY: 1
+    - _Metallic: 0
+    - _MinAlpha: 1
+    - _MinLight: 1
+    - _MinY: 0
+    - _Mode: 3
+    - _OcclusionStrength: 1
+    - _Offset: 0
+    - _OtlWidth: 1
+    - _OutlineSize: 10
+    - _Parallax: 0.02
+    - _Power: 0.1
+    - _Segmented: 0
+    - _ShnIntense: 0
+    - _ShnOverlap: 0
+    - _ShnRange: 0.15
+    - _ShnSmooth: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 0
+    - _SrcBlend: 1
+    - _Start01: 0.85
+    - _StartX: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Steps: 3
+    - _StpSmooth: 0
+    - _Strength: 0.9
+    - _StrokeWidthPx: 10
+    - _Thickness: 0.2
+    - _USE_LOCAL_X: 0
+    - _USE_SCREEN_X: 0
+    - _USE_WORLD_X: 0
+    - _UVSec: 0
+    - _UseScreenSpace: 0
+    - _UseUIAlphaClip: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _FogColor: {r: 0.89999473, g: 0.8443396, b: 1, a: 1}
+    - _OtlColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RangeX: {r: 0, g: 0, b: 0, a: 0}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShnColor: {r: 1, g: 1, b: 0, a: 1}
+    - _StrokeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _StrokeOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _XRange: {r: 0.1, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
