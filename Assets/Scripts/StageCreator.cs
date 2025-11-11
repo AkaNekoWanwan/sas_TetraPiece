@@ -224,11 +224,11 @@ public class StageCreator : MonoBehaviour
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
             stageObject.SetActive(true);
             Debug.Log($"ステージ生成：{stageObject.name}");
-            yield return null;
+            // yield return null;
             splitter.CreatePiece();
             _seeds.Add(splitter.PieceCreateSeed);
             beforeStage = stageObject;
-            yield return null;
+            // yield return null;
         }
 
         yield return null;
