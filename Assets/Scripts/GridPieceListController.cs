@@ -63,7 +63,7 @@ public class GridPieceListController : MonoBehaviour
         AlignAll(withDelay: false, onComplete: () => {
             UpdateSelectability();
         });
-        UpdateSelectability();
+        // UpdateSelectability();
 
         if(!IsSetShapeType)
         {
@@ -124,11 +124,14 @@ public class GridPieceListController : MonoBehaviour
 
             if (withDelay)
             {
-                float delay = 0.1f * i;
+                // ★ 変更1: 連続操作時の不整合を防ぐため、ピースごとの遅延 (0.1f * i) を廃止または調整
+                // ピースが抜けた直後の整列では、全てのピースが同時に動き始める方が安全かつ自然
+                float delay = 0f; // ピースごとの遅延を削除
                 float duration = shiftTime;
                 
-                // 既存のアニメーションを停止
-                DOTween.Kill(rt, complete: false);
+                // ★ 変更2: 既存のアニメーションを強制的に完了/停止させる (位置を確定させる)
+                // 完全にKillすることで、以前のトゥイーンの影響を排除します
+                DOTween.Kill(rt, complete: true); 
 
                 if (!isHidden && wasHidden)
                 {
@@ -136,16 +139,16 @@ public class GridPieceListController : MonoBehaviour
                     rt.position = new Vector3(hiddenX*0.5f, baseY, 0);
                     duration = shiftTime * 1.5f;
 
-                    // MoveアニメーションをシーケンスにJoin (全てのピースの移動は並行して行われる)
+                    // MoveアニメーションをシーケンスにJoin
                     _alignSequence.Join(rt.DOMove(target, duration)
-                        .SetDelay(delay)
+                        .SetDelay(delay) // delayは 0f のまま
                         .SetEase(Ease.OutQuad));
                 }
                 else if ((rt.position - target).sqrMagnitude > 0.001f)
                 {
                     // 通常移動
                     _alignSequence.Join(rt.DOMove(target, duration)
-                        .SetDelay(delay)
+                        .SetDelay(delay) // delayは 0f のまま
                         .SetEase(Ease.OutQuad));
                 }
             }
@@ -157,6 +160,7 @@ public class GridPieceListController : MonoBehaviour
         }
         
         // ★ シーケンスが完了したら、外部から渡されたコールバックを実行
+        // ... (OnComplete のロジックはそのまま) ...
         if (withDelay)
         {
             _alignSequence.OnComplete(() =>
@@ -167,7 +171,7 @@ public class GridPieceListController : MonoBehaviour
         }
         else
         {
-            onComplete?.Invoke(); // 遅延なしの場合は即座にコールバック実行
+            onComplete?.Invoke();
         }
     }
 
@@ -380,17 +384,6 @@ public class GridPieceListController : MonoBehaviour
 
     public void RescanAndAlign()
     {
-        // queue.Clear();
-        // var pcs = GetComponentsInChildren<PieceDragController>(false)
-        //           .OrderBy(p => p.transform.position.x);
-        // queue.AddRange(pcs);
-
-        // // AlignAll(withDelay: true);
-        // AlignAll(withDelay: true, onComplete: () => {
-        //     UpdateSelectability();
-        // });
-        // UpdateSelectability();
-
         queue.Clear();
         
         // ★ 変更: FindObjectsOfType<PieceDragController>() の結果を PieceSorter でソート

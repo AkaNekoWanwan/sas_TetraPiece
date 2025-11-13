@@ -545,6 +545,15 @@ public class StageCreator : MonoBehaviour
 
         return results;
     }
+
+    public void SetSkipFlg(bool isSkip)
+    {
+        List<AbstractGridImageSplitter> allSplitters = FindAllInScene<AbstractGridImageSplitter>();
+        foreach (var splitter in allSplitters)
+        {
+            splitter.isSkip = isSkip;
+        }
+    }
 #endif
 }
 
@@ -583,6 +592,15 @@ public class StageCreatorEditor : Editor
         {
             script.IsForce = false;
             script.StopCreateStages();
+        }
+
+        if (GUILayout.Button("All Skip"))
+        {
+            script.SetSkipFlg(true);
+        }
+        if (GUILayout.Button("All UnSkip"))
+        {
+            script.SetSkipFlg(false);
         }
         DrawDefaultInspector();
     }
