@@ -10,48 +10,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Image))]
 public class GridImageSplitterTriangle : AbstractGridImageSplitter
 {
-    // [Header("Grid Settings")]
-    // [Range(1, 20)] public int rows = 2;
-    // [Range(1, 20)] public int cols = 2;
-    // [Range(2, 30)] public int _pieceNum = 5;
-
-    // [Header("Target Range (Center % of image)")]
-    // [Range(10, 1000)] public int targetPercent = 100;
-
-    // [Header("Output Settings")]
-    // public string outputFolder = "Assets/Textures/Triangle";
-
-    // [Header("Cell Copy Settings")]
-    // public Material cellCopyMaterial;
-    // public SpritterParam _param;
-    // public Vector2 _trimShift = Vector2.zero;
-
-    // public bool isSkip = true;   // 全更新時にスキップするか
-    // public bool isPrefs = false;   // 全更新時にスキップするか
-    // public bool isCreative = false;
-    // public string PieceCreateSeed = ""; // ピース作成のシード値
-    // public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
-    // public List<string> avoidPatternSeeds = default;
-
-    // 画像名からフォルダ名を生成（既存なら番号付加）
-    // string GetUniqueFolder(string basePath, string imageName)
-    // {
-    //     string folderPath = Path.Combine(basePath, imageName);
-
-    //     if (!Directory.Exists(folderPath))
-    //     {
-    //         return folderPath;
-    //     }
-
-    //     int counter = 1;
-    //     while (Directory.Exists($"{folderPath}_{counter}"))
-    //     {
-    //         counter++;
-    //     }
-
-    //     return $"{folderPath}_{counter}";
-    // }
-
 #if UNITY_EDITOR
     public override ShapeType GetShapeType()
     {
@@ -59,7 +17,6 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
     }
 
     public override void SplitImage()
-    // public void SplitImageTriangle()
     {
         Image img = GetComponent<Image>();
         if (img == null || img.sprite == null)
@@ -88,6 +45,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
 
         float triSize = squareSize / Mathf.Max(rows, cols);
         float triHeight = Mathf.Sqrt(3f) / 2f * triSize;
+        SetCellScale(triSize);
 
         if (!Directory.Exists(saveFolder))
             Directory.CreateDirectory(saveFolder);
@@ -321,85 +279,5 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         else
             Debug.LogError($"Spriteロード失敗: {assetPath}");
     }
-
-
-    // public void DeleteChilden()
-    // {
-    //     for (int j = this.transform.childCount - 1; j >= 0; j--)
-    //     {
-    //         Transform child = this.transform.GetChild(j);
-    //         if (child != null)
-    //         {
-    //             DestroyImmediate(child.gameObject, true);
-    //         }
-    //     }
-    // }
-
-    // // ステージ作成に必要な一連の流れを実行
-    // public void CreatePiece()
-    // {
-    //     // 設定されているピース数が大き過ぎたら修正
-    //     int maxPieceNum = rows * cols;
-    //     _pieceNum = Mathf.Min(_pieceNum, maxPieceNum);
-    //     // 設定されているピース数がちいさすぎたら修正
-    //     _pieceNum = Mathf.Max(_pieceNum, 2);
-
-    //     // 子オブジェクトを全削除
-    //     DeleteChilden();
-    //     // ピースセル生成
-    //     SplitImageTriangle();
-
-    //     // 同じ階層のGridPieceListControllerを取得
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.isCreative = isCreative;
-    //     gridPieceListController.gridParent = this.transform;
-
-    //     // ピースセルをいい感じにピースリストに配置
-    //     List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-    //     CellSplitter.CellSplit(cols, rows, ref _pieceNum, cells, gridPieceListController, ShapeType.Triangle, PieceCreateSeed, avoidPatternSeeds);
-    //     PieceCreateSeed = CellSplitter.PatternSeed;
-    //     if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-    //         backUpPieceCreateSeed = PieceCreateSeed;
-        
-
-    //     // ピースのセットアップ
-    //     gridPieceListController.SetUpChildrenPieceDragController();
-    // }
-
-    // public void Deletepiece()
-    // {
-    //     DeleteChilden();
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.PreSetPieceDragControllers();
-    // }
 #endif
 }
-
-#if UNITY_EDITOR
-// [CustomEditor(typeof(GridImageSplitterTriangle))]
-// public class TriImageSplitterEditor : Editor
-// {
-//     public override void OnInspectorGUI()
-//     {
-//         DrawDefaultInspector();
-
-//         GridImageSplitterTriangle script = (GridImageSplitterTriangle)target;
-//         if (GUILayout.Button("Split Triangle Image"))
-//         {
-//             script.SplitImageTriangle();
-//         }
-//         if (GUILayout.Button("Delete all childen"))
-//         {
-//             script.DeleteChilden();
-//         }
-//         if (GUILayout.Button("Delete piece"))
-//         {
-//             script.Deletepiece();
-//         }
-//         if (GUILayout.Button("Auto Create piece"))
-//         {
-//             script.CreatePiece();
-//         }
-//     }
-// }
-#endif

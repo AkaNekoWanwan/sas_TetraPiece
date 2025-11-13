@@ -310,19 +310,19 @@ public static class CellSplitter
 
         // 1セル (I-1)
         int maxUseI1 = _random.Next(0, 2);
-        _availableShapes.Add(new PieceShape("I1", new List<GridCoord> { new GridCoord(0, 0) }, maxUseI1));
+        _availableShapes.Add(new PieceShape("1A", new List<GridCoord> { new GridCoord(0, 0) }, maxUseI1));
 
         // 2セル (I-2)
-        _availableShapes.Add(new PieceShape("I2", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0) }));
-        _availableShapes.Add(new PieceShape("I2", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1) }));
+        _availableShapes.Add(new PieceShape("I2-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0) }));
+        _availableShapes.Add(new PieceShape("I2-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1) }));
 
         // 3セル (I-3, L-3, V-3)
-        _availableShapes.Add(new PieceShape("I3", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0) }));
-        _availableShapes.Add(new PieceShape("I3", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(0, 2) }));
-        _availableShapes.Add(new PieceShape("L3", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(0, 1) }));
-        _availableShapes.Add(new PieceShape("」3", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(1, 1) }));
-        _availableShapes.Add(new PieceShape("「3", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 1) }));
-        _availableShapes.Add(new PieceShape("73", new List<GridCoord> { new GridCoord(1, 0), new GridCoord(0, 1), new GridCoord(1, 1) }));
+        _availableShapes.Add(new PieceShape("I3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0) }));
+        _availableShapes.Add(new PieceShape("I3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(0, 2) }));
+        _availableShapes.Add(new PieceShape("L3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(0, 1) }));
+        _availableShapes.Add(new PieceShape("」3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(1, 1) }));
+        _availableShapes.Add(new PieceShape("「3-C", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 1) }));
+        _availableShapes.Add(new PieceShape("73-D", new List<GridCoord> { new GridCoord(1, 0), new GridCoord(0, 1), new GridCoord(1, 1) }));
         // 4セル (T字の例) - 3x3制約内に収まっている
         _availableShapes.Add(new PieceShape("T4", new List<GridCoord> {
             new GridCoord(1, 0),
@@ -395,12 +395,12 @@ public static class CellSplitter
         _availableShapes.Add(new PieceShape("_3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0) }, -1, 0));
 
         _availableShapes.Add(new PieceShape("/3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 1) }, -1, 1));
-        _availableShapes.Add(new PieceShape("/3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 0) }, -1, 1));
+        _availableShapes.Add(new PieceShape("/3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(1, 1) }, -1, 2));
         _availableShapes.Add(new PieceShape("/3-C", new List<GridCoord> { new GridCoord(1, 0), new GridCoord(1, 1), new GridCoord(0, 1) }, -1, 2));
         _availableShapes.Add(new PieceShape("/3-D", new List<GridCoord> { new GridCoord(2, 0), new GridCoord(1, 0), new GridCoord(1, 1) }, -1, 2));
 
         _availableShapes.Add(new PieceShape("/4-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(1, 1), new GridCoord(2, 1) }, -1, 2));
-        _availableShapes.Add(new PieceShape("/4-B", new List<GridCoord> { new GridCoord(0, 1), new GridCoord(1, 1), new GridCoord(1, 0), new GridCoord(2, 0) }, -1, 1));
+        _availableShapes.Add(new PieceShape("/4-B", new List<GridCoord> { new GridCoord(0, 1), new GridCoord(1, 1), new GridCoord(1, 0), new GridCoord(2, 0) }, -1, 2));
         _availableShapes.Add(new PieceShape("/4-C", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 1), new GridCoord(2, 1) }, -1, 1));
         _availableShapes.Add(new PieceShape("/4-D", new List<GridCoord> { new GridCoord(0, 2), new GridCoord(0, 1), new GridCoord(1, 1), new GridCoord(1, 0) }, -1, 2));
 
@@ -570,10 +570,16 @@ public static class CellSplitter
                 }
 
                 // 4. 次のセルへ再帰
-                if (Solve(startX, startY, enforceCount, enforceUnique, isPatternSeedActive))
+                // ★★★ 枝刈りチェックを追加 ★★★
+                // if (IsFeasible())
                 {
-                    return true; // 成功
+                    // 2. 次のセルへ再帰
+                    if (Solve(startX, startY, enforceCount, enforceUnique, isPatternSeedActive))
+                    {
+                        return true; // 成功
+                    }
                 }
+                // ★★★ 実行不可能なら、即座に後戻り（枝刈り）★★★
 
                 // 5. 後戻り (Backtrack)
                 RemovePiece(origin.X, origin.Y, shape);
@@ -717,8 +723,12 @@ public static class CellSplitter
     // ピースをグリッドから除去 (後戻り用)
     private static void RemovePiece(int originX, int originY, PieceShape shape)
     {
-        // ピース配置リストから削除
-        _successfulPlacements.RemoveAt(_successfulPlacements.Count - 1);
+        if (_successfulPlacements != null && 1 <= _successfulPlacements.Count)
+        {
+            // ピース配置リストから削除
+            _successfulPlacements.RemoveAt(_successfulPlacements.Count - 1);
+        }
+        // _successfulPlacements.RemoveAt(_successfulPlacements.Count - 1);
 
         // グリッドをクリア
         foreach (var cell in shape.Cells)
@@ -763,5 +773,82 @@ public static class CellSplitter
             rng.GetBytes(bytes);
             return BitConverter.ToInt32(bytes, 0);
         }
+    }
+
+
+    // ========== 枝刈りロジック関連 ==========
+
+    // 最小ピースサイズを決定（現在のピース形状定義から最小セル数を持つピースのセル数を取得）
+    private static int GetMinPieceSize()
+    {
+        if (_availableShapes == null || _availableShapes.Count == 0) return 1;
+        
+        // ピースリスト内の最小セル数を取得
+        return _availableShapes.Min(s => s.Cells.Count);
+    }
+    
+    // 現在のグリッド状態が実行可能か（孤立した空きセルがないか）をチェック
+    private static bool IsFeasible()
+    {
+        int minSize = GetMinPieceSize();
+
+        // 訪問済みの空きセルを追跡
+        bool[,] visited = new bool[GridX, GridY];
+
+        for (int y = 0; y < GridY; y++)
+        {
+            for (int x = 0; x < GridX; x++)
+            {
+                // 未訪問の空きセルを見つける
+                if (_grid[x, y] == 0 && !visited[x, y])
+                {
+                    // 孤立した空き領域のサイズをBFS/DFSで計測
+                    int areaSize = CountConnectedEmptyArea(x, y, visited);
+                    
+                    // 孤立領域のサイズが最小ピースサイズを下回る場合は、この状態は実行不可能と判断
+                    if (areaSize < minSize)
+                    {
+                        return false; 
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    // (x, y)から繋がっている空き領域のセル数を数える (DFS/BFS)
+    private static int CountConnectedEmptyArea(int startX, int startY, bool[,] visited)
+    {
+        int count = 0;
+        Queue<GridCoord> queue = new Queue<GridCoord>();
+        queue.Enqueue(new GridCoord(startX, startY));
+        visited[startX, startY] = true;
+
+        while (queue.Count > 0)
+        {
+            GridCoord current = queue.Dequeue();
+            count++;
+
+            // 隣接セルの座標オフセット (四角形グリッドの場合)
+            GridCoord[] neighbors = new GridCoord[] {
+                new GridCoord(1, 0), new GridCoord(-1, 0), 
+                new GridCoord(0, 1), new GridCoord(0, -1)
+                // 六角形や三角形の場合は、そのグリッドに応じた隣接セル定義に変更が必要
+            };
+
+            foreach (var offset in neighbors)
+            {
+                int nx = current.X + offset.X;
+                int ny = current.Y + offset.Y;
+
+                if (nx >= 0 && nx < GridX && ny >= 0 && ny < GridY && 
+                    _grid[nx, ny] == 0 && !visited[nx, ny])
+                {
+                    visited[nx, ny] = true;
+                    queue.Enqueue(new GridCoord(nx, ny));
+                }
+            }
+        }
+        return count;
     }
 }

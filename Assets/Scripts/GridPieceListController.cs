@@ -22,6 +22,9 @@ public class GridPieceListController : MonoBehaviour
     public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
     public List<string> avoidPatternSeeds = default;
 
+    public ShapeType ShapeType = default;
+    public bool IsSetShapeType = false;
+
     public Transform gridParent = null;
     
     [Header("Hidden Pieces")]
@@ -46,6 +49,7 @@ public class GridPieceListController : MonoBehaviour
 
 
     private readonly List<PieceDragController> queue = new();
+    private Sequence _alignSequence = null; // ★ 追加：進行中の整列アニメーションを管理
 
     void Awake()
     {
@@ -55,8 +59,19 @@ public class GridPieceListController : MonoBehaviour
         var pcs = GetComponentsInChildren<PieceDragController>(false);
         queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
 
-        AlignAll(withDelay: false);
+        // AlignAll(withDelay: false);
+        AlignAll(withDelay: false, onComplete: () => {
+            UpdateSelectability();
+        });
         UpdateSelectability();
+
+        if(!IsSetShapeType)
+        {
+            // 同じ階層のGridPieceListControllerを取得
+            AbstractGridImageSplitter gridImageSplitter = this.transform.parent.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+            ShapeType = gridImageSplitter.GetShapeType();
+            IsSetShapeType = true;   
+        }
     }
 
     void UpdateSelectability()
@@ -70,64 +85,91 @@ public class GridPieceListController : MonoBehaviour
         }
     }
 
-   void AlignAll(bool withDelay)
-{
-    if(isCreative)
+   void AlignAll(bool withDelay, System.Action onComplete = null) // ★ onComplete パラメータを追加
     {
-        return;
-    }
-
-    for (int i = 0; i < queue.Count; i++)
-    {
-        var rt = queue[i].GetComponent<RectTransform>();
-        if (rt == null) continue;
-
-        float tx, ty;
-        bool isHidden = i >= selectableCount;
-
-        if (isHidden)
+        if(isCreative)
         {
-            tx = hiddenX;
-            ty = baseY;
-        }
-        else
-        {
-            tx = baseX + spacing * i;
-            ty = baseY;
+            onComplete?.Invoke(); // クリエイティブモードでは即時完了
+            return;
         }
 
-        Vector3 target = new Vector3(tx, ty, 0);
+        // 既存のシーケンスがあれば、念のため終了させる
+        _alignSequence?.Kill(complete: false);
+        _alignSequence = DOTween.Sequence(); // 新しいシーケンスを作成
+        
+        // ★ ピース移動処理をシーケンスに追加
+        for (int i = 0; i < queue.Count; i++)
+        {
+            var rt = queue[i].GetComponent<RectTransform>();
+            if (rt == null) continue;
 
-        // ★ 判定: いま hiddenX 側にいる or 画面外にいたピース
-        bool wasHidden = rt.position.x > baseX + spacing * (selectableCount - 1) + 0.1f
-                         || rt.position.x >= hiddenX - 10f;
+            float tx, ty;
+            bool isHidden = i >= selectableCount;
 
+            if (isHidden)
+            {
+                tx = hiddenX;
+                ty = baseY;
+            }
+            else
+            {
+                tx = baseX + spacing * i;
+                ty = baseY;
+            }
+
+            Vector3 target = new Vector3(tx, ty, 0);
+
+            bool wasHidden = rt.position.x > baseX + spacing * (selectableCount - 1) + 0.1f
+                            || rt.position.x >= hiddenX - 10f;
+
+            if (withDelay)
+            {
+                float delay = 0.1f * i;
+                float duration = shiftTime;
+                
+                // 既存のアニメーションを停止
+                DOTween.Kill(rt, complete: false);
+
+                if (!isHidden && wasHidden)
+                {
+                    // 今回画面内に入ってくるピース（ワープ→DO）
+                    rt.position = new Vector3(hiddenX*0.5f, baseY, 0);
+                    duration = shiftTime * 1.5f;
+
+                    // MoveアニメーションをシーケンスにJoin (全てのピースの移動は並行して行われる)
+                    _alignSequence.Join(rt.DOMove(target, duration)
+                        .SetDelay(delay)
+                        .SetEase(Ease.OutQuad));
+                }
+                else if ((rt.position - target).sqrMagnitude > 0.001f)
+                {
+                    // 通常移動
+                    _alignSequence.Join(rt.DOMove(target, duration)
+                        .SetDelay(delay)
+                        .SetEase(Ease.OutQuad));
+                }
+            }
+            else
+            {
+                // withDelay=false の場合は即時位置設定
+                rt.position = target;
+            }
+        }
+        
+        // ★ シーケンスが完了したら、外部から渡されたコールバックを実行
         if (withDelay)
         {
-            float delay = 0.1f * i;
-
-            // ★ 今回画面内に入ってくるピース（wasHidden → !isHidden）なら一瞬ワープ→DO
-            if (!isHidden && wasHidden)
+            _alignSequence.OnComplete(() =>
             {
-                rt.position = new Vector3(hiddenX*0.5f, baseY, 0); // 画面外に一瞬ワープ
-                rt.DOMove(target, shiftTime*1.5f)
-                    .SetDelay(delay)
-                    .SetEase(Ease.OutQuad);
-            }
-            else if ((rt.position - target).sqrMagnitude > 0.001f)
-            {
-                // 通常移動
-                rt.DOMove(target, shiftTime)
-                    .SetDelay(delay)
-                    .SetEase(Ease.OutQuad);
-            }
+                onComplete?.Invoke();
+                _alignSequence = null;
+            });
         }
         else
         {
-            rt.position = target;
+            onComplete?.Invoke(); // 遅延なしの場合は即座にコールバック実行
         }
     }
-}
 
 
     /// <summary>
@@ -135,10 +177,18 @@ public class GridPieceListController : MonoBehaviour
     /// </summary>
     public void NotifySnapped(PieceDragController snapped)
     {
+        // ピースをキューから削除
         queue.Remove(snapped);
-        AlignAll(withDelay: true);
-        UpdateSelectability();
+        
+        // ★ AlignAllを実行し、そのアニメーションが完了した後に選択性を更新する
+        AlignAll(withDelay: true, onComplete: () => {
+            UpdateSelectability();
+        });
+        
+        // 旧: UpdateSelectability(); // アニメーションと同時に実行されていた
     }
+
+    // GridPieceListController.cs
 
     /// <summary>
     /// ピースが戻ったとき呼ぶ（シェイク付き）
@@ -153,35 +203,173 @@ public class GridPieceListController : MonoBehaviour
             queue.Add(piece);
         }
 
-        // X位置順に並べ直して整列
-        var ordered = queue.OrderBy(p => p.transform.position.x).ToList();
+        // --- ★ 修正箇所: ソートロジックの再調整 ★ ---
+        
+        // 1. 戻ってきたピース（D）を除く、リスト内の他のピース（A, B, C）を取得し、X座標でソート
+        //    (この時点でのソートは、A, B, C がリストから抜けたピース D の穴を埋めるために
+        //     左にシフトした状態で並んでいることを確認するため)
+        // var otherPieces = queue.Where(p => p != piece).OrderBy(p => p.transform.position.x).ToList();
+        var otherPieces = queue.Where(p => p != piece).ToList();
+        
+        // 2. 戻ってきたピース D の挿入位置を決定
+        
+        // D がリストの可視領域（selectableCount = 3）に戻るかどうかを、そのX座標で判断する。
+        // 可視領域の最も右端のデフォルト位置（インデックス2）のX座標
+        float visibleRightX = baseX + spacing * (selectableCount - 1);
+        
+        // 戻ってきたピースの現在のX位置
+        float currentPieceX = piece.transform.position.x;
+        
+        // ★ リストの再構築
         queue.Clear();
-        queue.AddRange(ordered);
-
-        // ★ まず全体を AlignAll（4つ目以降を画面外に）
-        AlignAll(withDelay: true);
-
-        // ★ 戻ってきたピースだけ Shake
-        var rt = piece.GetComponent<RectTransform>();
-        if (rt != null)
+        
+        if (otherPieces.Count < selectableCount)
         {
-            DOTween.Kill(rt);
+            // (A, B) のようにリストに空きがある場合:
+            // 戻ってきたピース (D) は、他のピースの X 座標の間に挿入されようとするが、
+            // PieceSorter の順序を維持するため、現在の X 座標に最も近いインデックスに挿入する。
 
-            int idx = queue.IndexOf(piece);
-            bool isHidden = idx >= selectableCount;
-
-            if (isHidden)
+            // 戻ってきたピースの X 座標に最も近い他のピースのインデックスを見つける
+            int nearestIndex = -1;
+            float minDistance = float.MaxValue;
+            
+            for (int i = 0; i < otherPieces.Count; i++)
             {
-                float tx = hiddenX;
-                float ty = baseY;
-                rt.DOMove(new Vector3(tx, ty, 0), shiftTime).SetEase(Ease.OutQuad);
+                float dist = Mathf.Abs(otherPieces[i].transform.position.x - piece.transform.position.x);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    nearestIndex = i;
+                }
+            }
+            
+            // 挿入位置を決定（最も近いピースの右側または左側）
+            int insertIndex = (nearestIndex == -1 || piece.transform.position.x > otherPieces[nearestIndex].transform.position.x)
+                            ? otherPieces.Count
+                            : nearestIndex;
+
+            // 挿入して queue を再構築
+            otherPieces.Insert(insertIndex, piece);
+            queue.AddRange(otherPieces);
+        }
+        else
+        {
+            // (A, B, C) のようにリストが埋まっている場合 (前回の修正ロジックを維持)
+            // ... (前回の修正コードの通り、画面外へ押し出すロジックをそのまま使用) ...
+            
+            if (currentPieceX > visibleRightX + 0.1f)
+            {
+                queue.AddRange(otherPieces.Take(selectableCount - 1));
+                queue.Add(piece);
+                queue.Add(otherPieces[selectableCount - 1]);
+            }
+            else if (currentPieceX < baseX - 0.1f)
+            {
+                queue.Add(piece);
+                queue.AddRange(otherPieces);
             }
             else
             {
+                // X 座標の順序を尊重しつつ、最も右のピース C を画面外へ押し出す
+                var visiblePieces = otherPieces.Take(selectableCount - 1).ToList();
+                var tempQueue = new List<PieceDragController>(visiblePieces);
+                tempQueue.Add(piece);
+                // ★ X座標順ソートを維持: PieceSorterの順序を維持するロジックに変更する必要があるが、
+                //    このケースではピースを押し出すことが目的なので、現状のX座標ソートを維持する。
+                //    → ここが PieceSorter の意図を破壊する最後の場所となるが、
+                //       ユーザー体験上の「戻したピースが適切な位置に入る」ことを優先します。
+                queue.AddRange(tempQueue.OrderBy(p => p.transform.position.x));
+                queue.Add(otherPieces[selectableCount - 1]);
+            }
+        }
+        
+        // --- 修正箇所ここまで ---
+
+
+        // ★ 戻ってきたピースのインデックスを取得
+        int returnedIdx = queue.IndexOf(piece);
+
+        // ★ 戻ってきたピースのターゲット位置
+        float targetX = baseX + spacing * returnedIdx;
+        float targetY = baseY;
+        Vector3 targetPos = new Vector3(targetX, targetY, 0);
+
+        // ★ 画面内（3番目まで）に戻るかどうかの判定
+        bool isReturningToVisibleSlot = returnedIdx < selectableCount; // Dはインデックス2なので true
+
+
+        // 1. 全ピースの移動処理（戻ってきたピースを除く）
+        for (int i = 0; i < queue.Count; i++)
+        {
+            // 戻ってきたピースは次のステップで個別に処理するためスキップ
+            if (i == returnedIdx) continue; 
+
+            var pc = queue[i]; // C, B, A のいずれか
+            var rt = pc.GetComponent<RectTransform>();
+            if (rt == null) continue;
+
+            float tx, ty;
+            bool isHidden = i >= selectableCount; // C は i=3 なので isHidden=true
+
+            if (isHidden)
+            {
+                tx = hiddenX;
+                ty = baseY;
+            }
+            else
+            {
+                tx = baseX + spacing * i;
+                ty = baseY;
+            }
+
+            Vector3 target = new Vector3(tx, ty, 0);
+
+            // ピース D の移動によって C が画面外に移動したり、A, B が左に詰めるアニメーションを実行
+            bool wasHidden = rt.position.x > baseX + spacing * (selectableCount - 1) + 0.1f
+                             || rt.position.x >= hiddenX - 10f;
+
+
+            // DOTweenアニメーションを強制停止してから再開
+            DOTween.Kill(rt, complete: false);
+
+            if (!isHidden && wasHidden)
+            {
+                // 画面内に入ってくるピースは、一瞬ワープしてからDO
+                rt.position = new Vector3(hiddenX * 0.5f, baseY, 0); 
+                rt.DOMove(target, shiftTime * 1.5f)
+                    .SetDelay(0.1f * i) 
+                    .SetEase(Ease.OutQuad);
+            }
+            else if ((rt.position - target).sqrMagnitude > 0.001f)
+            {
+                // 通常移動（C が画面外へ、A, B はそのまま、または左にシフトする場合など）
+                rt.DOMove(target, shiftTime)
+                    .SetDelay(0.1f * i) 
+                    .SetEase(Ease.OutQuad);
+            }
+        }
+
+
+        // 2. 戻ってきたピースの特殊処理（Shakeと移動）
+        var returnedRt = piece.GetComponent<RectTransform>();
+        if (returnedRt != null)
+        {
+            DOTween.Kill(returnedRt, complete: false); 
+
+            if (isReturningToVisibleSlot)
+            {
+                // 画面内に戻る場合 (D が C の位置に戻る): Shake → ターゲット位置へ
                 Sequence seq = DOTween.Sequence();
-                seq.Append(rt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
-                seq.Append(rt.DOMove(new Vector3(baseX + spacing * idx, baseY, 0), shiftTime).SetEase(Ease.OutQuad));
+                seq.Append(returnedRt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
+                seq.Append(returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad));
                 seq.Join(piece.ReturnToList());
+            }
+            else
+            {
+                // 画面外に戻る場合 (このロジックでは D は画面内に戻るため、通常は実行されない)
+                returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad);
+                // originalScale を直接使用
+                returnedRt.DOScale(Vector3.one * _PieceDragControllersScale, 0.15f).SetEase(Ease.OutBack);
             }
         }
 
@@ -192,13 +380,40 @@ public class GridPieceListController : MonoBehaviour
 
     public void RescanAndAlign()
     {
-        queue.Clear();
-        var pcs = GetComponentsInChildren<PieceDragController>(false)
-                  .OrderBy(p => p.transform.position.x);
-        queue.AddRange(pcs);
+        // queue.Clear();
+        // var pcs = GetComponentsInChildren<PieceDragController>(false)
+        //           .OrderBy(p => p.transform.position.x);
+        // queue.AddRange(pcs);
 
-        AlignAll(withDelay: true);
-        UpdateSelectability();
+        // // AlignAll(withDelay: true);
+        // AlignAll(withDelay: true, onComplete: () => {
+        //     UpdateSelectability();
+        // });
+        // UpdateSelectability();
+
+        queue.Clear();
+        
+        // ★ 変更: FindObjectsOfType<PieceDragController>() の結果を PieceSorter でソート
+        var unsortedPieces = FindObjectsOfType<PieceDragController>().ToList();
+        
+        // ピースを PieceSorter で並び替える
+        // この並び替えによって、queue の順番が「外周から順番」になる
+        var sortedPieces = PieceSorter.SortBySeededAlternatingDirections(unsortedPieces, PieceCreateSeed); 
+
+        // 既存のリストにあるピースのみを queue に追加 (シーン内に残っているピースのみ)
+        foreach (var piece in sortedPieces)
+        {
+            if (piece.GetComponentInParent<GridPieceListController>() == this)
+            {
+                // リストコンポーネントの子であるピースのみを追加する想定
+                queue.Add(piece);
+            }
+        }
+        
+        // ★ 以前の修正と同様に AlignAll でアニメーションを完了保証する
+        AlignAll(withDelay: true, onComplete: () => {
+            UpdateSelectability();
+        });
     }
 
     public bool IsSelectable(PieceDragController pc)

@@ -85,8 +85,6 @@ public class FirebaseManager : MonoBehaviour
                          );
     }
 
-
-
   public void StageClear(string stageName, float clearTime)
     {
 
@@ -115,11 +113,12 @@ public class FirebaseManager : MonoBehaviour
                             new Parameter("StageName", stageName)
                          );
     }
-    public void TapCount(string stageName)
+    public void TapCount(string stageName, bool isTouch)
     {
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Tap_Count",
                          new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("StageName", stageName)
+                            new Parameter("StageName", stageName),
+                            new Parameter("isTouch", isTouch.ToString())
                          );
     }
     public void RewindMove(string stageName)

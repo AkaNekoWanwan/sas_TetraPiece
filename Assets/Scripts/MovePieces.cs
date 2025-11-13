@@ -128,7 +128,7 @@ public class MovePieces : MonoBehaviour
                 if (targetPiece != null && !snappingPieces.Contains(targetPiece) && !pieceIsSnapped[targetPiece])
                 {
                     selectedPiece = targetPiece;
-                    firebaseManager.TapCount(puzzleChecker.stageName);
+                    firebaseManager.TapCount(puzzleChecker.stageName, true);
 
                     selectedPiece.DOKill();
 
@@ -153,8 +153,13 @@ public class MovePieces : MonoBehaviour
                 }
                 else if (targetPiece != null)
                 {
+                    firebaseManager.TapCount(puzzleChecker.stageName, false);
                     Debug.Log($"{targetPiece.name} は選択できません（スナップ中またはスナップ済み）");
                 }
+            }
+            else
+            {
+                firebaseManager.TapCount(puzzleChecker.stageName, false);
             }
         }
 

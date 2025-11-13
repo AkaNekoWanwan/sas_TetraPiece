@@ -86,6 +86,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
         int usedHeight = Mathf.RoundToInt((rows - 1) * hexHeight + hexHeight + (cols > 1 ? hexHeight / 2f : 0));
         int startX = (int)(rect.x + (fullW - usedWidth) / 2f);
         int startY = (int)(rect.y + (fullH - usedHeight) / 2f);
+        SetCellScale(hexWidth);
 
         // === 分割ループ ===
         for (int y = 0; y < rows; y++)

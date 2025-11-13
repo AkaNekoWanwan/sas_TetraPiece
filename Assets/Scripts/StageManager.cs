@@ -35,6 +35,7 @@ public class StageManager : MonoBehaviour
     public int goalPicCount;
     public ParticleSystem ps;
     public Text levelText;
+    public HardEfffectManager _hardEfffectManager;
     public float pureElapsedTime; // 純粋な経過時間
     private Coroutine autoSaveRoutine;
     private const string ELAPSED_TIME_KEY = "StageElapsedTime";
@@ -52,14 +53,18 @@ public class StageManager : MonoBehaviour
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
         levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
 
+        bool isHard = false;
+
         // 🔸ステージに応じてアクティブ設定
         if (!isTest)
         {
             for (int i = 0; i < stages.Length; i++)
             {
                 stages[i].SetActive(i == isNowStage);
+                isHard = stages[i].GetComponent<StageInfo>().isHard;
             }
         }
+        
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
@@ -73,6 +78,8 @@ public class StageManager : MonoBehaviour
 
         // 🔸5秒ごとに経過時間を保存
         autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
+
+        _hardEfffectManager.PlayHardAnimation(isHard);
     }
 
     private IEnumerator AutoSaveElapsedTime()

@@ -10,43 +10,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Image))]
 public class GridImageSplitter : AbstractGridImageSplitter
 {
-    // [Header("Grid Settings")]
-    // [Range(1, 20)] public int rows = 2;
-    // [Range(1, 20)] public int cols = 2;
-    // [Range(2, 30)] public int _pieceNum = 5;
-
-    // [Header("Target Range (Center % of image)")]
-    // [Range(10, 1000)] public int targetPercent = 80;
-
-    // [Header("Output Settings")]
-    // public string outputFolder = "Assets/Textures/Square";
-
-    // [Header("Cell Copy Settings")]
-    // public Material cellCopyMaterial;
-    // public SpritterParam _param;
-
-    // public bool isSkip = true;   // 全更新時にスキップするか
-    // public bool isPrefs = false;   // 全更新時にスキップするか
-    // public bool isCreative = false;
-    // public string PieceCreateSeed = ""; // ピース作成のシード値
-    // public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
-    // public List<string> _seeds; // 作成を避けるシード値
-    // public List<string> avoidPatternSeeds = default;
-
-    // private Coroutine _createPieceCoriutine = null;
-
 #if UNITY_EDITOR
-    // string GetUniqueFolder(string basePath, string imageName)
-    // {
-    //     string folderPath = Path.Combine(basePath, imageName);
-
-    //     if (!Directory.Exists(folderPath))
-    //         return folderPath;
-
-    //     int counter = 1;
-    //     while (Directory.Exists($"{folderPath}_{counter}")) counter++;
-    //     return $"{folderPath}_{counter}";
-    // }
 
     public override ShapeType GetShapeType()
     {
@@ -104,7 +68,8 @@ public class GridImageSplitter : AbstractGridImageSplitter
             targetRows += 2;
             targetCols += 2;
         }
-        
+        bool isSetCellScale = false;
+
         for (int y = initY; y < targetRows; y++)
         {
             for (int x = initX; x < targetCols; x++)
@@ -159,6 +124,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                 // 分割セルのサイズ（常に正方形）
                 float uiCellSize = uiSquare / Mathf.Max(rows, cols);
                 Vector2 uiCellSizeVec = new Vector2(uiCellSize, uiCellSize);
+                SetCellScale(uiCellSize);
 
                 // 配置
                 float offsetUiX = (x - (cols - 1) * 0.5f) * uiCellSize;
@@ -266,97 +232,5 @@ public class GridImageSplitter : AbstractGridImageSplitter
 
         Debug.Log($"正方形分割が完了！保存先: {saveFolder}");
     }
-    // public int text = 0;
-    // private bool IsDummyAnswerOnly(int x, int y)
-    // {
-    //     Debug.Log($"info : {text}");
-    //     text++;
-    //     if(!isCreative)
-    //         return false;
-    //     if( x < 0 || y < 0 || cols <= x || rows <= y)
-    //         return true;
-    //     return false;
-    // }
-
-    // public void DeleteChilden()
-    // {
-    //     for (int j = this.transform.childCount - 1; j >= 0; j--)
-    //     {
-    //         Transform child = this.transform.GetChild(j);
-    //         if (child != null)
-    //         {
-    //             DestroyImmediate(child.gameObject, true);
-    //         }
-    //     }
-    // }
-
-    // // ステージ作成に必要な一連の流れを実行
-    // public void CreatePiece()
-    // {
-    //     // 設定されているピース数が大き過ぎたら修正
-    //     int maxPieceNum = rows * cols;
-    //     _pieceNum = Mathf.Min(_pieceNum, maxPieceNum);
-    //     // 設定されているピース数がちいさすぎたら修正
-    //     _pieceNum = Mathf.Max(_pieceNum, 2);
-
-    //     // 子オブジェクトを全削除
-    //     DeleteChilden();
-    //     // ピースセル生成
-    //     SplitImage();
-
-    //     // 同じ階層のGridPieceListControllerを取得
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.isCreative = isCreative;
-    //     gridPieceListController.gridParent = this.transform;
-
-    //     // ピースセルをいい感じにピースリストに配置
-    //     List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-    //     CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, ShapeType.Square, PieceCreateSeed, avoidPatternSeeds );
-    //     PieceCreateSeed = CellSplitter.PatternSeed;
-    //     if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-    //         backUpPieceCreateSeed = PieceCreateSeed;
-
-    //     // ピースのセットアップ
-    //     gridPieceListController.SetUpChildrenPieceDragController();
-    // }
-
-    // public void Deletepiece()
-    // {
-    //     DeleteChilden();
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.PreSetPieceDragControllers();
-    // }
 #endif
 }
-
-#if UNITY_EDITOR
-// [CustomEditor(typeof(GridImageSplitter))]
-// public class GridImageSplitterEditor : Editor
-// {
-//     public override void OnInspectorGUI()
-//     {
-//         DrawDefaultInspector();
-
-//         GridImageSplitter script = (GridImageSplitter)target;
-
-//         GUILayout.Space(10);
-
-//         if (GUILayout.Button("Split Image"))
-//         {
-//             script.SplitImage();
-//         }
-//         if (GUILayout.Button("Delete all childen"))
-//         {
-//             script.DeleteChilden();
-//         }
-//         if (GUILayout.Button("Delete piece"))
-//         {
-//             script.Deletepiece();
-//         }
-//         if (GUILayout.Button("Auto Create piece"))
-//         {
-//             script.CreatePiece();
-//         }
-//     }
-// }
-#endif

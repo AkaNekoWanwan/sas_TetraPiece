@@ -46,7 +46,7 @@ public class PieceDragController : MonoBehaviour,
     private Vector3 smoothedPosition;
     private bool isDragging = false;
     public List<string> avoidPatternSeeds = default;
-
+    public GridPieceListController _listCtrl = default;
     
 
     void Awake()
@@ -59,6 +59,7 @@ public class PieceDragController : MonoBehaviour,
 
         CacheOriginalMaterials();
         SetOutlineAlpha(1f, 0f);
+        _listCtrl = GetComponentInParent<GridPieceListController>();
     }
 
     void Update()
@@ -152,7 +153,7 @@ public class PieceDragController : MonoBehaviour,
             Vector3 targetPosition = FixZ(worldPoint + dragOffset);
 
             float addY = targetPosition.y - originalPos.y;
-            addY *= 0.4f;
+            addY *= 1.0f;
             if( 0f <= addY)
                 targetPosition.y += addY;
             
@@ -546,8 +547,24 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
         var myAnsGrid = myClosest.GetComponent<AnswerGridPos>().answerGrid;
         var otherAnsGrid = otherClosest.GetComponent<AnswerGridPos>().answerGrid;
+
         if (myAnsGrid == null || otherAnsGrid == null)
             return false;
+
+        // GridCell g1 = myAnsGrid.GetComponent<GridCell>();
+        // GridCell g2 = otherAnsGrid.GetComponent<GridCell>();
+        // if (g1 == null || g2 == null || !AreGridCoordsValid(g1, g2))
+        // {
+        //     // グリッド座標がない場合は、従来のワールド距離判定にフォールバックするか、エラーとする
+        //     return FallbackWorldDistanceCheck(); 
+        // }
+
+        // 隣接判定用のユーティリティメソッドを導入（下記B参照）
+        // if (!IsLogicalGridAdjacent(myAnsGrid, otherAnsGrid, _listCtrl.ShapeType))
+        // {
+        //     Debug.Log($"[CanMerge] ❌ 物理的に隣接していません: {myAnsGrid.name} と {otherAnsGrid.name}");
+        //     return false; // 物理的に隣接していない場合は即座にマージを拒否
+        // }
         
         Vector3 ansRel = otherAnsGrid.transform.position - myAnsGrid.transform.position;
         Vector3 curRel = otherClosest.position - myClosest.position;
@@ -563,9 +580,12 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         float zAngleCurrent = otherClosest.eulerAngles.z - myClosest.eulerAngles.z;
         float zAngleDiff = Mathf.Abs(Mathf.DeltaAngle(zAngleAnswer, zAngleCurrent));
 
-        bool distOK = lenDiff < 2f;
-        bool dirOK = angleDiff < 5f;
-        bool rotOK = zAngleDiff < 5f;
+        // bool distOK = lenDiff < 2f;
+        // bool dirOK = angleDiff < 5f;
+        // bool rotOK = zAngleDiff < 5f;
+        bool distOK = lenDiff < 0.5f;
+        bool dirOK = angleDiff < 2f;
+        bool rotOK = zAngleDiff < 2f;
 
         Debug.Log($"[CanMerge] {minDist}");
         if (distOK && dirOK && rotOK && minDist < 10f)
@@ -577,6 +597,74 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         {
             Debug.Log($"[CanMerge] ❌ mismatch: 距離Δ={lenDiff:F2}, 向きΔ={angleDiff:F2}, 回転Δ={zAngleDiff:F2}");
             return false;
+        }
+    }
+
+    // PieceDragController.cs に新しいプライベートメソッドを追加
+
+    // PieceDragController.cs に追加するメソッド
+
+    // ShapeType は外部で定義されている enum ShapeType { Square, Hex, Triangle } を使用
+
+    private bool IsLogicalGridAdjacent(GridCell g1, GridCell g2, ShapeType currentShape)
+    {
+        // ピース同士が同じセルを参照している場合は隣接ではない
+        if (g1 == g2) return false;
+
+        int dx = Mathf.Abs(g1.gridX - g2.gridX);
+        int dy = Mathf.Abs(g1.gridY - g2.gridY);
+        
+        switch (currentShape)
+        {
+            case ShapeType.Square:
+                // 四角形グリッドの隣接判定 (上下左右のみ)
+                // 座標差の合計がちょうど1であること
+                return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+
+            case ShapeType.Hex:
+                // 六角形 (スタッガード/オフセット) グリッドの隣接判定
+                // xが偶数か奇数かで隣接Y座標が変わる
+                
+                // ----------------------------------------------------
+                // A. X座標の差が0 (垂直方向の隣接)
+                if (dx == 0)
+                {
+                    // 上または下への隣接のみ
+                    return dy == 1; 
+                }
+                
+                // B. X座標の差が1 (斜め方向の隣接)
+                if (dx == 1)
+                {
+                    // 隣接X座標が偶数（例: g1.gridXが偶数）の場合
+                    if (g1.gridX % 2 == 0)
+                    {
+                        // 斜め上 (dy=1) または 水平 (dy=0) に隣接
+                        return dy == 0 || dy == 1;
+                    }
+                    // 隣接X座標が奇数（例: g1.gridXが奇数）の場合
+                    else
+                    {
+                        // 斜め下 (dy=0) または 水平 (dy=1) に隣接
+                        return dy == 0 || dy == 1; 
+                    }
+                }
+                
+                return false; // x, y 差分が大きすぎる場合は非隣接
+
+            case ShapeType.Triangle:
+                // 三角形グリッドの隣接判定 (複雑なため、座標系に合わせて調整が必要)
+                // 少なくとも四角形と同様の論理で斜めを排除する必要がありますが、
+                // isUpSide や gridZ (もしあれば) を使って3方向の隣接を厳密に定義する必要があります。
+                // ここでは簡易的に、四角形よりは緩いが、斜め対角線は排除するロジックを想定します。
+                
+                // 三角形グリッドの実装詳細によるため、四角形ロジックをベースに調整が必要です。
+                // 暫定的に、辺を共有する隣接のみを許可する（四角形と同様のロジックが妥当な場合がある）
+                return (dx == 1 && dy == 0) || (dx == 0 && dy == 1) || (dx == 1 && dy == 1); // 3方向に隣接する場合
+
+            default:
+                // 未定義の形状の場合、安全のため隣接を拒否
+                return false;
         }
     }
 
@@ -776,10 +864,12 @@ public void OnEndDrag(PointerEventData eventData)
         // ★ RenderQueueを元に戻す
         RestoreRenderQueue();
         
-        ReturnToOrigin();
+        // ReturnToOrigin();
         SetOutlineAlpha(1f, 0.2f);
-        var listCtrl = GetComponentInParent<GridPieceListController>();
-        if (listCtrl != null) listCtrl.NotifyReturned(this);
+        // var _listCtrl = GetComponentInParent<GridPieceListController>();
+        if (_listCtrl != null) _listCtrl.NotifyReturned(this);
+
+        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         return;
     }
 

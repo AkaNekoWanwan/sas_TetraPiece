@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor.SceneManagement;
+#endif
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Image))]
@@ -42,25 +45,37 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 #if UNITY_EDITOR
     protected string GetUniqueFolder(string basePath, string imageName)
     {
-        string folderPath = Path.Combine(basePath, imageName);
+        // 1. ShapeTypeに応じた接尾辞を取得
+        string shapeTypeName = GetShapeType().ToString(); // ShapeType.Square -> "Square"
 
-        if (!Directory.Exists(folderPath))
-            return folderPath;
+        // 2. 最終的なフォルダ名を構築: "Assets/Textures" + "画像名" + "ShapeType名"
+        string finalFolderName = $"{imageName}_{shapeTypeName}";
+        string folderPath = Path.Combine(basePath, finalFolderName);
 
-        int counter = 1;
-        while (Directory.Exists($"{folderPath}_{counter}")) counter++;
-        return $"{folderPath}_{counter}";
+        // 3. 同名フォルダが存在するかチェック
+        if (Directory.Exists(folderPath))
+        {
+            // 4. 存在する場合、フォルダの中身を全て削除
+            Debug.Log($"同名フォルダが存在するため中身を全削除します: {folderPath}");
+            
+            // Directory.Delete はフォルダ自体も削除できるが、中身を再帰的に削除するために true を使用
+            // 削除後、すぐに再作成するため、ここではフォルダ自体も一度削除してから作成する
+            Directory.Delete(folderPath, true);
+        }
+
+        // 5. 新規でフォルダを作成（削除されていれば再作成）
+        Directory.CreateDirectory(folderPath);
+        
+        // Unityエディタが新しいフォルダを認識できるようにアセットデータベースを更新
+        AssetDatabase.Refresh();
+
+        return folderPath;
     }
 
     public virtual void SplitImage()
     {
     
     }
-    public virtual ShapeType GetShapeType()
-    {
-        return ShapeType.Square;
-    }
-
 
     public int text = 0;
     protected bool IsDummyAnswerOnly(int x, int y)
@@ -86,6 +101,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         }
     }
 
+    // 【新規追加】自身のCellSplitterインスタンスを保持
+    private CellSplitter2 _myCellSplitter;
     // ステージ作成に必要な一連の流れを実行
     public void CreatePiece()
     {
@@ -99,18 +116,33 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         DeleteChilden();
         // ピースセル生成
         SplitImage();
+        
 
         // 同じ階層のGridPieceListControllerを取得
-        GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
+        GridPieceListController gridPieceListController = GetGridPieceListController();
         gridPieceListController.isCreative = isCreative;
         gridPieceListController.gridParent = this.transform;
+        gridPieceListController.ShapeType = GetShapeType();
+        gridPieceListController.IsSetShapeType = true;
 
         // ピースセルをいい感じにピースリストに配置
         List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-        CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
-        PieceCreateSeed = CellSplitter.PatternSeed;
+        // CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
+        // ★★★ 修正点 1: CellSplitterをインスタンス化 ★★★
+        _myCellSplitter = new CellSplitter2(cols, rows, _pieceNum, GetShapeType(), PieceCreateSeed);
+        // ★★★ 修正点 2: インスタンスメソッドを呼び出し ★★★
+        _myCellSplitter.SplitAndRegisterCells(cells, gridPieceListController, null); 
+        // Note: _pieceNumはCellSplitter内部で参照されるため、refは不要
+
+        // ★★★ 修正点 3: 結果のPatternSeedをインスタンスから取得 ★★★
+        PieceCreateSeed = _myCellSplitter.PatternSeed;
         if (string.IsNullOrEmpty(backUpPieceCreateSeed))
             backUpPieceCreateSeed = PieceCreateSeed;
+
+        // CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, null );
+        // PieceCreateSeed = CellSplitter.PatternSeed;
+        // if (string.IsNullOrEmpty(backUpPieceCreateSeed))
+        //     backUpPieceCreateSeed = PieceCreateSeed;
 
         // ピースのセットアップ
         gridPieceListController.SetUpChildrenPieceDragController();
@@ -131,28 +163,45 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         SplitImage();
 
         // 同じ階層のGridPieceListControllerを取得
-        GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
+        GridPieceListController gridPieceListController = GetGridPieceListController();
         gridPieceListController.isCreative = isCreative;
         gridPieceListController.gridParent = this.transform;
         
         // ピースセルをいい感じにピースリストに配置
         List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
 
+        _myCellSplitter = new CellSplitter2(cols, rows, _pieceNum, GetShapeType(), PieceCreateSeed);
+
         yield return null;
-        CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
-        PieceCreateSeed = CellSplitter.PatternSeed;
-        if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-            backUpPieceCreateSeed = PieceCreateSeed;
+        
+        _myCellSplitter.SplitAndRegisterCells(cells, gridPieceListController, null);
+        EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+        PieceCreateSeed = _myCellSplitter.PatternSeed;
+        isSkip = true;
 
         // ピースのセットアップ
         gridPieceListController.SetUpChildrenPieceDragController();
+
+        yield break;
     }
 
     public void Deletepiece()
     {
         DeleteChilden();
-        GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
+        GridPieceListController gridPieceListController = GetGridPieceListController();
         gridPieceListController.PreSetPieceDragControllers();
+    }
+
+    public GridPieceListController GetGridPieceListController()
+    {
+        return this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
+    }
+
+    // セルサイズ270x270を基準に、それより小さいほどピースサイズを大きくして補正する
+    public void SetCellScale(float size)
+    {
+        GridPieceListController gridPieceListController = GetGridPieceListController();
+        gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
     }
 
     public void SetShapeType()
@@ -160,6 +209,10 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         
     }
 #endif
+    public virtual ShapeType GetShapeType()
+    {
+        return ShapeType.Square;
+    }
 }
 
 #if UNITY_EDITOR
@@ -176,15 +229,14 @@ public class AbstractGridImageSplitterEditor : Editor
 
         if (GUILayout.Button("Split Image"))
         {
+            script.Deletepiece();
             script.SplitImage();
-        }
-        if (GUILayout.Button("Delete all childen"))
-        {
-            script.DeleteChilden();
+            script.isSkip = false;
         }
         if (GUILayout.Button("Delete piece"))
         {
             script.Deletepiece();
+            script.isSkip = false;
         }
         if (GUILayout.Button("Auto Create piece"))
         {

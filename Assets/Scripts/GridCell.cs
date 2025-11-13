@@ -10,4 +10,8 @@ public class GridCell : MonoBehaviour
 
     // 子オブジェクト単位にしたいので Transform に変更
     public Transform occupiedByChild;
+
+    [Header("Grid Coordinates")]
+    public int gridX;
+    public int gridY;
 }
