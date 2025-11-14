@@ -47,7 +47,7 @@ public class GridPieceListController : MonoBehaviour
     [Tooltip("ピースリストのサイズ")]
     public float _PieceDragControllersScale = -1f;
 
-
+    public List<PieceDragController> _queue;
     private readonly List<PieceDragController> queue = new();
     private Sequence _alignSequence = null; // ★ 追加：進行中の整列アニメーションを管理
 
@@ -57,7 +57,10 @@ public class GridPieceListController : MonoBehaviour
         shakeVibrato = 25;
         shakeDuration = 0.2f;
         var pcs = GetComponentsInChildren<PieceDragController>(false);
-        queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
+
+        // queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
+        queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(pcs.ToList(), PieceCreateSeed)); 
+        _queue = queue;
 
         // AlignAll(withDelay: false);
         AlignAll(withDelay: false, onComplete: () => {
@@ -72,6 +75,29 @@ public class GridPieceListController : MonoBehaviour
             ShapeType = gridImageSplitter.GetShapeType();
             IsSetShapeType = true;   
         }
+        for(int i = 0; i < pcs.Length; i++)
+        {
+            PieceDragController ps = pcs[i];
+            if(i == 0)
+            {
+                RectTransform rect = ps.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+                SetCellScale(rect.sizeDelta.x, ShapeType);
+                // Debug.Log($"aaaaaa:{this.gameObject.name},{ps.gameObject.name}, {rect.gameObject.name}, {rect.sizeDelta.x}, {_PieceDragControllersScale}, {ShapeType}");
+            }
+            ps.transform.localScale = Vector3.one * _PieceDragControllersScale;
+        }
+    }
+
+    public void SetCellScale(float size, ShapeType shapeType)
+    {
+        // GridPieceListController gridPieceListController = GetGridPieceListController();
+        // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
+
+        _PieceDragControllersScale = 0.8f * 185f / size;
+        if(shapeType == ShapeType.Square)
+            _PieceDragControllersScale *= 0.75f;
+        else
+            _PieceDragControllersScale *= 1f;
     }
 
     void UpdateSelectability()
@@ -83,6 +109,7 @@ public class GridPieceListController : MonoBehaviour
             bool can = i < selectableCount;
             queue[i].enabled = can;
         }
+        _queue = queue;
     }
 
    void AlignAll(bool withDelay, System.Action onComplete = null) // ★ onComplete パラメータを追加
@@ -183,6 +210,7 @@ public class GridPieceListController : MonoBehaviour
     {
         // ピースをキューから削除
         queue.Remove(snapped);
+        _queue = queue;
         
         // ★ AlignAllを実行し、そのアニメーションが完了した後に選択性を更新する
         AlignAll(withDelay: true, onComplete: () => {
@@ -199,6 +227,7 @@ public class GridPieceListController : MonoBehaviour
     /// </summary>
     public void NotifyReturned(PieceDragController piece)
     {
+        Debug.Log($"queueDebug1:{queue.Count}");
         // ★ 念のため、戻ってきたピースの占有を解除
         piece.ReleaseOccupiedCells();
         
@@ -206,6 +235,7 @@ public class GridPieceListController : MonoBehaviour
         {
             queue.Add(piece);
         }
+        Debug.Log($"queueDebug2:{queue.Count}");
 
         // --- ★ 修正箇所: ソートロジックの再調整 ★ ---
         
@@ -226,6 +256,7 @@ public class GridPieceListController : MonoBehaviour
         
         // ★ リストの再構築
         queue.Clear();
+        Debug.Log($"queueDebug3:{queue.Count}, {otherPieces.Count}");
         
         if (otherPieces.Count < selectableCount)
         {
@@ -255,6 +286,7 @@ public class GridPieceListController : MonoBehaviour
             // 挿入して queue を再構築
             otherPieces.Insert(insertIndex, piece);
             queue.AddRange(otherPieces);
+            Debug.Log($"queueDebug4:{queue.Count}");
         }
         else
         {
@@ -266,11 +298,13 @@ public class GridPieceListController : MonoBehaviour
                 queue.AddRange(otherPieces.Take(selectableCount - 1));
                 queue.Add(piece);
                 queue.Add(otherPieces[selectableCount - 1]);
+                Debug.Log($"queueDebug5:{queue.Count}");
             }
             else if (currentPieceX < baseX - 0.1f)
             {
                 queue.Add(piece);
                 queue.AddRange(otherPieces);
+                Debug.Log($"queueDebug6:{queue.Count}");
             }
             else
             {
@@ -278,13 +312,13 @@ public class GridPieceListController : MonoBehaviour
                 var visiblePieces = otherPieces.Take(selectableCount - 1).ToList();
                 var tempQueue = new List<PieceDragController>(visiblePieces);
                 tempQueue.Add(piece);
-                // ★ X座標順ソートを維持: PieceSorterの順序を維持するロジックに変更する必要があるが、
-                //    このケースではピースを押し出すことが目的なので、現状のX座標ソートを維持する。
-                //    → ここが PieceSorter の意図を破壊する最後の場所となるが、
-                //       ユーザー体験上の「戻したピースが適切な位置に入る」ことを優先します。
                 queue.AddRange(tempQueue.OrderBy(p => p.transform.position.x));
+                // queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(tempQueue, PieceCreateSeed));
                 queue.Add(otherPieces[selectableCount - 1]);
+                Debug.Log($"queueDebug7:{queue.Count}");
             }
+            queue.AddRange(otherPieces.Skip(selectableCount).ToList());
+            Debug.Log($"queueDebug8-1:{queue.Count}");
         }
         
         // --- 修正箇所ここまで ---
@@ -378,9 +412,9 @@ public class GridPieceListController : MonoBehaviour
         }
 
         UpdateSelectability();
+        _queue = queue;
+        Debug.Log($"queueDebug8:{queue.Count}");
     }
-
-
 
     public void RescanAndAlign()
     {
@@ -407,12 +441,13 @@ public class GridPieceListController : MonoBehaviour
         AlignAll(withDelay: true, onComplete: () => {
             UpdateSelectability();
         });
+        _queue = queue;
     }
 
     public bool IsSelectable(PieceDragController pc)
     {
         int idx = queue.IndexOf(pc);
-
+        _queue = queue;
         return idx >= 0 && idx < selectableCount;
     }
 

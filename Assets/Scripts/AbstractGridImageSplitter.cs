@@ -198,10 +198,22 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     }
 
     // セルサイズ270x270を基準に、それより小さいほどピースサイズを大きくして補正する
+    // public void SetCellScale(float size)
+    // {
+    //     GridPieceListController gridPieceListController = GetGridPieceListController();
+    //     gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
+    // }
+
     public void SetCellScale(float size)
     {
         GridPieceListController gridPieceListController = GetGridPieceListController();
-        gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
+        // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
+
+        gridPieceListController._PieceDragControllersScale = 0.8f * 185f / size;
+        if(GetShapeType() == ShapeType.Square)
+            gridPieceListController._PieceDragControllersScale *= 0.75f;
+        else
+            gridPieceListController._PieceDragControllersScale *= 1f;
     }
 
     public void SetShapeType()

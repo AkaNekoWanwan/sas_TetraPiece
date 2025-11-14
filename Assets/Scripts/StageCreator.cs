@@ -510,7 +510,7 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 7 && rows == 7)
         {
-            splitter._trimShift = new Vector2(212f, 68f);
+            splitter._trimShift = new Vector2(278f, 88f);
             splitter._shiftY = -0.89f;
         }
     }

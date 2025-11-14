@@ -174,7 +174,7 @@ public class StageManager : MonoBehaviour
     {
         // 広告再生の判定
         Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
-        if( 60 <= AdsTimerManager.instance.ElapsedTime && 3 <= PlayerPrefs.GetInt("totalLevel", 1))
+        if( 60 <= AdsTimerManager.instance.ElapsedTime && 4 <= PlayerPrefs.GetInt("totalLevel", 1))
         {
             AdsTimerManager.instance.ElapsedTime = 0f;
             AdsTimerManager.instance.IsCounter = false;

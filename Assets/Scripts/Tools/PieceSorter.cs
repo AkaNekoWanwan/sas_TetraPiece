@@ -6,46 +6,71 @@ public static class PieceSorter
 {
     public enum SortDirection { Left, Right, Up, Down }
 
+    public static bool prioritizeMultiCellPieces = true;
+
     /// <summary>
-    /// 文字列シードを元にリストをシャッフルし、子オブジェクト数で並び替え、その後ランダムサイクルでソートする
+    /// 子オブジェクト数の降順で並び替え、その後、最も子オブジェクト数の多い外周ピースの方向を起点に
+    /// 固定の上下左右サイクルでソートを行う。シード値によるランダム化は行わない。
     /// </summary>
     /// <param name="source">PieceDragControllerのリスト</param>
-    /// <param name="seedString">ランダム化に使用する文字列シード</param>
+    /// <param name="seedString">使用しないが引数は維持</param>
+    /// <param name="prioritizeMultiCellPieces">セル数2以上のピースをセル数1のピースより優先するか</param>
     /// <returns>並び替えられた新しいリスト</returns>
-    public static List<PieceDragController> SortBySeededAlternatingDirections(this List<PieceDragController> source, string seedString)
+    public static List<PieceDragController> SortBySeededAlternatingDirections(
+        this List<PieceDragController> source, 
+        string seedString // ★ 変更点1: bool変数を追加し、デフォルトをtrueに設定
+    )
     {
         if (source == null || source.Count == 0)
         {
             return new List<PieceDragController>();
         }
 
-        // 1. 文字列シードを整数に変換
-        int seed = StringToSeed(seedString);
-        System.Random rng = new System.Random(seed);
+        // 1. コピーを作成し、初期ソートを行う
+        
+        IEnumerable<PieceDragController> sortedInitial;
 
-        // 2. コピーを作成し、ランダムにシャッフルする
-        var remainingPieces = new List<PieceDragController>(source);
-        Shuffle(remainingPieces, rng); 
+        if (prioritizeMultiCellPieces)
+        {
+            // ★ 変更点2: prioritizeMultiCellPiecesがtrueの場合のソートロジック
+            // セル数が2以上のピースを優先し、その後子オブジェクト数の降順で並び替える
+            // GetSortPriority: セル数 > 1 なら 1、セル数 = 1 なら 0 を返す
+            sortedInitial = source
+                .OrderByDescending(p => GetSortPriority(p)) // 優先度順 (2以上が先、1が後)
+                .ThenByDescending(p => p.transform.childCount) // 同じ優先度内で、子オブジェクト数の降順
+                .ToList();
+        }
+        else
+        {
+            // 変更前の元のロジック：子オブジェクト数の降順のみ
+            sortedInitial = source
+                .OrderByDescending(p => p.transform.childCount)
+                .ToList();
+        }
 
-        // 3. 【追加された処理】子オブジェクト数の降順で並び替える
-        // GetChildCount()で、孫以下のオブジェクトは考慮せず、直下の子の数を取得します。
-        remainingPieces = remainingPieces
-            .OrderByDescending(p => p.transform.childCount)
-            .ToList();
+        var remainingPieces = sortedInitial.ToList();
             
-        // この時点で、remainingPiecesは「シャッフルされ」→「子オブジェクト数で降順ソートされた」状態になる
-
         var sortedQueue = new List<PieceDragController>();
         
-        // 4. ソート方向のサイクルをランダムに決定
-        List<SortDirection> directions = new List<SortDirection> 
+        // 2. 最初の抽出方向を決定
+        SortDirection initialDirection = DetermineInitialDirection(remainingPieces);
+
+        // 3. 固定の方向サイクルを定義
+        List<SortDirection> fullCycle = new List<SortDirection> 
         { 
-            SortDirection.Left, 
-            SortDirection.Right, 
             SortDirection.Up, 
-            SortDirection.Down 
+            SortDirection.Right, 
+            SortDirection.Down, 
+            SortDirection.Left 
         };
-        Shuffle(directions, rng);
+        
+        // 最初の方向がサイクル内のどこから始まるかを特定し、サイクルを再構築
+        int startIndex = fullCycle.IndexOf(initialDirection);
+        List<SortDirection> directions = new List<SortDirection>();
+        for (int i = 0; i < fullCycle.Count; i++)
+        {
+            directions.Add(fullCycle[(startIndex + i) % fullCycle.Count]);
+        }
 
         int directionIndex = 0;
 
@@ -54,23 +79,23 @@ public static class PieceSorter
             SortDirection nextDirection = directions[directionIndex % directions.Count];
             PieceDragController nextPiece = null;
             
-            // 5. ランダムに決めた方向に従ってピースを取得
+            // 4. 決定した方向に従って、まだソートされていないピースの中から外周のピースを取得
+            // remainingPiecesは既に初期ソートされているため、First()で選ばれるピースは、
+            // **その方向で最も優先度の高い（セル数が多い）ピース**になります。
+            
             switch (nextDirection)
             {
                 case SortDirection.Left:
-                    // OrderByDescendingがないので、OrderBy().First()でX最小（左端）を取得
+                    // 左端のピースの中から、remainingPiecesの現在のソート順（優先度順）で一番最初のものを取得
                     nextPiece = remainingPieces.OrderBy(p => p.transform.position.x).First();
                     break;
                 case SortDirection.Right:
-                    // OrderByDescending().First()でX最大（右端）を取得
                     nextPiece = remainingPieces.OrderByDescending(p => p.transform.position.x).First();
                     break;
                 case SortDirection.Up:
-                    // OrderByDescending().First()でY最大（上端）を取得
                     nextPiece = remainingPieces.OrderByDescending(p => p.transform.position.y).First();
                     break;
                 case SortDirection.Down:
-                    // OrderBy().First()でY最小（下端）を取得
                     nextPiece = remainingPieces.OrderBy(p => p.transform.position.y).First();
                     break;
             }
@@ -81,45 +106,83 @@ public static class PieceSorter
                 sortedQueue.Add(nextPiece);
                 remainingPieces.Remove(nextPiece);
             }
-
             // 次の方向へ進む
             directionIndex++;
+        }
+
+        if(prioritizeMultiCellPieces)
+        {
+            sortedQueue = sortedQueue.OrderByDescending(p => GetSortPriority(p)).ToList();
         }
 
         return sortedQueue;
     }
 
     /// <summary>
-    /// リストをランダムにシャッフルする（フィッシャー・イェーツ・シャッフル）
+    /// セル数 > 1 のピースに高い優先度を付与するヘルパーメソッド。
     /// </summary>
-    private static void Shuffle<T>(IList<T> list, System.Random rng)
+    private static int GetSortPriority(PieceDragController piece)
     {
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            T value = list[k];
-            list[k] = list[n];
-            list[n] = value;
-        }
+        return piece.transform.childCount > 1 ? 1 : 0;
     }
 
     /// <summary>
-    /// 文字列から決定論的な整数シード値を生成する
+    /// リストの中で「外周の最も子オブジェクト数が多いピース」を見つけ、その方向を返す
     /// </summary>
-    private static int StringToSeed(string s)
+    private static SortDirection DetermineInitialDirection(List<PieceDragController> pieces)
     {
-        // シンプルなハッシュ関数（文字コードの合計）を使って整数を生成
-        unchecked // オーバーフローを許容する
+        if (pieces == null || pieces.Count == 0)
         {
-            int hash = 0;
-            foreach (char c in s)
-            {
-                // 文字コードにシードを乗算し加算する（より均等なハッシュを生成するため）
-                hash = 31 * hash + c.GetHashCode();
-            }
-            return hash;
+            return SortDirection.Up; // デフォルト
         }
+
+        // 1. 最も優先度の高いピース群を取得 (子オブジェクト数 >= 2 のピース、または全ピース)
+        // pieces は既に優先度順でソートされているため、先頭のピースと同じ優先度のグループを取得
+        
+        // 優先度が最大のグループを取得
+        int maxPriority = GetSortPriority(pieces.First());
+        int maxCount = pieces.First().transform.childCount;
+
+        var maxPriorityPieces = pieces
+            .Where(p => GetSortPriority(p) == maxPriority)
+            .Where(p => p.transform.childCount == maxCount) // その中でさらに子オブジェクト数最大のグループ
+            .ToList();
+        
+        // 2. 取得したピース群の中で、最も外周にあるものを探す
+        
+        // 外周の端座標を計算
+        float minX = maxPriorityPieces.Min(p => p.transform.position.x);
+        float maxX = maxPriorityPieces.Max(p => p.transform.position.x);
+        float minY = maxPriorityPieces.Min(p => p.transform.position.y);
+        float maxY = maxPriorityPieces.Max(p => p.transform.position.y);
+        
+        // 3. 最初に抽出される方向を決定 (上→右→下→左 の優先度)
+        
+        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.y - maxY) < 0.001f))
+        {
+            return SortDirection.Up;
+        }
+        
+        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.x - maxX) < 0.001f))
+        {
+            return SortDirection.Right;
+        }
+        
+        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.y - minY) < 0.001f))
+        {
+            return SortDirection.Down;
+        }
+        
+        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.x - minX) < 0.001f))
+        {
+            return SortDirection.Left;
+        }
+        
+        return SortDirection.Up;
     }
+    
+    // ... (Shuffle と StringToSeed メソッドは使用しないため削除または維持) ...
+    // ShuffleとStringToSeedは元のコードにはありましたが、新しいロジックでは不要です。
+    // メソッドの定義は省略します。
+    
 }
