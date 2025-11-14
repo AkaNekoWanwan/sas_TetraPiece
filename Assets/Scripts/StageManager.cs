@@ -212,7 +212,8 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
             if (isNowStage + 1 >= stages.Length)
             {
-                PlayerPrefs.SetInt("Stage", 0); // 最後のステージをクリアしたら最初のステージに戻す
+                // 25ステージ目からループさせる
+                PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
       
