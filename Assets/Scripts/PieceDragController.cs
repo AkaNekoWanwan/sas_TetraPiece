@@ -326,6 +326,8 @@ bool SnapChildrenToGridsAndRecenterParent()
     {
         MarkCells(children, targetCells, true);
         Debug.Log($"スナップ完了: {gameObject.name}");
+        // バイブレーション
+        VibratorManager.Vibrate(70, 40);
     });
 
     return true;
@@ -550,21 +552,6 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
         if (myAnsGrid == null || otherAnsGrid == null)
             return false;
-
-        // GridCell g1 = myAnsGrid.GetComponent<GridCell>();
-        // GridCell g2 = otherAnsGrid.GetComponent<GridCell>();
-        // if (g1 == null || g2 == null || !AreGridCoordsValid(g1, g2))
-        // {
-        //     // グリッド座標がない場合は、従来のワールド距離判定にフォールバックするか、エラーとする
-        //     return FallbackWorldDistanceCheck(); 
-        // }
-
-        // 隣接判定用のユーティリティメソッドを導入（下記B参照）
-        // if (!IsLogicalGridAdjacent(myAnsGrid, otherAnsGrid, _listCtrl.ShapeType))
-        // {
-        //     Debug.Log($"[CanMerge] ❌ 物理的に隣接していません: {myAnsGrid.name} と {otherAnsGrid.name}");
-        //     return false; // 物理的に隣接していない場合は即座にマージを拒否
-        // }
         
         Vector3 ansRel = otherAnsGrid.transform.position - myAnsGrid.transform.position;
         Vector3 curRel = otherClosest.position - myClosest.position;
@@ -834,6 +821,8 @@ public void OnPointerDown(PointerEventData eventData)
     
     // ★ RenderQueueを変更
     SetRenderQueue(3004, 3003);
+
+    VibratorManager.Vibrate(70, 40);
 
     Vector3 worldPoint;
     if (RectTransformUtility.ScreenPointToWorldPointInRectangle(

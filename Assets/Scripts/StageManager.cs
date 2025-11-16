@@ -40,6 +40,8 @@ public class StageManager : MonoBehaviour
     private Coroutine autoSaveRoutine;
     private const string ELAPSED_TIME_KEY = "StageElapsedTime";
 
+    public ClearViewManager _clearViewManager = default;
+
 
     
     public void Awake()
@@ -61,7 +63,8 @@ public class StageManager : MonoBehaviour
             for (int i = 0; i < stages.Length; i++)
             {
                 stages[i].SetActive(i == isNowStage);
-                isHard = stages[i].GetComponent<StageInfo>().isHard;
+                if(i == isNowStage)
+                    isHard = stages[i].GetComponent<StageInfo>().isHard;
             }
         }
         
@@ -80,6 +83,8 @@ public class StageManager : MonoBehaviour
         autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
 
         _hardEfffectManager.PlayHardAnimation(isHard);
+
+        TryRequestReview();
     }
 
     private IEnumerator AutoSaveElapsedTime()
@@ -216,7 +221,7 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
-      
+            _clearViewManager.PosText();
          
             reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine);
             isClear = true;
@@ -297,6 +302,14 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log("▶ アプリが再開されました。計測再開します。");
         }
+    }
+
+    // レビュー促進ポップアップ表示を試行
+    private void TryRequestReview()
+    {
+        if(this != null && this.gameObject.activeSelf)
+            if(30 <= PlayerPrefs.GetInt("Stage", 0))
+                StartCoroutine(InAppReviewManager.RequestReview());
     }
 
 }

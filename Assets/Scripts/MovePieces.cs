@@ -150,6 +150,8 @@ public class MovePieces : MonoBehaviour
                     isDragging = true;
 
                     Debug.Log($"選択したピース: {selectedPiece.name}");
+                    // バイブレーション
+                    VibratorManager.Vibrate(70, 40);
                 }
                 else if (targetPiece != null)
                 {

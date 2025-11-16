@@ -227,6 +227,8 @@ public class GridPieceListController : MonoBehaviour
     /// </summary>
     public void NotifyReturned(PieceDragController piece)
     {
+        // バイブレーション
+        VibratorManager.Vibrate(70, 40);
         Debug.Log($"queueDebug1:{queue.Count}");
         // ★ 念のため、戻ってきたピースの占有を解除
         piece.ReleaseOccupiedCells();
