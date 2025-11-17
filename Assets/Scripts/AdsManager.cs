@@ -40,11 +40,11 @@ public class AdsManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     { 
-          adUnitId   = "6b416402c9a83019";
+          adUnitId = "6b416402c9a83019";
 
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
         {
-            MaxSdk.ShowMediationDebugger();
+            // MaxSdk.ShowMediationDebugger();
             InitializeInterstitialAds();
             _stageBanner.InitializeBannerAds();
             _rewardedAdManager.InitializeRewardedAds();
@@ -53,7 +53,6 @@ public class AdsManager : MonoBehaviour
         //MaxSdk.SetTestDeviceAdvertisingIdentifiers(new string[] { "87FBF16D-0FCB-4CF4-AB0C-C1625A66F250" });
         MaxSdk.SetUserId("USER_ID");
         MaxSdk.InitializeSdk();
-        
     }
 
     // Update is called once per frame
