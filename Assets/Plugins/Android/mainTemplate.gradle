@@ -9,16 +9,16 @@ dependencies {
     implementation 'com.android.support:customtabs:28.+' // Assets/MaxSdk/Mediation/InMobi/Editor/Dependencies.xml:7
     implementation 'com.android.support:recyclerview-v7:28.+' // Assets/MaxSdk/Mediation/InMobi/Editor/Dependencies.xml:6
     implementation 'com.applovin.mediation:bytedance-adapter:7.7.0.2.0' // Assets/MaxSdk/Mediation/ByteDance/Editor/Dependencies.xml:8
-    implementation 'com.applovin.mediation:facebook-adapter:[6.20.0.0]' // Assets/MaxSdk/Mediation/Facebook/Editor/Dependencies.xml:8
+    implementation 'com.applovin.mediation:facebook-adapter:[6.21.0.0]' // Assets/MaxSdk/Mediation/Facebook/Editor/Dependencies.xml:8
     implementation 'com.applovin.mediation:fyber-adapter:8.4.0.0' // Assets/MaxSdk/Mediation/Fyber/Editor/Dependencies.xml:4
     implementation 'com.applovin.mediation:google-adapter:[24.7.0.0]' // Assets/MaxSdk/Mediation/Google/Editor/Dependencies.xml:5
     implementation 'com.applovin.mediation:inmobi-adapter:11.1.0.0' // Assets/MaxSdk/Mediation/InMobi/Editor/Dependencies.xml:4
     implementation 'com.applovin.mediation:ironsource-adapter:9.0.0.0.0' // Assets/MaxSdk/Mediation/IronSource/Editor/Dependencies.xml:4
     implementation 'com.applovin.mediation:mintegral-adapter:17.0.31.0' // Assets/MaxSdk/Mediation/Mintegral/Editor/Dependencies.xml:8
     implementation 'com.applovin.mediation:moloco-adapter:4.2.1.0' // Assets/MaxSdk/Mediation/Moloco/Editor/Dependencies.xml:4
-    implementation 'com.applovin.mediation:unityads-adapter:4.16.3.0' // Assets/MaxSdk/Mediation/UnityAds/Editor/Dependencies.xml:4
+    implementation 'com.applovin.mediation:unityads-adapter:4.16.4.0' // Assets/MaxSdk/Mediation/UnityAds/Editor/Dependencies.xml:4
     implementation 'com.applovin.mediation:vungle-adapter:7.6.1.0' // Assets/MaxSdk/Mediation/Vungle/Editor/Dependencies.xml:4
-    implementation 'com.applovin:applovin-sdk:12.4.0' // Assets/MaxSdk/AppLovin/Editor/Dependencies.xml:4
+    implementation 'com.applovin:applovin-sdk:13.5.0' // Assets/MaxSdk/AppLovin/Editor/Dependencies.xml:4
     implementation 'com.google.android.gms:play-services-base:18.3.0' // Assets/Firebase/Editor/AppDependencies.xml:17
     implementation 'com.google.android.play:core-common:2.0.4' // Assets/GooglePlayPlugins/com.google.play.core/Editor/Dependencies.xml:3
     implementation 'com.google.android.play:review:2.0.0' // Assets/GooglePlayPlugins/com.google.play.review/Editor/Dependencies.xml:3

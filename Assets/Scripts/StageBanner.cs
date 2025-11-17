@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System;
 using Firebase.Analytics;
-// using com.adjust.sdk;
+using com.adjust.sdk;
 
 
 public class StageBanner : MonoBehaviour
@@ -69,7 +69,7 @@ private void OnBannerAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) {
 
 private void OnBannerAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo) {
 
-    }
+}
 
 private void OnBannerAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
 
@@ -87,16 +87,16 @@ private void OnBannerAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) {
         string placement = adInfo.Placement; // The placement this ad's postbacks are tied to
 
         // 広告単価を取得してFirebaseでイベント発火
-        // double revenue = impressionData.Revenue;
         var impressionParameters = new[] {
         new Firebase.Analytics.Parameter("ad_platform", "AppLovin"),
-        // new Firebase.Analytics.Parameter("ad_source", impressionData.NetworkName),
-        // new Firebase.Analytics.Parameter("ad_unit_name", impressionData.AdUnitIdentifier),
-        // new Firebase.Analytics.Parameter("ad_format", impressionData.AdFormat),
         new Firebase.Analytics.Parameter("value", revenue),
         new Firebase.Analytics.Parameter("currency", "USD"), // All AppLovin revenue is sent in USD
         };
         Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression", impressionParameters);
+
+        float eCPM = (float)(revenue * 1000.0);
+        // FirebaseManagerの RevenueInste 関数を発火
+        FindAnyObjectByType<FirebaseManager>().RevenueBanner(eCPM);
 
         TrackAdRevenue(adInfo);
     }
@@ -113,7 +113,7 @@ private void OnBannerAdCollapsedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         // FirebaseManager.instance.EventWatchBanner(true, revenue);
         // MaxSdk.ShowBanner(bannerAdUnitId);
         // FirebaseManager.instance.EventWatchBanner(true, GetAdRevenue());
-        FirebaseManager.instance.EventWatchBanner(true);
+        // FirebaseManager.instance.EventWatchBanner(true);
         MaxSdk.ShowBanner(bannerAdUnitId);
     }
 
@@ -131,14 +131,14 @@ private void OnBannerAdCollapsedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
     }
     private void TrackAdRevenue(MaxSdkBase.AdInfo adInfo)
     {
-        // AdjustAdRevenue adjustAdRevenue = new AdjustAdRevenue(AdjustConfig.AdjustAdRevenueSourceAppLovinMAX);
+        AdjustAdRevenue adjustAdRevenue = new AdjustAdRevenue(AdjustConfig.AdjustAdRevenueSourceAppLovinMAX);
 
-        // adjustAdRevenue.setRevenue(adInfo.Revenue, "USD");
-        // adjustAdRevenue.setAdRevenueNetwork(adInfo.NetworkName);
-        // adjustAdRevenue.setAdRevenueUnit(adInfo.AdUnitIdentifier);
-        // adjustAdRevenue.setAdRevenuePlacement(adInfo.Placement);
+        adjustAdRevenue.setRevenue(adInfo.Revenue, "USD");
+        adjustAdRevenue.setAdRevenueNetwork(adInfo.NetworkName);
+        adjustAdRevenue.setAdRevenueUnit(adInfo.AdUnitIdentifier);
+        adjustAdRevenue.setAdRevenuePlacement(adInfo.Placement);
 
-        // Adjust.trackAdRevenue(adjustAdRevenue);
+        Adjust.trackAdRevenue(adjustAdRevenue);
     }
 
 

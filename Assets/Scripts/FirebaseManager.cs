@@ -137,25 +137,18 @@ public class FirebaseManager : MonoBehaviour
                          );
     }
 
-    public void EventWatchInste(bool isWatch)
+    public void WatchInste(bool CanWatch, string stageName, double eCPM = 0f)
     {
-        int watchInsteCount = -1;
-        if(isWatch)
-        {
-            watchInsteCount = PlayerPrefs.GetInt("WatchInsteCount", 1);
-        }
-
-        FirebaseAnalytics.LogEvent("Watch_Inste", 
-                            new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("CanWatch", isWatch.ToString()),
-                            new Parameter("WatchInsteCount", watchInsteCount));
-        // Debug.Log("isWatch:" + isWatch + ", " + watchInsteCount);
-        if(isWatch)
-        {
-            watchInsteCount++;
-            PlayerPrefs.SetInt("WatchInsteCount", watchInsteCount);
-        }
+        string canWatch = CanWatch ? "True" : "False";
+        Debug.Log("FirebaseManager WatchInsta" + canWatch + " eCPM: " + eCPM);
+        Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Inste",
+                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1) - 1),
+                            new Parameter("Stage_Name", stageName),
+                            new Parameter("eCPM", eCPM),
+                            new Parameter("CanWatch", canWatch)
+                         );
     }
+
     public void EventWatchBanner(bool isWatch)
     {
         FirebaseAnalytics.LogEvent("Watch_Banner", 
@@ -180,5 +173,13 @@ public class FirebaseManager : MonoBehaviour
             watchRewardCount++;
             PlayerPrefs.SetInt("WatchRewardCount", watchRewardCount);
         }
+    }
+    public void RevenueBanner(float eCPM)
+    {
+        Debug.Log("FirebaseManager RevenueBanner"+ eCPM);
+            Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Banner",
+                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                            new Parameter("eCPM", eCPM)
+                         );
     }
 }

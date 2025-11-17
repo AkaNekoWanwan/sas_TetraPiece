@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using com.adjust.sdk;
 
 
 public class AdsManager : MonoBehaviour
@@ -117,7 +118,19 @@ public class AdsManager : MonoBehaviour
     }
     private void OnInterstitialDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) {
        //LoadInterstitial();
+        FindAnyObjectByType<FirebaseManager>().WatchInste(true, "", adInfo.Revenue * 1000f);
+        TrackAdRevenue(adInfo);
+    }
+     private void TrackAdRevenue(MaxSdkBase.AdInfo adInfo)
+    {
+       AdjustAdRevenue adjustAdRevenue = new AdjustAdRevenue(AdjustConfig.AdjustAdRevenueSourceAppLovinMAX);
 
+       adjustAdRevenue.setRevenue(adInfo.Revenue, "USD");
+       adjustAdRevenue.setAdRevenueNetwork(adInfo.NetworkName);
+       adjustAdRevenue.setAdRevenueUnit(adInfo.AdUnitIdentifier);
+       adjustAdRevenue.setAdRevenuePlacement(adInfo.Placement);
+
+       Adjust.trackAdRevenue(adjustAdRevenue);
     }
 
     private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
@@ -139,17 +152,10 @@ public class AdsManager : MonoBehaviour
         if (MaxSdk.IsInterstitialReady(adUnitId))
         {
             MaxSdk.ShowInterstitial(adUnitId);
-           
         }
         else
         {
-  
+            FindAnyObjectByType<FirebaseManager>().WatchInste(false, "");
         }
     }
- 
-
-
-  
-    
-
 }

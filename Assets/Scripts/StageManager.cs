@@ -41,6 +41,7 @@ public class StageManager : MonoBehaviour
     private const string ELAPSED_TIME_KEY = "StageElapsedTime";
 
     public ClearViewManager _clearViewManager = default;
+    public GameObject _debugCanvas = default;
 
 
     
@@ -56,6 +57,8 @@ public class StageManager : MonoBehaviour
         levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
 
         bool isHard = false;
+
+        _debugCanvas.SetActive(Debug.isDebugBuild);
 
         // 🔸ステージに応じてアクティブ設定
         if (!isTest)

@@ -11,26 +11,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebc0ba1b5ef6b4a6b9dd53d7eadfea16, type: 3}
   m_Name: AppLovinSettings
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: MaxSdk.Scripts.IntegrationManager.Editor::AppLovinSettings
   qualityServiceEnabled: 1
   sdkKey: EpIDwy0bhJT7B76E65tdJt8Wkp20-IrR2Oc9sbxuS-6BseH7R3bQzSfFTN1u0Jvxh88rOvyh2rPH0WX81eO7Km
-  setAttributionReportEndpoint: 0
-  addApsSkAdNetworkIds: 0
   customGradleVersionUrl: 
   customGradleToolsVersion: 
-  consentFlowEnabled: 0
-  consentFlowPlatform: 0
-  consentFlowPrivacyPolicyUrl: 
-  consentFlowTermsOfServiceUrl: 
-  userTrackingUsageDescriptionEn: 
-  userTrackingUsageLocalizationEnabled: 0
-  userTrackingUsageDescriptionDe: 
-  userTrackingUsageDescriptionEs: 
-  userTrackingUsageDescriptionFr: 
-  userTrackingUsageDescriptionJa: 
-  userTrackingUsageDescriptionKo: 
-  userTrackingUsageDescriptionZhHans: 
-  userTrackingUsageDescriptionZhHant: default_localization
-  adMobAndroidAppId: ca-app-pub-1333877194161360~8187446007
+  adMobAndroidAppId: ca-app-pub-1333877194161360~1438855154
   adMobIosAppId: 
-  showInternalSettingsInIntegrationManager: 0
