@@ -167,7 +167,7 @@ MonoBehaviour:
     - line: '|   loadStoreDebugModeEnabled: 0'
     - line: '|   visionOSBundleVersion: 1.0'
     - line: '|   tvOSBundleVersion: 1.0'
-    - line: '|   bundleVersion: 0.2'
+    - line: '|   bundleVersion: 0.21'
     - line: '|   preloadedAssets: []'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
@@ -1061,6 +1061,6 @@ MonoBehaviour:
         m_CurrentDeploymentTargetId: RFCY7238MNY
         m_BuildType: 2
         m_LinkTimeOptimization: 0
-        m_BuildAppBundle: 1
+        m_BuildAppBundle: 0
         m_IPAddressToConnect: 
         m_SymlinkSources: 0
