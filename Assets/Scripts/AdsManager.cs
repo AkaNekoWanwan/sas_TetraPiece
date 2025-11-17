@@ -44,11 +44,10 @@ public class AdsManager : MonoBehaviour
 
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
         {
-           
+            MaxSdk.ShowMediationDebugger();
             InitializeInterstitialAds();
             _stageBanner.InitializeBannerAds();
             _rewardedAdManager.InitializeRewardedAds();
-
         };
         MaxSdk.SetSdkKey("EpIDwy0bhJT7B76E65tdJt8Wkp20-IrR2Oc9sbxuS-6BseH7R3bQzSfFTN1u0Jvxh88rOvyh2rPH0WX81eO7Km");
         //MaxSdk.SetTestDeviceAdvertisingIdentifiers(new string[] { "87FBF16D-0FCB-4CF4-AB0C-C1625A66F250" });
