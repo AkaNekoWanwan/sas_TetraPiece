@@ -554,22 +554,21 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
             return false;
 
         // // ★ 1. GridCellコンポーネントの取得
-        // GridCell myCell = myAnsGrid.GetComponent<GridCell>();
-        // GridCell otherCell = otherAnsGrid.GetComponent<GridCell>();
+        GridCell myCell = myAnsGrid.GetComponent<GridCell>();
+        GridCell otherCell = otherAnsGrid.GetComponent<GridCell>();
 
-        // if (myCell == null || otherCell == null)
-        // {
-        //      Debug.LogWarning("[CanMerge] 正解グリッドに GridCell コンポーネントがありません。");
-        //      return false;
-        // }
+        if (myCell == null || otherCell == null)
+        {
+             Debug.LogWarning("[CanMerge] 正解グリッドに GridCell コンポーネントがありません。");
+             return false;
+        }
 
-        // // ★ 2. 論理的な隣接チェック (ここではShapeType.Squareを仮定)
-        // //     もし実際の形状が異なる場合は、適切なShapeTypeを特定し、
-        // //     IsLogicalGridAdjacent(myCell, otherCell, 実際のShapeType) を呼び出す必要があります。
+        // ★ 2. 論理的な隣接チェック (ここではShapeType.Squareを仮定)
+        //     もし実際の形状が異なる場合は、適切なShapeTypeを特定し、
+        //     IsLogicalGridAdjacent(myCell, otherCell, 実際のShapeType) を呼び出す必要があります。
         // ShapeType currentShape = ShapeType.Square; // ← 実際の形状に応じて修正してください
         // bool isLogicallyAdjacent = IsLogicalGridAdjacent(myCell, otherCell, currentShape);
 
-        
         Vector3 ansRel = otherAnsGrid.transform.position - myAnsGrid.transform.position;
         Vector3 curRel = otherClosest.position - myClosest.position;
 
@@ -592,7 +591,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         bool rotOK = zAngleDiff < 2f;
 
         Debug.Log($"[CanMerge] {minDist}");
-        if (distOK && dirOK && rotOK && minDist < 10f)
+        if (distOK && dirOK && rotOK && minDist < 5f)
         {
             Debug.Log($"[CanMerge] ✅ 距離OK({Vector3.Distance(myAnsGrid.transform.position, otherAnsGrid.transform.position):F2}) 向きOK({Vector3.Distance(myClosest.transform.position, otherClosest.transform.position):F2}) 回転OK({zAngleDiff:F2}) between {myClosest.name} and {otherClosest.name}");
             return true;
