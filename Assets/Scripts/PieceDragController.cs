@@ -328,6 +328,7 @@ bool SnapChildrenToGridsAndRecenterParent()
         Debug.Log($"スナップ完了: {gameObject.name}");
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
+        AudioManager.Instance.PlayMergeSound();
     });
 
     return true;
@@ -850,6 +851,8 @@ public void OnPointerDown(PointerEventData eventData)
         _moveTween?.Kill();
         _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
     }
+
+    AudioManager.Instance.PlayHoldSound();
 }
 
 public void OnEndDrag(PointerEventData eventData)
@@ -858,7 +861,7 @@ public void OnEndDrag(PointerEventData eventData)
 
     // rt.transform.localScale = Vector3.one;
     rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
-    
+    AudioManager.Instance.PlayPlaceSound();
     isDragging = false;
 
     bool snapStarted = SnapChildrenToGridsAndRecenterParent();

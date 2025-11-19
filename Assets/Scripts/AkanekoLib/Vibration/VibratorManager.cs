@@ -12,12 +12,16 @@ public static class VibratorManager
 
     public static void Vibrate(long milliseconds)
     {
+        if(PlayerPrefs.GetInt("IsVib", 1) == 0)
+            return;
         // 振動の強さをデフォルト値で指定
         Vibrate(milliseconds, -1);
     }
 
     public static void Vibrate(long milliseconds, int amplitude)
     {
+        if(PlayerPrefs.GetInt("IsVib", 1) == 0)
+            return;
 #if UNITY_EDITOR
         Debug.Log($"Vibrate {milliseconds}, {amplitude}");
 
@@ -50,12 +54,16 @@ public static class VibratorManager
 
     public static void Vibrate(long[] pattern, int repeat)
     {
+        if(PlayerPrefs.GetInt("IsVib", 1) == 0)
+            return;
         // 振幅を指定しないパターン振動
         Vibrate(pattern, null, repeat);
     }
 
     public static void Vibrate(long[] pattern, int[] amplitudes, int repeat)
     {
+        if(PlayerPrefs.GetInt("IsVib", 1) == 0)
+            return;
 #if UNITY_EDITOR
         Debug.Log($"Vibrate {pattern}, {amplitudes}, {repeat}");
 
