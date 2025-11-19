@@ -41,13 +41,22 @@ public class StageManager : MonoBehaviour
     private const string ELAPSED_TIME_KEY = "StageElapsedTime";
 
     public ClearViewManager _clearViewManager = default;
+    public GameObject _defaultCanvas = default;
     public GameObject _debugCanvas = default;
+    public GameObject _creativeCanvas = default;
 
 
-    
     public void Awake()
     {
         Application.targetFrameRate = 60; // フレームレートを60に設定
+        if(!Debug.isDebugBuild)
+        {
+            isTest = false;
+        }
+        else if(GameConst.IsCreativeMode())
+        {
+            isTest = true;
+        }
     }
     void Start()
     {
@@ -57,8 +66,10 @@ public class StageManager : MonoBehaviour
         levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
 
         bool isHard = false;
-
-        _debugCanvas.SetActive(Debug.isDebugBuild);
+        
+        _debugCanvas.SetActive(Debug.isDebugBuild && !GameConst.IsCreativeMode());
+        _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
+        _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
         // 🔸ステージに応じてアクティブ設定
         if (!isTest)

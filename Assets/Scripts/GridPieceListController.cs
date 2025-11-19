@@ -18,6 +18,7 @@ public class GridPieceListController : MonoBehaviour
     public string pieceSeed = "";
     public bool isOverraySeed = true;   // ピースのランダム配置のシード値を更新するか
     public bool isSkip = false;   // 全更新時にスキップするか
+    public bool isOrderSort = false;   // ピースの並びを手動で指定するか
     public string PieceCreateSeed = ""; // ピース作成のシード値
     public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
     public List<string> avoidPatternSeeds = default;
@@ -59,7 +60,15 @@ public class GridPieceListController : MonoBehaviour
         var pcs = GetComponentsInChildren<PieceDragController>(false);
 
         // queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
-        queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(pcs.ToList(), PieceCreateSeed)); 
+        if(!isOrderSort)
+        {
+            queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(pcs.ToList(), PieceCreateSeed)); 
+        }
+        else
+        {
+            queue.AddRange(pcs.ToList());
+        }
+        
         _queue = queue;
 
         // AlignAll(withDelay: false);

@@ -726,8 +726,8 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         {
             TriangleCellCopyHandler triOutlineHandler = child.GetComponent<TriangleCellCopyHandler>();
             float scale = 1.1f;
-            if(isCreative)
-                scale = 1.03f;
+            if(isCreative || GameConst.IsCreativeMode())
+                scale = 0f;
             if(triOutlineHandler != null)
                 scale = triOutlineHandler.Scale;
             foreach (Transform grandChild in child)

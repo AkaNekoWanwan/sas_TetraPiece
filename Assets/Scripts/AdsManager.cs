@@ -45,6 +45,10 @@ public class AdsManager : MonoBehaviour
 
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
         {
+            if(GameConst.IsCreativeMode())
+            {
+                return;
+            }
             // MaxSdk.ShowMediationDebugger();
             InitializeInterstitialAds();
             _stageBanner.InitializeBannerAds();

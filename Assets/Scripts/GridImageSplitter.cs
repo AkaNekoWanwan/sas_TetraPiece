@@ -207,7 +207,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                 if(!isCreative)
                     copyRT.localScale *= 1.1f;
                 else
-                    copyRT.localScale *= 1.03f;
+                    copyRT.localScale *= 0f;
                 copyRT.sizeDelta = uiCellSizeVec;
 
                 Image copyImg = copyObj.GetComponent<Image>();

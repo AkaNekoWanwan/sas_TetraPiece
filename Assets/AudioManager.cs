@@ -27,12 +27,15 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        if (bgmAudioSource != null && bgmAudioClip != null)
+        if (bgmAudioSource != null && bgmAudioClip != null )
         {
             bgmAudioSource.clip = bgmAudioClip;
             bgmAudioSource.loop = true;
             bgmAudioSource.Play();
         }
+
+        audioSource.mute = IsMute("IsSe");
+        bgmAudioSource.mute = IsMute("IsMusic");
     }
 
     public void PlayMergeSound()
@@ -48,5 +51,10 @@ public class AudioManager : MonoBehaviour
     public void PlayPlaceSound()
     {
         audioSource.PlayOneShot(placeSound);
+    }
+
+    private bool IsMute(string key)
+    {
+        return PlayerPrefs.GetInt(key, 1) == 0 || GameConst.IsMute();
     }
 }
