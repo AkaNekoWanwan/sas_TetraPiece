@@ -2,7 +2,11 @@ using UnityEngine;
 
 public static class GameConst
 {
-    private const bool IsCreative = true;
+#if UNITY_EDITOR
+    private const bool IsCreative = false;
+#else
+    private const bool IsCreative = false;
+#endif
 
     public static bool IsCreativeMode()
     {
