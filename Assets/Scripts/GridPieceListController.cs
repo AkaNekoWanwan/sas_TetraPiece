@@ -94,6 +94,7 @@ public class GridPieceListController : MonoBehaviour
                 // Debug.Log($"aaaaaa:{this.gameObject.name},{ps.gameObject.name}, {rect.gameObject.name}, {rect.sizeDelta.x}, {_PieceDragControllersScale}, {ShapeType}");
             }
             ps.transform.localScale = Vector3.one * _PieceDragControllersScale;
+            ps.OriginalScale = Vector3.one * _PieceDragControllersScale;
         }
     }
 
@@ -101,6 +102,12 @@ public class GridPieceListController : MonoBehaviour
     {
         // GridPieceListController gridPieceListController = GetGridPieceListController();
         // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
+
+        if(GameConst.IsCreativeMode())
+        {
+            _PieceDragControllersScale = 0.9f;
+            return;
+        }
 
         _PieceDragControllersScale = 0.8f * 185f / size;
         if(shapeType == ShapeType.Square)

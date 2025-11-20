@@ -29,7 +29,9 @@ public class PieceDragController : MonoBehaviour,
 
     private RectTransform rt;
     private Vector3 originalPos;
-    private Vector3 originalScale;
+    public Vector3 originalScale;
+    private bool isSetOriginalScale = false;
+    public Vector3 OriginalScale{ get { return originalScale; } set { originalScale = value; isSetOriginalScale = true;} }
 
     private List<GridCell> lastMarkedCells = new List<GridCell>();
     private Dictionary<Transform, GridCell> lastOccupiedMap = new Dictionary<Transform, GridCell>();
@@ -52,7 +54,8 @@ public class PieceDragController : MonoBehaviour,
     void Awake()
     {
         rt = GetComponent<RectTransform>();
-        originalScale = rt.localScale;
+        if(!isSetOriginalScale)
+            originalScale = rt.localScale;
         originalPos = rt.position;
         initialScale = rt.localScale;
         initialZ = rt.position.z;
@@ -829,7 +832,8 @@ public void OnPointerDown(PointerEventData eventData)
     transform.SetAsLastSibling();
     var hand = FindAnyObjectByType<HandCursorController>();
     originalPos = rt.position;
-    originalScale = initialScale;
+    if(!isSetOriginalScale)
+        originalScale = initialScale;
     wasDragged = false;
 
     rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
