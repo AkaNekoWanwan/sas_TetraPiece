@@ -38,6 +38,10 @@ public class SettingManager : MonoBehaviour
                 VibratorManager.Vibrate(70, 40);
             }
         };
+
+        audioSource = AudioManager.Instance.audioSource;
+        bgmAudioSource = AudioManager.Instance.bgmAudioSource;
+
         _buttonSound.onOptionChanged += (isOn) =>
         {
             audioSource.mute = !isOn;

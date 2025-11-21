@@ -17,6 +17,7 @@ public class StageCreator : MonoBehaviour
 #if UNITY_EDITOR
     // public bool isOverrideSprite = true;
     public List<Sprite> _setSplites = new List<Sprite>();
+    public List<Sprite> _setDailySplites = new List<Sprite>();
     public HashSet<Sprite> _splitesHash = new HashSet<Sprite>();
     public HashSet<string> _seeds = default;
     GameObject beforeStage = null;
@@ -25,7 +26,11 @@ public class StageCreator : MonoBehaviour
     public bool IsPreSetUp = false;
     public bool IsWaitBeforeSplit = true;
     public bool IsWaitAfterSplit = true;
+    public bool IsDailyStage = true;
     public List<StageData> _stageData = default;
+
+    public List<StageInfo> _targetStages = default;
+    public List<AbstractGridImageSplitter> _targetSplitters = default;
 
     public List<AbstractGridImageSplitter> AllSplitters;
     public List<AbstractGridImageSplitter> _createPieceplitterList = new List<AbstractGridImageSplitter>();
@@ -70,7 +75,7 @@ public class StageCreator : MonoBehaviour
 
         // 2. 初期化処理の抽象化
         // 全ステージ取得 (AbstractGridImageSplitterを継承した全てを取得)
-        List<AbstractGridImageSplitter> allSplitters = FindAllInScene<AbstractGridImageSplitter>();
+        List<AbstractGridImageSplitter> allSplitters = GetAllSplitters();
         _seeds = new HashSet<string>();
         AllSplitters = new List<AbstractGridImageSplitter>();
 
@@ -130,8 +135,17 @@ public class StageCreator : MonoBehaviour
         for (int i = 0; i < sumCount; i++)
         {
             bool isHard = (i + 1) % 3 == 0;
+            if(IsDailyStage)
+                isHard = false;
             ShapeType shapeType = ShapeType.Square;
             int typeInt = (i / 3) % 3; // ３ステージ毎に切り替わる
+            // IsDailyStageならShapeType.Square(0) と ShapeType.Hex(2) のみで
+            if(IsDailyStage)
+            {
+                typeInt = i % 2;
+                if(typeInt == 1)
+                    typeInt = 2;
+            }
 
             // 交互にステージタイプを決定
             if (typeInt == 0)
@@ -141,7 +155,7 @@ public class StageCreator : MonoBehaviour
             else if (typeInt == 2)
                 shapeType = ShapeType.Hex;
 
-            if(IsRangeStageData(i))
+            if(IsRangeStageData(i) && !IsDailyStage)
             {
                 shapeType = _stageData[i].shapeType;
             }
@@ -187,7 +201,7 @@ public class StageCreator : MonoBehaviour
                 continue;
             }
 
-            GetStageParam(i, isHard, out cols, out rows, out pieceNum, currentSplitter);
+            GetStageParam(i, isHard, out cols, out rows, out pieceNum, currentSplitter, shapeType);
             SetImage(currentSplitter, i); 
 
             GameObject stageObject = currentSplitter.transform.parent.parent.gameObject;
@@ -236,7 +250,37 @@ public class StageCreator : MonoBehaviour
             }
         }
     }
+
+    private void SetTargetSplitters()
+    {
+        _targetSplitters = new List<AbstractGridImageSplitter>();
+        foreach(var stageInfo in _targetStages)
+        {
+            AbstractGridImageSplitter splitter = stageInfo.GetComponentInChildren<AbstractGridImageSplitter>();
+            if(splitter != null)
+            {
+                _targetSplitters.Add(splitter);
+            }
+        }
+    }
+    private List<AbstractGridImageSplitter> GetAllSplitters()
+    {
+        List<AbstractGridImageSplitter> allSplitters;
+        SetTargetSplitters();
+        if(_targetSplitters != null && 0 < _targetSplitters.Count)
+        {
+            allSplitters = _targetSplitters;
+            Debug.Log($"ターゲット指定:{_targetSplitters.Count}個");
+        }
+        else
+        {
+            allSplitters = FindAllInScene<AbstractGridImageSplitter>();
+            Debug.Log($"ターゲット未指定:シーン内全取得:{allSplitters.Count}個");
+        }
+        return allSplitters;
+    }
     
+    // ステージ作成コルーチン:ステージを一つずつ順番に作成していく
     public IEnumerator CreateStagesCoroutine()
     {
         Debug.Log("ステージ生成コルーチン:実行！");
@@ -293,7 +337,8 @@ public class StageCreator : MonoBehaviour
 
         yield return null;
     }
-
+    
+    // ステージ作成コルーチン:各ステージの生成処理を一斉に開始する
     public IEnumerator CreateStagesCoroutine2()
     {
         Debug.Log("ステージ生成コルーチン:実行！");
@@ -307,7 +352,7 @@ public class StageCreator : MonoBehaviour
         }
         List<Coroutine> runningTasks = new List<Coroutine>();
 
-        // シード値を更新していきながらステージ作成
+
         for(int i = 0; i < _createPieceplitterList.Count; i++)
         {
             AbstractGridImageSplitter splitter = _createPieceplitterList[i];
@@ -357,7 +402,10 @@ public class StageCreator : MonoBehaviour
     private void CommonSplitterProcces(GameObject splitter, int i, ref bool isSkip)
     {
         GameObject stageObject = splitter.transform.parent.parent.gameObject;
-        stageObject.name = $"Stage{i + 1}";
+        if(!IsDailyStage)
+            stageObject.name = $"Stage{i + 1}";
+        else
+            stageObject.name = $"DailyStage{i + 1}";
 
         // stageObject.SetActive(true);
         if (0 < i)
@@ -394,13 +442,25 @@ public class StageCreator : MonoBehaviour
         return false;
     }
     
-    private void GetStageParam(int i, bool isHard, out int cols, out int rows, out int pieceNum, AbstractGridImageSplitter splitter)
+    private void GetStageParam(int i, bool isHard, out int cols, out int rows, out int pieceNum, AbstractGridImageSplitter splitter, ShapeType shapeType)
     {
-        if(IsRangeStageData(i))
+        if(IsRangeStageData(i) && !IsDailyStage)
         {
             cols = _stageData[i].gridX; 
             rows = _stageData[i].gridY;
             pieceNum = _stageData[i].pieceNum;
+        }
+        else if(IsDailyStage)
+        {
+            cols = 7; 
+            rows = 9;
+            pieceNum = 21;
+            if(shapeType == ShapeType.Triangle)
+            {
+                cols = 8; 
+                rows = 8;
+                pieceNum = 24;
+            }
         }
         else
         {
@@ -513,6 +573,16 @@ public class StageCreator : MonoBehaviour
             splitter._trimShift = new Vector2(278f, 88f);
             splitter._shiftY = -0.89f;
         }
+        if(cols == 7 && rows == 9)
+        {
+            // splitter._trimShift = new Vector2(278f, 88f);
+            splitter._shiftY = -0.7f;
+        }
+        if(cols == 8 && rows == 8)
+        {
+            splitter._trimShift = new Vector2(278f, 88f);
+            // splitter._shiftY = -0.7f;
+        }
     }
     
 
@@ -548,7 +618,7 @@ public class StageCreator : MonoBehaviour
 
     public void SetSkipFlg(bool isSkip)
     {
-        List<AbstractGridImageSplitter> allSplitters = FindAllInScene<AbstractGridImageSplitter>();
+        List<AbstractGridImageSplitter> allSplitters = GetAllSplitters();
         foreach (var splitter in allSplitters)
         {
             splitter.isSkip = isSkip;

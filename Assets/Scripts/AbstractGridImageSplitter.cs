@@ -41,15 +41,22 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public float _shiftY = 0f;
     [Header("TriangleParam")]
     public Vector2 _trimShift = Vector2.zero;
+    public int uniqueId = 0;
+    
 
 #if UNITY_EDITOR
     protected string GetUniqueFolder(string basePath, string imageName)
     {
+        // ユニークIDを割り当てる
+        GridImageSplitterUniqueIdManager UniqueIdManager = FindObjectOfType<GridImageSplitterUniqueIdManager>();
+        UniqueIdManager.AssignUniqueIds(this);
+
         // 1. ShapeTypeに応じた接尾辞を取得
         string shapeTypeName = GetShapeType().ToString(); // ShapeType.Square -> "Square"
 
+        basePath = $"Assets/Textures/PieceCells";
         // 2. 最終的なフォルダ名を構築: "Assets/Textures" + "画像名" + "ShapeType名"
-        string finalFolderName = $"{imageName}_{shapeTypeName}";
+        string finalFolderName = $"{uniqueId}";
         string folderPath = Path.Combine(basePath, finalFolderName);
 
         // 3. 同名フォルダが存在するかチェック
@@ -74,7 +81,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     public virtual void SplitImage()
     {
-    
+
     }
 
     public int text = 0;

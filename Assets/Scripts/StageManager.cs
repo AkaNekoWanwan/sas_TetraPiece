@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Globalization;
 
 public class StageManager : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class StageManager : MonoBehaviour
     private bool hasStartedTimer = false;
     public bool isPause;
     public GameObject[] stages;
+    public GameObject[] dailyStages;
     public int isNowStage;
     public bool isRestart;
     public bool isTest;
@@ -45,6 +47,8 @@ public class StageManager : MonoBehaviour
     public GameObject _debugCanvas = default;
     public GameObject _creativeCanvas = default;
 
+    private int _dailyStage = -1;
+
 
     public void Awake()
     {
@@ -63,7 +67,15 @@ public class StageManager : MonoBehaviour
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
-        levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
+
+        _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
+        if(_dailyStage == -1)
+            levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
+        else
+        {
+            // 日付テキストを設定　例：June 5
+            levelText.text = System.DateTime.Now.ToString("MMM", new CultureInfo("en-US")) + " " + _dailyStage.ToString();
+        }
 
         bool isHard = false;
         
@@ -76,17 +88,23 @@ public class StageManager : MonoBehaviour
         {
             for (int i = 0; i < stages.Length; i++)
             {
-                stages[i].SetActive(i == isNowStage);
-                if(i == isNowStage)
+                bool isActive = (i == isNowStage && _dailyStage == -1);
+                stages[i].SetActive(isActive);
+                if(isActive)
                     isHard = stages[i].GetComponent<StageInfo>().isHard;
             }
+            for(int i = 0; i < dailyStages.Length; i++)
+            {
+                dailyStages[i].SetActive(i + 1 == _dailyStage);
+            }
         }
+
         
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
         // 🔸前回の経過時間を読み込み
-        string key = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+        string key = GetElapsedTimeKey();
         pureElapsedTime = PlayerPrefs.GetFloat(key, 0f);
 
         firebaseManager.StageStart("");
@@ -101,9 +119,19 @@ public class StageManager : MonoBehaviour
         TryRequestReview();
     }
 
+    private string GetElapsedTimeKey()
+    {
+        string ret = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+        if(_dailyStage != -1)
+        {
+            ret = $"{ELAPSED_TIME_KEY}_Daily_{_dailyStage}";
+        }
+        return ret;
+    }
+
     private IEnumerator AutoSaveElapsedTime()
     {
-        string key = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+        string key = GetElapsedTimeKey();
 
         while (true)
         {
@@ -227,12 +255,27 @@ public class StageManager : MonoBehaviour
             firebaseManager.StageClear(stageName,pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
             Debug.Log("🎉 ゲームクリア！:1");
-            PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
-            PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
-            if (isNowStage + 1 >= stages.Length)
+            
+            int _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
+
+            if(_dailyStage == -1)
             {
-                // 25ステージ目からループさせる
-                PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
+                PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
+                PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
+                if (isNowStage + 1 >= stages.Length)
+                {
+                    // 25ステージ目からループさせる
+                    PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
+                }
+            }
+            else
+            {
+                // デイリーステージクリア時の処理
+                PlayerPrefs.SetInt("DailyStage", -1); // デイリーステージモードを解除
+                int clearSaveData = PlayerPrefs.GetInt("DailyClearData", 0);
+                clearSaveData |= (1 << (_dailyStage - 1));
+                PlayerPrefs.SetInt("DailyClearData", clearSaveData);
+                PlayerPrefs.SetInt("beforeDailyClear", 1);
             }
             PlayerPrefs.Save();
             _clearViewManager.PosText();

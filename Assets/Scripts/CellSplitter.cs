@@ -357,6 +357,8 @@ public static class CellSplitter
         // 3セル (I-3, L-3, V-3)
         _availableShapes.Add(new PieceShape("I3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0) }));
         _availableShapes.Add(new PieceShape("I3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(0, 2) }));
+        _availableShapes.Add(new PieceShape("I3-C", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 1) }));
+        _availableShapes.Add(new PieceShape("I3-D", new List<GridCoord> { new GridCoord(1, 0), new GridCoord(1, 0), new GridCoord(2, 0) }));
         _availableShapes.Add(new PieceShape("L3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(0, 1) }));
         _availableShapes.Add(new PieceShape("L3-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(1, 1) }));
         _availableShapes.Add(new PieceShape("L3-C", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 1) }));
@@ -377,6 +379,10 @@ public static class CellSplitter
         _availableShapes.Add(new PieceShape("T4-D", new List<GridCoord> {
             new GridCoord(1, 0), new GridCoord(1, 1), new GridCoord(1, 2),
              new GridCoord(0, 1)
+        }));
+        _availableShapes.Add(new PieceShape("X5-A", new List<GridCoord> {
+            new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0),
+            new GridCoord(0, 1), new GridCoord(2, 1)
         }));
     }
     // 三角形セル用

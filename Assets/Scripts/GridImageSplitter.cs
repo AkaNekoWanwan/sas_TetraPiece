@@ -19,6 +19,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
 
     public override void SplitImage()
     {
+        base.SplitImage();
         Image img = GetComponent<Image>();
         if (img == null || img.sprite == null)
         {
