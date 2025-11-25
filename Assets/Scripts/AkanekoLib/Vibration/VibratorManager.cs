@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
+using System.Runtime.InteropServices;
 
 public static class VibratorManager
 {
@@ -8,6 +10,12 @@ public static class VibratorManager
     private static AndroidJavaObject unityActivity;
     private static AndroidJavaObject vibrator;
     private static int androidSdkVersion = -1;
+#endif
+#if !UNITY_EDITOR && UNITY_IOS
+    // iOSのAudioToolboxフレームワークから外部関数をインポート
+    // PlaySystemSound(SystemSoundID)は、短時間の振動やアラート音を再生するiOSのAPI
+    [DllImport("__Internal")]
+    private static extern void PlaySystemSound(int soundID);
 #endif
 
     public static void Vibrate(long milliseconds)
@@ -47,8 +55,8 @@ public static class VibratorManager
             // Android 8.0 未満では従来のメソッドを使用
             vibrator.Call("vibrate", milliseconds);
         }
-#else
-        Handheld.Vibrate();
+#elif !UNITY_EDITOR && UNITY_IOS
+        PlaySystemSound(1519);
 #endif
     }
 
@@ -91,8 +99,8 @@ public static class VibratorManager
             AndroidJavaObject vibrationEffect = vibrationEffectClass.CallStatic<AndroidJavaObject>("createWaveform", pattern, repeat);
             vibrator.Call("vibrate", vibrationEffect);
         }
-#else
-        Handheld.Vibrate();
+#elif !UNITY_EDITOR && UNITY_IOS
+        PlaySystemSound(1519);
 #endif
     }
 

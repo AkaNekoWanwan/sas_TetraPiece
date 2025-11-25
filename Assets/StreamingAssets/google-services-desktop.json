@@ -7,20 +7,22 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:864168151100:android:883478a566c8e751d5db39",
+        "mobilesdk_app_id": "1:864168151100:ios:a461464413f9dd38d5db39",
         "android_client_info": {
           "package_name": "jp.fourm.tetrapiece"
         }
       },
-      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD556klHjoJuj7ITu-TNgBFaPr8REXFH90"
+          "current_key": "AIzaSyCZb4tuK-sgcBEMa4ly7ih6dcK6SaPC6pw"
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 0
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "status": 1
         }
       }
     }
