@@ -11,12 +11,6 @@ public static class VibratorManager
     private static AndroidJavaObject vibrator;
     private static int androidSdkVersion = -1;
 #endif
-#if !UNITY_EDITOR && UNITY_IOS
-    // iOSのAudioToolboxフレームワークから外部関数をインポート
-    // PlaySystemSound(SystemSoundID)は、短時間の振動やアラート音を再生するiOSのAPI
-    [DllImport("__Internal")]
-    private static extern void PlaySystemSound(int soundID);
-#endif
 
     public static void Vibrate(long milliseconds)
     {
@@ -56,7 +50,7 @@ public static class VibratorManager
             vibrator.Call("vibrate", milliseconds);
         }
 #elif !UNITY_EDITOR && UNITY_IOS
-        PlaySystemSound(1519);
+        VibrationManager.Vibrate(VibrationType.Short);
 #endif
     }
 
@@ -100,7 +94,7 @@ public static class VibratorManager
             vibrator.Call("vibrate", vibrationEffect);
         }
 #elif !UNITY_EDITOR && UNITY_IOS
-        PlaySystemSound(1519);
+        VibrationManager.Vibrate(VibrationType.Short);
 #endif
     }
 

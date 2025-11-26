@@ -38,7 +38,8 @@ public class StageBanner : MonoBehaviour
 #if UNITY_ANDROID
          bannerAdUnitId  = "321fc6af69f7f567";
 #elif UNITY_IOS
-       bannerAdUnitId = "afb58a02817c027e";
+       bannerAdUnitId = "9d08900bcd181d74";
+    //    bannerAdUnitId = "38301d7df146a979";
 #else
         bannerAdUnitId  = "unexpected_platform";
 #endif

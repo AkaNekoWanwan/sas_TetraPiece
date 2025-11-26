@@ -79,7 +79,7 @@ public class StageManager : MonoBehaviour
 
         bool isHard = false;
         
-        _debugCanvas.SetActive(Debug.isDebugBuild && !GameConst.IsCreativeMode());
+        _debugCanvas.SetActive(_debugCanvas.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode());
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 

@@ -43,12 +43,13 @@ public class AdsManager : MonoBehaviour
     { 
         adUnitId = "6b416402c9a83019";
 #if UNITY_IOS
-        adUnitId = "afb58a02817c027e";
+        adUnitId = "5fa700f29189e082";
+        // adUnitId = "afb58a02817c027e";
 #endif
 
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
         {
-            if(GameConst.IsCreativeMode())
+            if(GameConst.IsCreativeMode() || GameConst.IsScreenShotMode())
             {
                 return;
             }
