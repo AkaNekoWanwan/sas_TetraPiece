@@ -194,6 +194,8 @@ public class GridImageSplitter : AbstractGridImageSplitter
                     ansPos.answerGrid = answerObj;
                     ansPos.x = x;
                     ansPos.y = y;
+                    gridCell.gridX = x;
+                    gridCell.gridY = y;
                 }
                 else
                     continue;

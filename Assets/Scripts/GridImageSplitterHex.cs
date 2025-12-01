@@ -146,11 +146,13 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 SetupRectAndSprite(cellObj, img, sp, radius, hexWidth, hexHeight, x, y);
 
                 // === コンポーネント付与 ===
-                answerObj.AddComponent<GridCell>();
+                GridCell gridCell = answerObj.AddComponent<GridCell>();
                 AnswerGridPos ansPos = cellObj.AddComponent<AnswerGridPos>();
                 ansPos.answerGrid = answerObj;
                 ansPos.x = x;
                 ansPos.y = y;
+                gridCell.gridX = x;
+                gridCell.gridY = y;
 
                 // === パラメーター付与 ===
                 if(_param != null)

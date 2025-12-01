@@ -49,6 +49,10 @@ public class PieceDragController : MonoBehaviour,
     private bool isDragging = false;
     public List<string> avoidPatternSeeds = default;
     public GridPieceListController _listCtrl = default;
+
+    public List<Vector2Int> _cellsPositions = null;
+	public List<Vector2Int> _comparisonPositions = null;
+    private Vector2Int workPos = Vector2Int.zero;
     
 
     void Awake()
@@ -63,6 +67,14 @@ public class PieceDragController : MonoBehaviour,
         CacheOriginalMaterials();
         SetOutlineAlpha(1f, 0f);
         _listCtrl = GetComponentInParent<GridPieceListController>();
+
+        AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
+        for (int i = 0; i < cells.Length; i++)
+		{
+			workPos.x = cells[i].x;
+			workPos.y = cells[i].y;
+			_cellsPositions.Add(workPos);
+		}
     }
 
     void Update()
@@ -242,6 +254,7 @@ bool SnapChildrenToGridsAndRecenterParent()
     List<Transform> children = new List<Transform>();
     List<GridCell> targetCells = new List<GridCell>();
     HashSet<GridCell> usedCells = new HashSet<GridCell>();
+    _comparisonPositions = new List<Vector2Int>();
 
     foreach (Transform child in transform)
     {
@@ -278,6 +291,14 @@ bool SnapChildrenToGridsAndRecenterParent()
 
         usedCells.Add(nearestAnswerCell);
         targetCells.Add(nearestAnswerCell);
+
+        workPos.x = nearestAnswerCell.gridX;
+		workPos.y = nearestAnswerCell.gridY;
+        _comparisonPositions.Add(workPos);
+    }
+    if (!ShapeComparer.CheckShapeEquality(_cellsPositions, _comparisonPositions, _listCtrl.ShapeType))
+    {
+        return false;
     }
 
     // ★ 各子の最終的なワールド座標位置を計算（最も近いanswerGridの位置）

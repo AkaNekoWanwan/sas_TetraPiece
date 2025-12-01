@@ -14,4 +14,20 @@ public class GridCell : MonoBehaviour
     [Header("Grid Coordinates")]
     public int gridX;
     public int gridY;
+
+    // public bool _isSetGridPos = false;
+
+    // private void OnValidate() {
+    //     SetUpGridPos();
+    // }
+
+    // public void SetUpGridPos()
+    // {
+    //     // if(_isSetGridPos)
+    //     //     return;
+    //     // _isSetGridPos = true;
+    //     Vector2Int pos = TextParser.ParseAnswerCoordinates(this.gameObject.name);
+    //     gridX = pos.x;
+    //     gridY = pos.y;
+    // }
 }

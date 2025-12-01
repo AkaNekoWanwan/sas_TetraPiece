@@ -93,6 +93,8 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
 
                 GridCell answerCell = answerObj.AddComponent<GridCell>();
                 answerCell.isUpSide = pointingUp;
+                answerCell.gridX = x;
+                answerCell.gridY = y;
                 
                 AnswerGridPos ansPos = cellObj.AddComponent<AnswerGridPos>();
                 ansPos.answerGrid = answerObj;
