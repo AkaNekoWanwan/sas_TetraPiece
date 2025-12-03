@@ -14,6 +14,19 @@ public static class GameDataManager
     public static bool IsBlockTouch = false;
     public static float FixScale = 1f;
     public static float CanvasWidth = 1080f;
+    public static Color32 GridOutLineColor = default;
+
+    private static bool _isInit = false;
+    public static bool IsInit => _isInit;
+
+    public static bool IsDebugView = false;
+
+    public static void Initialize()
+    {
+        if(_isInit)
+            return;
+        _isInit = true;
+    } 
 
 
     // ステージスタート処理の設定

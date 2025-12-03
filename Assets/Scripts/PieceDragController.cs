@@ -30,7 +30,7 @@ public class PieceDragController : MonoBehaviour,
     private RectTransform rt;
     private Vector3 originalPos;
     public Vector3 originalScale;
-    private bool isSetOriginalScale = false;
+    public bool isSetOriginalScale = false;
     public Vector3 OriginalScale{ get { return originalScale; } set { originalScale = value; isSetOriginalScale = true;} }
 
     private List<GridCell> lastMarkedCells = new List<GridCell>();
@@ -53,7 +53,7 @@ public class PieceDragController : MonoBehaviour,
     public List<Vector2Int> _cellsPositions = null;
 	public List<Vector2Int> _comparisonPositions = null;
     private Vector2Int workPos = Vector2Int.zero;
-    
+    private Vector3 lastSnappedPos = Vector3.zero;
 
     void Awake()
     {
@@ -65,8 +65,8 @@ public class PieceDragController : MonoBehaviour,
         initialZ = rt.position.z;
 
         CacheOriginalMaterials();
-        SetOutlineAlpha(1f, 0f);
         _listCtrl = GetComponentInParent<GridPieceListController>();
+        SetOutlineAlpha(1f, 0f, true);
 
         AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
         for (int i = 0; i < cells.Length; i++)
@@ -75,6 +75,12 @@ public class PieceDragController : MonoBehaviour,
 			workPos.y = cells[i].y;
 			_cellsPositions.Add(workPos);
 		}
+    }
+
+    private void OnValidate()
+    {
+        if( 1 <= CellCopyHandlers.Count )
+            CellCopyHandlers[0].UpdateAllCellCopyTransform(CellCopyHandlers);
     }
 
     void Update()
@@ -328,6 +334,8 @@ bool SnapChildrenToGridsAndRecenterParent()
 
     // ★ 親を瞬時に新しい中心に移動
     rt.position = newParentCenter;
+    // ★ 追加: スナップ成功時の位置を記録
+    lastSnappedPos = newParentCenter;
 
     // ★ 子のワールド座標を元の位置に戻す（親が動いたのでローカル座標が変わっているため）
     for (int i = 0; i < children.Count; i++)
@@ -744,26 +752,48 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         return nearest;
     }
 
-    void SetOutlineAlpha(float targetAlpha, float duration)
+    void SetOutlineAlpha(float targetAlpha, float duration, bool isFirst = false)
     {
         foreach (Transform child in transform)
         {
             TriangleCellCopyHandler triOutlineHandler = child.GetComponent<TriangleCellCopyHandler>();
-            float scale = 1.1f;
+            // float scale = 1.05f;
+
+            float scale = 1.00f;
             if(isCreative || GameConst.IsCreativeMode())
                 scale = 0f;
-            if(triOutlineHandler != null)
-                scale = triOutlineHandler.Scale;
+            // if(triOutlineHandler != null)
+            //     scale = triOutlineHandler.Scale;
+            RectTransform childRect = child.GetComponent<RectTransform>();
             foreach (Transform grandChild in child)
             {
+                RectTransform grandChildRect = grandChild.GetComponent<RectTransform>();
+                // アウトラインの大きさ設定
+                if(isFirst)
+                {
+                    Vector2 setSize = childRect.sizeDelta;
+                    if(_listCtrl.ShapeType == ShapeType.Hex)
+                    {
+                        setSize.x += 13f;
+                        setSize.y += 13f;
+                    }
+                    if(_listCtrl.ShapeType == ShapeType.Square)
+                    {
+                        setSize.x += 4.25f;
+                        setSize.y += 4.25f;
+                    }
+                    if(_listCtrl.ShapeType != ShapeType.Triangle)
+                        grandChildRect.sizeDelta = setSize;
+                }
+
                 Image img = grandChild.GetComponent<Image>();
                 if (targetAlpha == 1f)
                 {
-                    img.GetComponent<RectTransform>().localScale = Vector3.one * scale;
+                    grandChildRect.localScale = Vector3.one * scale;
                 }
                 else
                 {
-                    img.GetComponent<RectTransform>().localScale = Vector3.one;
+                    grandChildRect.localScale = Vector3.one;
                 }
                 if (img != null)
                 {
@@ -845,155 +875,230 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
     }
 
     // ★ 元のRenderQueueを保存する辞書を追加
-private Dictionary<Material, int> originalRenderQueues = new Dictionary<Material, int>();
+    private Dictionary<Material, int> originalRenderQueues = new Dictionary<Material, int>();
 
-public void OnPointerDown(PointerEventData eventData)
-{
-    if (isLocked) return;
-    transform.SetAsLastSibling();
-    var hand = FindAnyObjectByType<HandCursorController>();
-    originalPos = rt.position;
-    if(!isSetOriginalScale)
-        originalScale = initialScale;
-    wasDragged = false;
-
-    rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
-    RestoreChildrenMaterials();
-    SetOutlineAlpha(1f, 0f);
-    
-    // ★ RenderQueueを変更
-    SetRenderQueue(3004, 3003);
-
-    VibratorManager.Vibrate(70, 40);
-
-    Vector3 worldPoint;
-    if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-        rt, eventData.position, eventData.pressEventCamera, out worldPoint))
+    public void OnPointerDown(PointerEventData eventData)
     {
-        dragOffset = rt.position - worldPoint;
-        Vector3 targetPos = FixZ(worldPoint + dragOffset);
-        smoothedPosition = targetPos;
-        _moveTween?.Kill();
-        _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
-    }
-
-    AudioManager.Instance.PlayHoldSound();
-}
-
-public void OnEndDrag(PointerEventData eventData)
-{
-    if (isLocked) return;
-
-    // rt.transform.localScale = Vector3.one;
-    rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
-    AudioManager.Instance.PlayPlaceSound();
-    isDragging = false;
-
-    bool snapStarted = SnapChildrenToGridsAndRecenterParent();
-    if (!snapStarted)
-    {
-        ReleaseOccupiedCells();
-        
-        // ★ RenderQueueを元に戻す
-        RestoreRenderQueue();
-        
-        // ReturnToOrigin();
-        SetOutlineAlpha(1f, 0.2f);
-        // var _listCtrl = GetComponentInParent<GridPieceListController>();
-        if (_listCtrl != null) _listCtrl.NotifyReturned(this);
-
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
-        return;
-    }
-
-    DOVirtual.DelayedCall(0.4f, () =>
-    {
-        var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
-        if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
-
-        // ★ RenderQueueを元に戻す
-        RestoreRenderQueue();
-
-        if (CheckAnswer() && !isCreative)
-        {
-            isLocked = true;
-            SetOutlineAlpha(0f, 0f);
-        }
-        else
-        {
-            RestoreChildrenMaterials();
-            SetOutlineAlpha(1f, 0f);
-        }
-
-        TryMergeNearbyPieces();
-    });
-}
-
-public void OnPointerUp(PointerEventData eventData)
-{
-    if (!wasDragged && !isLocked)
-    {
-        isDragging = false;
+        if (isLocked) return;
+        transform.SetAsLastSibling();
         var hand = FindAnyObjectByType<HandCursorController>();
-        
-        // ★ RenderQueueを元に戻す
-        RestoreRenderQueue();
-        
-        ReturnToOrigin();
-    }
-}
+        originalPos = rt.position;
+        if(!isSetOriginalScale)
+            originalScale = initialScale;
+        wasDragged = false;
 
-// ★ RenderQueueを設定する新しいメソッド
-void SetRenderQueue(int cellQueue, int outlineQueue)
-{
-    originalRenderQueues.Clear();
-    
-    foreach (Transform child in transform)
-    {
-        // 子セル（cell）のマテリアル
-        Image cellImg = child.GetComponent<Image>();
-        if (cellImg != null && cellImg.material != null)
+        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        RestoreChildrenMaterials();
+        SetOutlineAlpha(1f, 0f);
+        
+        // ★ RenderQueueを変更
+        SetRenderQueue(3004, 3003);
+
+        VibratorManager.Vibrate(70, 40);
+
+        Vector3 worldPoint;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         {
-            // 元のRenderQueueを保存
-            if (!originalRenderQueues.ContainsKey(cellImg.material))
-            {
-                originalRenderQueues[cellImg.material] = cellImg.material.renderQueue;
-            }
-            cellImg.material.renderQueue = cellQueue;
-            Debug.Log($"[RenderQueue] {child.name} のセルを {cellQueue} に設定");
+            dragOffset = rt.position - worldPoint;
+            Vector3 targetPos = FixZ(worldPoint + dragOffset);
+            smoothedPosition = targetPos;
+            _moveTween?.Kill();
+            _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
         }
 
-        // Outlineのマテリアル
-        foreach (Transform grandChild in child)
+        AudioManager.Instance.PlayHoldSound();
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (isLocked) return;
+
+        // rt.transform.localScale = Vector3.one;
+        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        AudioManager.Instance.PlayPlaceSound();
+        isDragging = false;
+
+        bool snapStarted = SnapChildrenToGridsAndRecenterParent();
+        if (!snapStarted)
         {
-            Image outlineImg = grandChild.GetComponent<Image>();
-            if (outlineImg != null && outlineImg.material != null)
+            ReleaseOccupiedCells();
+            RestoreRenderQueue();
+            SetOutlineAlpha(1f, 0.2f);
+            
+            // ★ 分岐ロジック: 最後にスナップされた位置があるか？
+            if (lastSnappedPos != Vector3.zero) 
+            {
+                // 1. 盤面に一度置かれたことがある場合
+                ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
+            }
+            else
+            {
+                // 2. リストから初めてドラッグされた場合
+                // リストに戻す (シェイクなし)
+                if (_listCtrl != null) 
+                {
+                    // ★ 変更箇所: shouldShake: false を渡してシェイクを抑制
+                    _listCtrl.NotifyReturned(this, shouldShake: false); 
+                }
+                rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+            }
+            
+            return;
+        }
+
+        DOVirtual.DelayedCall(0.4f, () =>
+        {
+            var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
+            if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
+
+            // ★ RenderQueueを元に戻す
+            RestoreRenderQueue();
+
+            if (CheckAnswer() && !isCreative)
+            {
+                isLocked = true;
+                SetOutlineAlpha(0f, 0f);
+            }
+            else
+            {
+                RestoreChildrenMaterials();
+                SetOutlineAlpha(1f, 0f);
+            }
+
+            TryMergeNearbyPieces();
+        });
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (!wasDragged && !isLocked)
+        {
+            isDragging = false;
+            var hand = FindAnyObjectByType<HandCursorController>();
+            
+            // ★ RenderQueueを元に戻す
+            RestoreRenderQueue();
+            
+            ReturnToOrigin();
+        }
+    }
+
+    // ★ RenderQueueを設定する新しいメソッド
+    void SetRenderQueue(int cellQueue, int outlineQueue)
+    {
+        originalRenderQueues.Clear();
+        
+        foreach (Transform child in transform)
+        {
+            // 子セル（cell）のマテリアル
+            Image cellImg = child.GetComponent<Image>();
+            if (cellImg != null && cellImg.material != null)
             {
                 // 元のRenderQueueを保存
-                if (!originalRenderQueues.ContainsKey(outlineImg.material))
+                if (!originalRenderQueues.ContainsKey(cellImg.material))
                 {
-                    originalRenderQueues[outlineImg.material] = outlineImg.material.renderQueue;
+                    originalRenderQueues[cellImg.material] = cellImg.material.renderQueue;
                 }
-                outlineImg.material.renderQueue = outlineQueue;
-                Debug.Log($"[RenderQueue] {grandChild.name} のアウトラインを {outlineQueue} に設定");
+                cellImg.material.renderQueue = cellQueue;
+                Debug.Log($"[RenderQueue] {child.name} のセルを {cellQueue} に設定");
+            }
+
+            // Outlineのマテリアル
+            foreach (Transform grandChild in child)
+            {
+                Image outlineImg = grandChild.GetComponent<Image>();
+                if (outlineImg != null && outlineImg.material != null)
+                {
+                    // 元のRenderQueueを保存
+                    if (!originalRenderQueues.ContainsKey(outlineImg.material))
+                    {
+                        originalRenderQueues[outlineImg.material] = outlineImg.material.renderQueue;
+                    }
+                    outlineImg.material.renderQueue = outlineQueue;
+                    Debug.Log($"[RenderQueue] {grandChild.name} のアウトラインを {outlineQueue} に設定");
+                }
             }
         }
     }
-}
 
-// ★ RenderQueueを元に戻すメソッド
-void RestoreRenderQueue()
-{
-    foreach (var kvp in originalRenderQueues)
+    // ★ RenderQueueを元に戻すメソッド
+    void RestoreRenderQueue()
     {
-        if (kvp.Key != null)
+        foreach (var kvp in originalRenderQueues)
         {
-            kvp.Key.renderQueue = kvp.Value;
-            Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
+            if (kvp.Key != null)
+            {
+                kvp.Key.renderQueue = kvp.Value;
+                Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
+            }
+        }
+        originalRenderQueues.Clear();
+    }
+
+    // PieceDragController クラス内に追加
+    /// <summary>
+    /// ピースを最後にスナップされた盤面上の位置に戻す
+    /// </summary>
+    public void ReturnToLastSnappedPosition()
+    {
+        // 戻る位置が設定されていない場合（初回など）はリストに戻すなど代替処理を検討するが、
+        // ここでは単純に設定されていると仮定する。
+
+        // バイブレーション (NotifyReturnedから流用)
+        VibratorManager.Vibrate(70, 40);
+
+        // 既存のアニメーションを停止
+        _moveTween?.Kill();
+        
+        // ターゲット位置
+        Vector3 targetPos = FixZ(lastSnappedPos);
+
+        // 1. シェイクアニメーション
+        // 2. ターゲット位置への移動アニメーション
+
+        var returnedRt = GetComponent<RectTransform>();
+        if (returnedRt != null)
+        {
+            DOTween.Kill(returnedRt, complete: false); 
+
+            // ★ シェイク付きアニメーション (GridPieceListControllerの Shake Settings を利用)
+            Sequence seq = DOTween.Sequence();
+            seq.Append(returnedRt.DOShakePosition(_listCtrl.shakeDuration, new Vector3(_listCtrl.shakeStrength, 0, 0), _listCtrl.shakeVibrato, 90, false, true));
+            seq.Append(returnedRt.DOMove(targetPos, _listCtrl.shiftTime).SetEase(Ease.OutQuad));
+            // seq.Join(ReturnToList()); 
+            seq.Join(returnedRt.DOScale(Vector3.one, 0.15f).SetEase(Ease.OutBack)); 
+        
+            // ★ 修正箇所: アニメーション完了後にセルを再占有
+            seq.OnComplete(() =>
+            {
+                // lastOccupiedMapの情報を使ってセルを再占有する
+                RestoreOccupiedCellsFromMap(); // 新しく作成するヘルパーメソッド
+                Debug.Log($"[ReturnToLastSnappedPosition] ピースが {lastSnappedPos} に戻り、セルを再占有しました。");
+            });
         }
     }
-    originalRenderQueues.Clear();
-}
+
+    // PieceDragController クラスに追加: lastOccupiedMap を使ってセルを復元するメソッド
+    /// <summary>
+    /// lastOccupiedMap に基づいてセルを占有状態に戻す
+    /// </summary>
+    private void RestoreOccupiedCellsFromMap()
+    {
+        foreach (var pair in lastOccupiedMap)
+        {
+            Transform child = pair.Key;
+            GridCell cell = pair.Value;
+
+            if (child != null && cell != null)
+            {
+                // このセルをこのピースの子で占有する
+                cell.isOccupied = true;
+                cell.occupiedByChild = child;
+            }
+        }
+        // lastMarkedCells の復元が必要な場合はここで行う（ただし RestoreOccupiedCells() がその役割を持つべき）
+    }
 }
 
 public static class ShadowExtensions

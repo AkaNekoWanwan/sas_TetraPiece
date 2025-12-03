@@ -1,0 +1,65 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+using DG.Tweening;
+using System.Collections.Generic;
+using UnityEngine.UI;
+
+public class DebugUIManager : MonoBehaviour
+{
+    public List<RectTransform> _debugButtons = default;
+    public List<int> _switchViewCommand;
+    public GameObject _view = default;
+
+    public List<int> _currentCommand = default;
+
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        _currentCommand = new List<int>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if(TryTapCommandButton(_currentCommand.Count))
+            {
+                
+            }
+            else
+            {
+                _currentCommand.Clear();
+                TryTapCommandButton(0);
+            }
+        }
+    }
+
+    // 指定したコマンドインデックスのボタンを押しているか
+    private bool TryTapCommandButton(int commandIndex)
+    {   
+        Debug.Log($"DebugChk:1:{commandIndex}");
+        int chkButtonIndex = _switchViewCommand[commandIndex];
+        RectTransform chkButton = _debugButtons[chkButtonIndex];
+        if(IsPointerOverPiece(chkButton))
+        {
+            _currentCommand.Add(chkButtonIndex);
+            if(_currentCommand.Count == _switchViewCommand.Count)
+            {
+                _currentCommand.Clear();
+                _view.SetActive(!_view.activeSelf);
+                GameDataManager.IsDebugView = _view.activeSelf;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsPointerOverPiece(RectTransform button)
+    {
+        bool ret = RectTransformUtility.RectangleContainsScreenPoint(button, Input.mousePosition, Camera.main);
+        Debug.Log($"DebugChk:2:{button.gameObject.name}, {ret}");
+        return ret;
+    }
+}

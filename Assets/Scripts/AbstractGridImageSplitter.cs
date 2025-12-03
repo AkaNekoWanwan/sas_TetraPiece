@@ -45,6 +45,20 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     
 
 #if UNITY_EDITOR
+    private void OnValidate() {
+        Vector3 pos = this.transform.localPosition;
+        pos.y = 3.7f;
+        this.transform.localPosition = pos;
+
+        GameObject shadow = SiblingFinder.FindSiblingByName(this.gameObject, "shadow");
+        if(shadow != null)
+        {
+            pos = shadow.transform.localPosition;
+            pos.y = 2f;
+            shadow.transform.localPosition = pos;
+        }
+    }
+
     protected string GetUniqueFolder(string basePath, string imageName)
     {
         // ユニークIDを割り当てる
@@ -216,7 +230,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         GridPieceListController gridPieceListController = GetGridPieceListController();
         // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
 
-        gridPieceListController._PieceDragControllersScale = 0.8f * 185f / size;
+        gridPieceListController._PieceDragControllersScale = 0.67f * 185f / size;
         if(GetShapeType() == ShapeType.Square)
             gridPieceListController._PieceDragControllersScale *= 0.75f;
         else

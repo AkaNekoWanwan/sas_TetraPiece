@@ -52,6 +52,10 @@ public class GridPieceListController : MonoBehaviour
     private readonly List<PieceDragController> queue = new();
     private Sequence _alignSequence = null; // ★ 追加：進行中の整列アニメーションを管理
 
+    private void OnValidate() {
+        baseY = -18f;
+    }
+
     void Awake()
     {
         shakeStrength = 2f;
@@ -109,7 +113,7 @@ public class GridPieceListController : MonoBehaviour
             return;
         }
 
-        _PieceDragControllersScale = 0.8f * 185f / size;
+        _PieceDragControllersScale = 0.67f * 185f / size;
         if(shapeType == ShapeType.Square)
             _PieceDragControllersScale *= 0.75f;
         else
@@ -241,7 +245,7 @@ public class GridPieceListController : MonoBehaviour
     /// <summary>
     /// ピースが戻ったとき呼ぶ（シェイク付き）
     /// </summary>
-    public void NotifyReturned(PieceDragController piece)
+    public void NotifyReturned(PieceDragController piece, bool shouldShake = true)
     {
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
@@ -416,7 +420,10 @@ public class GridPieceListController : MonoBehaviour
             {
                 // 画面内に戻る場合 (D が C の位置に戻る): Shake → ターゲット位置へ
                 Sequence seq = DOTween.Sequence();
-                seq.Append(returnedRt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
+                if (shouldShake)
+                {
+                    seq.Append(returnedRt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
+                }
                 seq.Append(returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad));
                 seq.Join(piece.ReturnToList());
             }

@@ -19,7 +19,7 @@ public class TriangleCellCopyHandler : MonoBehaviour
     public Transform CellCopy;
     public bool IsUpSide; // trueで辺が上を向く(頂点が下を向く)
     public Vector2Int CellPos = default;
-    public float Scale = 1.1f;
+    public float Scale = 1f;
 
     // 他のセルたちと比較
     public ContainsCellInfo ContainsCell(List<TriangleCellCopyHandler> others, ContainsCellInfo info)
@@ -89,9 +89,16 @@ public class TriangleCellCopyHandler : MonoBehaviour
     }
     public void UpdateCellCopyTransform(bool containsL, bool containsR, bool containsY)
     {
+        RectTransform rect = GetComponent<RectTransform>();
+        RectTransform outlineRect = CellCopy.GetComponent<RectTransform>();
+
         float posX = 0f;
         float posY = 0f;
-        float posZ = 10f;
+        float posZ = 1f;
+        float addSize = 23f;
+
+        Vector2 sizeDelta = rect.sizeDelta;
+        Vector2 outlineSizeDelta = outlineRect.sizeDelta;
 
         // Debug.Log($"ワン：{this.gameObject.name}, {containsL}, {containsR}, {containsY}");
 
@@ -101,59 +108,105 @@ public class TriangleCellCopyHandler : MonoBehaviour
         if(containsR) containsNum++;
         if(containsY) containsNum++;
 
-        if(containsNum == 0)
-            Scale = 1.1f;
+        // if(containsNum == 0)
+        //     addSize = 24f;
+            // Scale = 1.3f;
         if(containsNum == 1)
-            Scale = 1.07f;
+            addSize /= 1.7320508f;
+            // Scale = 1.07f;
         if(containsNum == 2)
-            Scale = 1.04f;
+            addSize /= 3f;
+            // Scale = 1.04f;
         // 周囲に他のセルがある -> アウトライン非表示
         if(containsNum == 3)
+        {
+            addSize = 0f;
             Scale = 0f;
+        }
+
+        // addSize *= Scale;
+        outlineSizeDelta.x = sizeDelta.x + addSize;
+        outlineSizeDelta.y = sizeDelta.y + addSize;
+        outlineRect.sizeDelta = outlineSizeDelta;
+        Vector2 setPivot = new Vector2();
+
+        // float collect = sizeDelta.x / outlineSizeDelta.x / Scale;
+        float collect = 1;
+        if( Scale <= 0f)
+            collect = 0f;
 
         // 周囲に何もない -> 全周にアウトライン表示
         if( !containsL && !containsR && !containsY )
         {
-            posY = -4f;
+            setPivot = Vector2.one * 0.5f;
+            outlineRect.pivot = setPivot;
+            outlineRect.anchorMax = setPivot;
+            outlineRect.anchorMin = setPivot;
+            posY = -addSize / 6f;
+            // Debug.Log($"setY:1:{outlineSizeDelta.x}, {sizeDelta.x}, {Scale}, {collect}, {posY}");
         }
         // 左だけ他のセルがある
         if(containsL && !containsR && !containsY)
         {
-            posX = 5f;
-            posY = -2f;
+            // 頂点が下向きなら基準点を右下に。
+            setPivot = new Vector2( 0f, 0f );
+            posX = -addSize / 4f;
+            posY = -addSize / 2f;
+            if(!IsUpSide)
+            {
+                setPivot.y = 1f; 
+                posY *= -1f;
+            }
         }
         // 右だけ他のセルがある
         if(!containsL && containsR && !containsY)
         {
-            posX = -5f;
-            posY = -2f;
+            // 頂点が下向きなら基準点を左下に。
+            setPivot = new Vector2( 1f, 0f );
+            posX = addSize / 4f;
+            posY = -addSize / 2f;
+            if(!IsUpSide)
+            {
+                setPivot.y = 1f; 
+                posY *= -1f;
+            }
         }
         // 下(上)だけ他のセルがある
         if(!containsL && !containsR && containsY)
         {
-            posY = -10f;
+            setPivot = new Vector2( 0.5f, 1f );
+            if(!IsUpSide)
+                setPivot.y = 0f; 
         }
         // 左だけ他のセルがない
         if(!containsL && containsR && containsY)
         {
-            posX = -6f;
-            posY = -4f;
+            // 頂点が下向きなら基準点を右上に。
+            setPivot = new Vector2( 1f, 1f );
+            if(!IsUpSide)
+                setPivot.y = 0f; 
         }
         // 右だけ他のセルがない
         if(containsL && !containsR && containsY)
         {
-            posX = 6f;
-            posY = -4f;
+            // 頂点が下向きなら基準点を左上に。
+            setPivot = new Vector2( 0f, 1f );
+            if(!IsUpSide)
+                setPivot.y = 0f; 
         }
         // 下(上)だけ他のセルがない
         if(containsL && containsR && !containsY)
         {
-            posY = 6f;
+            setPivot = new Vector2( 0.5f, 0f );
+            if(!IsUpSide)
+                setPivot.y = 1f; 
         }
-
-        if(!IsUpSide)
-            posY *= -1f;
-        CellCopy.localScale = Vector3.one * Scale;
+        outlineRect.pivot = setPivot;
+        outlineRect.anchorMax = setPivot;
+        outlineRect.anchorMin = setPivot;
+        // CellCopy.localScale = Vector3.one * Scale;
+        CellCopy.localScale = Vector3.one;
         CellCopy.localPosition = new Vector3(posX, posY, posZ);
+        outlineRect.anchoredPosition = new Vector3(posX, posY, posZ);
     }
 }

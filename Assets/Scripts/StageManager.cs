@@ -45,6 +45,7 @@ public class StageManager : MonoBehaviour
     public ClearViewManager _clearViewManager = default;
     public GameObject _defaultCanvas = default;
     public GameObject _debugCanvas = default;
+    public DebugUIManager _debugUIManager = default;
     public GameObject _creativeCanvas = default;
 
     private int _dailyStage = -1;
@@ -79,7 +80,15 @@ public class StageManager : MonoBehaviour
 
         bool isHard = false;
         
-        _debugCanvas.SetActive(_debugCanvas.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode());
+        if(GameDataManager.IsInit)
+        {
+            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
+            GameDataManager.Initialize();
+        }
+        else
+        {
+            _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
+        }
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
