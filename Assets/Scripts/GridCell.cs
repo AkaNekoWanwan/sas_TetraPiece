@@ -1,5 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GridCell : MonoBehaviour
 {
@@ -18,34 +24,69 @@ public class GridCell : MonoBehaviour
 
     public static Color32 outLineColor = default;
     public Color32 currentOutLineColor = default;
-    public UnityEngine.UI.Outline outLine = null;
+    public List<UnityEngine.UI.Outline> outLines = null;
     // public bool _isSetGridPos = false;
 
     // アウトラインの色合を変えたら全体に共有
+#if UNITY_EDITOR
     private void OnValidate() {
+        Debug.Log("ああああああああああ:1");
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
+        Debug.Log("ああああああああああ:2");
         // SetUpGridPos();
-        if(outLine == null)
-            outLine = GetComponent<UnityEngine.UI.Outline>();
-        if(outLine == null)
+        if(outLines == null)
+            outLines = GetComponents<UnityEngine.UI.Outline>().ToList();
+        if(outLines == null)
             return;
+        Debug.Log($"ああああああああああ:3,{outLines.Count}");
 
-        AbstractGridImageSplitter spritter = GetComponentInParent<AbstractGridImageSplitter>();
-        if(spritter == null)
-            return;
-        SpritterParam param = spritter._param;
+        // if(outLines.Count == 0)
+        //     outLines.Add(GetComponent<UnityEngine.UI.Outline>());
 
-        if(!IsEqualsColor(param.OutLineColor, outLine.effectColor))
+        GridPieceListController pieceListController = transform.parent.parent.GetComponentInChildren<GridPieceListController>();
+        if(pieceListController == null || pieceListController.ShapeType != ShapeType.Square)
         {
-            if(IsEqualsColor(param.OutLineColor, currentOutLineColor))
+            if(outLines.Count == 1)
             {
-                currentOutLineColor = outLine.effectColor;
-                param.OutLineColor = outLine.effectColor;
+                UnityEngine.UI.Outline newOutLine = this.gameObject.AddComponent<UnityEngine.UI.Outline>();
+                outLines.Add(newOutLine);
+            }
+        }
+
+        for(int i = 0; i < outLines.Count; i++)
+        {
+            var outLine = outLines[i];
+            AbstractGridImageSplitter spritter = GetComponentInParent<AbstractGridImageSplitter>();
+            if(spritter == null)
+                return;
+            SpritterParam param = spritter._param;
+
+            if(!IsEqualsColor(param.OutLineColor, outLine.effectColor))
+            {
+                if(IsEqualsColor(param.OutLineColor, currentOutLineColor) && i == 0)
+                {
+                    currentOutLineColor = outLine.effectColor;
+                    param.OutLineColor = outLine.effectColor;
+                }
+                else
+                {
+                    currentOutLineColor = param.OutLineColor;
+                    outLine.effectColor = param.OutLineColor;
+                }
+            }
+            if(i == 0)
+            {
+                if(pieceListController == null || pieceListController.ShapeType == ShapeType.Square)
+                {
+                    outLine.effectDistance = Vector2.one * 5f;
+                }
+                else
+                    outLine.effectDistance = Vector2.one * 2f;
             }
             else
-            {
-                currentOutLineColor = param.OutLineColor;
-                outLine.effectColor = param.OutLineColor;
-            }
+                outLine.effectDistance = Vector2.one * 3f;
+                
         }
     }
 
@@ -62,7 +103,7 @@ public class GridCell : MonoBehaviour
             return false;
         return true;
     }
-
+#endif
     // グリッドの座標設定
     // public void SetUpGridPos()
     // {

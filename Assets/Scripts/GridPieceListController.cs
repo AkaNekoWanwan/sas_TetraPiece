@@ -3,6 +3,9 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using UnityEditor;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 
 public class GridPieceListController : MonoBehaviour
@@ -43,6 +46,10 @@ public class GridPieceListController : MonoBehaviour
     public int shakeVibrato = 10;
     [Tooltip("シェイクの時間")]
     public float shakeDuration = 0.3f;
+    public Transform _boardTransform = null;
+    public RectTransform _rectTransform = null;
+
+    private Vector2 _targetSizeDelta = default;
 
     // パーツリストのスケール
     [Tooltip("ピースリストのサイズ")]
@@ -52,8 +59,40 @@ public class GridPieceListController : MonoBehaviour
     private readonly List<PieceDragController> queue = new();
     private Sequence _alignSequence = null; // ★ 追加：進行中の整列アニメーションを管理
 
+#if UNITY_EDITOR
     private void OnValidate() {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         baseY = -18f;
+        if(_rectTransform == null)
+            _rectTransform = GetComponent<RectTransform>();
+
+        UpdateSizeDelta();
+    }
+#endif
+
+    private void UpdateSizeDelta()
+    {
+        if(_boardTransform == null)
+            return;
+        List<PieceDragController> pcs;
+#if UNITY_EDITOR
+        if(UnityEditor.EditorApplication.isPlaying)
+            pcs = queue;
+        else
+#endif
+            pcs = GetComponentsInChildren<PieceDragController>(false).ToList();
+
+        Debug.Log($"queue:{queue}, {queue.Count}");
+        Vector2 size = _rectTransform.sizeDelta;
+        size.x = pcs.Count * spacing + 2f;
+
+        // if(!UnityEditor.EditorApplication.isPlaying)
+            _rectTransform.sizeDelta = size;
+        var pos = _rectTransform.anchoredPosition;
+        pos.x += spacing / 4;
+        _rectTransform.anchoredPosition = pos;
+        _targetSizeDelta = size;
     }
 
     void Awake()
@@ -62,6 +101,8 @@ public class GridPieceListController : MonoBehaviour
         shakeVibrato = 25;
         shakeDuration = 0.2f;
         var pcs = GetComponentsInChildren<PieceDragController>(false);
+        selectableCount = 999;
+        _targetSizeDelta = _rectTransform.sizeDelta;
 
         // queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
         if(!isOrderSort)
@@ -100,6 +141,37 @@ public class GridPieceListController : MonoBehaviour
             ps.transform.localScale = Vector3.one * _PieceDragControllersScale;
             ps.OriginalScale = Vector3.one * _PieceDragControllersScale;
         }
+    }
+
+    private void Update()
+    {
+        // if(_targetSizeDelta != _rectTransform.sizeDelta)
+        // {
+        //     bool withDelay = false;
+        //     Vector2 setSize = _rectTransform.sizeDelta;
+        //     if(Mathf.Abs(_rectTransform.sizeDelta.x - _targetSizeDelta.x) <= 1.2f)
+        //     {
+        //         setSize.x = _targetSizeDelta.x;
+        //         withDelay = true;
+        //     }
+        //     if(_rectTransform.sizeDelta.x <= _targetSizeDelta.x)
+        //     {
+        //         setSize.x += 0.5f;
+        //     }
+        //     else
+        //     {
+        //         setSize.x -= 0.5f;
+        //     }
+        //     if(Mathf.Abs(_rectTransform.sizeDelta.x - _targetSizeDelta.x) <= 1.2f)
+        //     {
+        //         setSize.x = _targetSizeDelta.x;
+        //         withDelay = true;
+        //     }
+        //     _rectTransform.sizeDelta = setSize;
+            // AlignAll(withDelay, onComplete: () => {
+            //     UpdateSelectability();
+            // });
+        // }
     }
 
     public void SetCellScale(float size, ShapeType shapeType)
@@ -231,6 +303,11 @@ public class GridPieceListController : MonoBehaviour
         // ピースをキューから削除
         queue.Remove(snapped);
         _queue = queue;
+        if(_boardTransform != null)
+        {
+            snapped.transform.parent = _boardTransform;
+            UpdateSizeDelta();
+        }
         
         // ★ AlignAllを実行し、そのアニメーションが完了した後に選択性を更新する
         AlignAll(withDelay: true, onComplete: () => {

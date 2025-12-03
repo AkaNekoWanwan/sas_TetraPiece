@@ -511,10 +511,10 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
             if (agp != null && agp.answerGrid != null)
             {
                 Transform answerGrid = agp.answerGrid.transform;
-                UnityEngine.UI.Outline outline = answerGrid.GetComponent<UnityEngine.UI.Outline>();
-                if (outline != null)
+                var outlines = answerGrid.GetComponents<UnityEngine.UI.Outline>();
+                for(int i = 0; i < outlines.Length; i++)
                 {
-                    outline.DOFade(0f, 0.3f);
+                    outlines[i].DOFade(0f, 0.3f);
                 }
             }
         }
@@ -732,6 +732,16 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
         if(1 <= CellCopyHandlers.Count)
             StartCoroutine(CellCopyHandlers[0].UpdateAllCellCopyTransformCoroutine(CellCopyHandlers));
+
+
+        _cellsPositions.Clear();
+        AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
+        for (int i = 0; i < cells.Length; i++)
+		{
+			workPos.x = cells[i].x;
+			workPos.y = cells[i].y;
+			_cellsPositions.Add(workPos);
+		}
     }
 
     GridCell FindClosestGrid(Vector3 worldPos)

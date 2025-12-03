@@ -80,7 +80,7 @@ public class StageManager : MonoBehaviour
 
         bool isHard = false;
         
-        if(GameDataManager.IsInit)
+        if(!GameDataManager.IsInit)
         {
             GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
             GameDataManager.Initialize();
@@ -213,7 +213,7 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.SetFloat(key, pureElapsedTime);
             PlayerPrefs.Save();
 
-            FadeManager.Instance.LoadScene(SceneManager.GetActiveScene().name, 0.5f);
+            FadeManager.Instance.LoadScene(SceneManager.GetActiveScene().name, 0.2f);
             isRestart = true;
         }
     }
@@ -241,7 +241,7 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            ReLoadScene(0.5f);
+            ReLoadScene(0.25f);
         }  
         // FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         
@@ -326,11 +326,12 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("Stage", 0); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
-            ReLoadScene(0.0f); 
+            // ReLoadScene(0.0f); 
+            SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
 
-    private void ReLoadScene(float duration = 0.5f)
+    private void ReLoadScene(float duration = 0.25f)
     {
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, duration);
     }
@@ -348,7 +349,7 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("Stage", stages.Length-1); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
-            FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.0f);
+            SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
 
