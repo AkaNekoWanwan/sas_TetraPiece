@@ -26,8 +26,6 @@ public static class PieceSorter
             return new List<PieceDragController>();
         }
 
-        int oneCellPieceNum = 0;
-
         // 1. コピーを作成し、初期ソートを行う
         
         IEnumerable<PieceDragController> sortedInitial;
@@ -106,8 +104,6 @@ public static class PieceSorter
             if (nextPiece != null)
             {
                 sortedQueue.Add(nextPiece);
-                if(nextPiece.transform.childCount <= 1)
-                    oneCellPieceNum++;
                 remainingPieces.Remove(nextPiece);
             }
             // 次の方向へ進む
@@ -115,12 +111,12 @@ public static class PieceSorter
         }
 
         // 最後にセル数が１のピースを最後に
-        if(prioritizeMultiCellPieces)
-        {
-            sortedQueue = sortedQueue.OrderByDescending(p => GetSortPriority(p)).ToList();
-        }
+        // if(prioritizeMultiCellPieces)
+        // {
+        //     sortedQueue = sortedQueue.OrderByDescending(p => GetSortPriority(p)).ToList();
+        // }
 
-        // ここに処理を追加したい＞今の若い順に３ピースごとに外周以外のピースも混ぜるようにする。
+        // 今の若い順に３ピースごとに外周以外のピースも混ぜるようにする。
         // ３ピースのうち何個目が外周以外のピースかは一見ランダムなようにする（seedStringを使う？）
         for(int i = 0; i < sortedQueue.Count; i += 3)
         {
@@ -128,8 +124,6 @@ public static class PieceSorter
             int insertIndex = i + (int)directions[i / 2 % directions.Count] % 3;
             if( sortedQueue.Count <= i )
                 break;
-            if( i < insertTargetIndex - oneCellPieceNum )
-                insertTargetIndex -= oneCellPieceNum;
             
             PieceDragController piece = sortedQueue[insertTargetIndex];
             sortedQueue.Remove(piece);
