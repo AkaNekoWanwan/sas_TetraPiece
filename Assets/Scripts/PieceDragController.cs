@@ -496,9 +496,9 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         Debug.Log($"Piece {gameObject.name} completed the answer!");
         FindAnyObjectByType<StageManager>().CountDownPic();
         var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
-        this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.1f, 0.07f).SetEase(Ease.Linear).OnComplete(() =>
+        this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear).OnComplete(() =>
         {
-            this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.07f).SetEase(Ease.Linear);
+            this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.12f).SetEase(Ease.Linear);
         });
         return true;
     }

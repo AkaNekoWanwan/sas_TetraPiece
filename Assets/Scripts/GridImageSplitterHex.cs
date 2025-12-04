@@ -10,43 +10,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Image))]
 public class GridImageSplitterHex : AbstractGridImageSplitter
 {
-    // [Header("Grid Settings")]
-    // [Range(1, 20)] public int rows = 2;
-    // [Range(1, 20)] public int cols = 2;
-    // [Range(2, 30)] public int _pieceNum = 5;
-
-    // [Header("Target Range (Center % of image)")]
-    // [Range(10, 200)] public int targetPercent = 100;
-
-    // [Header("Output Settings")]
-    // public string outputFolder = "Assets/Textures/Hexa";
-
-    // [Header("Cell Copy Settings")]
-    // public Material cellCopyMaterial;
-    // public SpritterParam _param;
-    // public float _shiftY = 0f;
-
-    // public bool isSkip = true;   // 全更新時にスキップするか
-    // public bool isPrefs = false;   // 全更新時にスキップするか
-    // public bool isCreative = false;
-    // public string PieceCreateSeed = ""; // ピース作成のシード値
-    // public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
-    // public List<string> avoidPatternSeeds = default;
-
-    // // フォルダ名重複回避
-    // string GetUniqueFolder(string basePath, string imageName)
-    // {
-    //     string folderPath = Path.Combine(basePath, imageName);
-    //     if (!Directory.Exists(folderPath))
-    //         return folderPath;
-
-    //     int counter = 1;
-    //     while (Directory.Exists($"{folderPath}_{counter}"))
-    //         counter++;
-
-    //     return $"{folderPath}_{counter}";
-    // }
-
 #if UNITY_EDITOR
     // public void SplitImageHex()
     public override void SplitImage()
@@ -212,18 +175,6 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
     }
 #endif
 
-    // public void DeleteChilden()
-    // {
-    //     for (int j = this.transform.childCount - 1; j >= 0; j--)
-    //     {
-    //         Transform child = this.transform.GetChild(j);
-    //         if (child != null)
-    //         {
-    //             DestroyImmediate(child.gameObject, true);
-    //         }
-    //     }
-    // }
-
     // === 六角形マスク付きテクスチャ生成 ===
     Texture2D CreateHexTexture(Texture2D srcTex, int px, int py, int w, int h)
     {
@@ -285,71 +236,4 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
         Image cImg = obj.GetComponent<Image>();
         cImg.sprite = sp;
     }
-#if UNITY_EDITOR
-    // // ステージ作成に必要な一連の流れを実行
-    // public void CreatePiece()
-    // {
-    //     // 設定されているピース数が大き過ぎたら修正
-    //     int maxPieceNum = rows * cols;
-    //     _pieceNum = Mathf.Min(_pieceNum, maxPieceNum);
-    //     // 設定されているピース数がちいさすぎたら修正
-    //     _pieceNum = Mathf.Max(_pieceNum, 2);
-
-    //     // 子オブジェクトを全削除
-    //     DeleteChilden();
-    //     // ピースセル生成
-    //     SplitImageHex();
-
-    //     // 同じ階層のGridPieceListControllerを取得
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.isCreative = isCreative;
-    //     gridPieceListController.gridParent = this.transform;
-
-    //     // ピースセルをいい感じにピースリストに配置
-    //     List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-    //     CellSplitter.CellSplit(cols, rows, ref _pieceNum, cells, gridPieceListController, ShapeType.Hex, PieceCreateSeed, avoidPatternSeeds);
-    //     PieceCreateSeed = CellSplitter.PatternSeed;
-    //     if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-    //         backUpPieceCreateSeed = PieceCreateSeed;
-
-    //     // ピースのセットアップ
-    //     gridPieceListController.SetUpChildrenPieceDragController();
-    // }
-
-    // public void Deletepiece()
-    // {
-    //     DeleteChilden();
-    //     GridPieceListController gridPieceListController = this.transform.parent.gameObject.GetComponentInChildren<GridPieceListController>();
-    //     gridPieceListController.PreSetPieceDragControllers();
-    // }
-#endif
 }
-
-#if UNITY_EDITOR
-// [CustomEditor(typeof(GridImageSplitterHex))]
-// public class HexImageSplitterEditor : Editor
-// {
-//     public override void OnInspectorGUI()
-//     {
-//         DrawDefaultInspector();
-//         GridImageSplitterHex script = (GridImageSplitterHex)target;
-//         GUILayout.Space(10);
-//         if (GUILayout.Button("Split Hex Image"))
-//         {
-//             script.SplitImageHex();
-//         }
-//         if (GUILayout.Button("Delete all childen"))
-//         {
-//             script.DeleteChilden();
-//         }
-//         if (GUILayout.Button("Delete piece"))
-//         {
-//             script.Deletepiece();
-//         }
-//         if (GUILayout.Button("Auto Create piece"))
-//         {
-//             script.CreatePiece();
-//         }
-//     }
-// }
-#endif

@@ -155,9 +155,10 @@ public class StageCreator : MonoBehaviour
             else if (typeInt == 2)
                 shapeType = ShapeType.Hex;
 
-            if(IsRangeStageData(i) && !IsDailyStage)
+            StageData stageData = GetStageData(i);
+            if(stageData != null && !IsDailyStage)
             {
-                shapeType = _stageData[i].shapeType;
+                shapeType = stageData.shapeType;
             }
 
             int cols = 3;
@@ -435,22 +436,30 @@ public class StageCreator : MonoBehaviour
         }
     }
 
-    private bool IsRangeStageData(int i)
+    private StageData GetStageData(int index)
     {
-        if( 0 <= i && i < _stageData.Count && _stageData[i] != null)
-            return true;
-        return false;
+        StageData ret = null;
+        if(_stageData != null && 0 <= index)
+        {
+            if( index < _stageData.Count )
+            {
+                ret = _stageData[index];
+            }
+            else if( 9 <= _stageData.Count)
+            {
+                index = _stageData.Count / 9 * 9 + index % 9;
+                if(_stageData.Count <= index)
+                    index -= 9;
+                ret = _stageData[index];
+            }
+        }
+        return ret;
     }
     
     private void GetStageParam(int i, bool isHard, out int cols, out int rows, out int pieceNum, AbstractGridImageSplitter splitter, ShapeType shapeType)
     {
-        if(IsRangeStageData(i) && !IsDailyStage)
-        {
-            cols = _stageData[i].gridX; 
-            rows = _stageData[i].gridY;
-            pieceNum = _stageData[i].pieceNum;
-        }
-        else if(IsDailyStage)
+        StageData stageData = GetStageData(i);
+        if(IsDailyStage)
         {
             cols = 7; 
             rows = 9;
@@ -462,8 +471,33 @@ public class StageCreator : MonoBehaviour
                 pieceNum = 24;
             }
         }
+        else if( stageData != null )
+        {
+            cols = stageData.gridX; 
+            rows = stageData.gridY;
+            // pieceNum = stageData.pieceNum;
+            pieceNum = -1;
+            bool isSetToId = false;
+            if(!string.IsNullOrEmpty(stageData.gridIds))
+            {
+                Vector2Int grid = GetGridToId(stageData.gridIds, i, shapeType);
+                if(grid != Vector2Int.zero)
+                {
+                    cols = grid.x; 
+                    rows = grid.y;
+                    isSetToId = true;
+                }
+            }
+
+            if(isSetToId)
+                Debug.Log($"StageCreator:ステージ{i}をgridIdから設定:{stageData.gridIds} -> ({cols}, {rows})");
+            else
+                Debug.Log($"StageCreator:ステージ{i}をgridIdから設定できませんでした:{stageData.gridIds} -> ({cols}, {rows})");
+        }
+        // 決め打ち
         else
         {
+            Debug.LogWarning($"StageCreator:ステージ{i}を決め打ちで生成しました！！！");
             int paramType = 0;
             if (i < 15)
             {
@@ -573,16 +607,74 @@ public class StageCreator : MonoBehaviour
             splitter._trimShift = new Vector2(278f, 88f);
             splitter._shiftY = -0.89f;
         }
+        if(cols == 7 && rows == 8)
+        {
+            Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
+            // splitter._trimShift = new Vector2(278f, 88f);
+            // splitter._shiftY = -0.7f;
+        }
         if(cols == 7 && rows == 9)
         {
             // splitter._trimShift = new Vector2(278f, 88f);
             splitter._shiftY = -0.7f;
+        }
+        if(cols == 8 && rows == 7)
+        {
+            Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
+            // splitter._trimShift = new Vector2(278f, 88f);
+            // splitter._shiftY = -0.7f;
         }
         if(cols == 8 && rows == 8)
         {
             splitter._trimShift = new Vector2(278f, 88f);
             // splitter._shiftY = -0.7f;
         }
+    }
+
+    // IDからグリッド数の取得を試みる
+    private Vector2Int GetGridToId(string gridIds, int debugIndex, ShapeType shapeType)
+    {
+        Vector2Int ret = Vector2Int.zero;
+        if(string.IsNullOrEmpty(gridIds))
+        {
+            Debug.Log($"StageCreator:GetGridToId:1:{debugIndex}, {shapeType}");
+            return ret;
+        }
+        string[] values = gridIds.Split(" or ");
+        int rendomIndex = UnityEngine.Random.Range(0, values.Length);
+        string value = values[rendomIndex];
+        int gridId = -1;
+        if(int.TryParse(value, out gridId))
+        {
+            Debug.Log($"StageCreator:GetGridToId:2:{debugIndex}, {shapeType}");
+            if(gridId == 3){ ret.x = 3; ret.y = 4; }
+            if(gridId == 4){ ret.x = 4; ret.y = 5; }
+            if(gridId == 5)
+            { 
+                if(shapeType == ShapeType.Triangle){ ret.x = 6; ret.y = 6;  }
+                else{ ret.x = 5; ret.y = 7; }
+            }
+            if(gridId == 6)
+            { 
+                if(shapeType == ShapeType.Triangle){ ret.x = 7; ret.y = 7;  }
+                else{ ret.x = 6; ret.y = 8; }
+            }
+            if(gridId == 7)
+            { 
+                if(shapeType == ShapeType.Triangle){ ret.x = 8; ret.y = 7;  }
+                else{ ret.x = 7; ret.y = 8; }
+            }
+            if(gridId == 8)
+            { 
+                if(shapeType == ShapeType.Triangle){ ret.x = 8; ret.y = 8;  }
+                else{ ret.x = 7; ret.y = 9; }
+            }
+        }
+        else
+        {
+            Debug.Log($"StageCreator:GetGridToId:3:{debugIndex}, {shapeType}");
+        }
+        return ret;
     }
     
 
@@ -606,7 +698,7 @@ public class StageCreator : MonoBehaviour
         foreach (GameObject root in rootGameObjects)
         {
             // GetComponentsInChildren<T>(true) が重要なポイントです。
-            // 第二引数に true を渡すことで、非アクティブなGameObjectにアタッチされたコンポーネントも検索対象に含めます。
+            // 第二引数に true を渡すことで、非アクティブなGameObjecitにアタッチされたコンポーネントも検索対象に含めます。
             T[] components = root.GetComponentsInChildren<T>(true);
 
             // 見つかったコンポーネントを結果リストに追加

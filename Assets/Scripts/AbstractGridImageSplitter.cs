@@ -14,8 +14,8 @@ using UnityEditor.SceneManagement;
 public abstract class AbstractGridImageSplitter : MonoBehaviour
 {
     [Header("Grid Settings")]
-    [Range(1, 20)] public int rows = 2;
     [Range(1, 20)] public int cols = 2;
+    [Range(1, 20)] public int rows = 2;
     [Range(2, 30)] public int _pieceNum = 5;
 
     [Header("Target Range (Center % of image)")]
@@ -148,22 +148,18 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
         // ピースセルをいい感じにピースリストに配置
         List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-        // CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
+        _pieceNum = -1;
+        CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
         // ★★★ 修正点 1: CellSplitterをインスタンス化 ★★★
-        _myCellSplitter = new CellSplitter2(cols, rows, _pieceNum, GetShapeType(), PieceCreateSeed);
+        // _myCellSplitter = new CellSplitter2(cols, rows, -1, GetShapeType(), PieceCreateSeed);
         // ★★★ 修正点 2: インスタンスメソッドを呼び出し ★★★
-        _myCellSplitter.SplitAndRegisterCells(cells, gridPieceListController, null); 
+        // _myCellSplitter.SplitAndRegisterCells(cells, gridPieceListController, null); 
         // Note: _pieceNumはCellSplitter内部で参照されるため、refは不要
 
         // ★★★ 修正点 3: 結果のPatternSeedをインスタンスから取得 ★★★
-        PieceCreateSeed = _myCellSplitter.PatternSeed;
+        // PieceCreateSeed = _myCellSplitter.PatternSeed;
         if (string.IsNullOrEmpty(backUpPieceCreateSeed))
             backUpPieceCreateSeed = PieceCreateSeed;
-
-        // CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, gridPieceListController, GetShapeType(), PieceCreateSeed, null );
-        // PieceCreateSeed = CellSplitter.PatternSeed;
-        // if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-        //     backUpPieceCreateSeed = PieceCreateSeed;
 
         // ピースのセットアップ
         gridPieceListController.SetUpChildrenPieceDragController();
@@ -191,7 +187,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         // ピースセルをいい感じにピースリストに配置
         List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
 
-        _myCellSplitter = new CellSplitter2(cols, rows, _pieceNum, GetShapeType(), PieceCreateSeed);
+        _myCellSplitter = new CellSplitter2(cols, rows, -1, GetShapeType(), PieceCreateSeed);
 
         yield return null;
         

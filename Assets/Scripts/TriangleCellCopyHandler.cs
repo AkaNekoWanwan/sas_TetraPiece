@@ -143,6 +143,8 @@ public class TriangleCellCopyHandler : MonoBehaviour
             outlineRect.anchorMax = setPivot;
             outlineRect.anchorMin = setPivot;
             posY = -addSize / 6f;
+            if(!IsUpSide)
+                posY = -posY;
             // Debug.Log($"setY:1:{outlineSizeDelta.x}, {sizeDelta.x}, {Scale}, {collect}, {posY}");
         }
         // 左だけ他のセルがある

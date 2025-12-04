@@ -14,8 +14,8 @@ using System.Linq;
 [System.Serializable]
 public class StageData
 {
-    
     public string stageId;
+    public string gridIds;
     public string gridXString;
     public string gridYString;
     public string pieceNumString;
@@ -74,30 +74,35 @@ public class CSVLoader : MonoBehaviour
         string[] lines = csvText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         Debug.Log($"総行数: {lines.Length}");
-        for (int i = 1; i < lines.Length; i++)
+        for (int i = 2; i < lines.Length; i++)
         {
             string line = lines[i];
             string[] values = line.Split(',');
+            
+            if(6 <= values.Length)
+                Debug.Log($"行 {i + 1} のLength: {values.Length}, values[5]:{values[5]}");
+            else
+                Debug.Log($"行 {i + 1} のLength: {values.Length}");
 
-            if (values.Length < 5)
+            if (!ChkActiveData(values))
             {
                 Debug.LogWarning($"行 {i + 1} のデータが不完全です。スキップします。");
                 continue;
             }
-
             try
             {
                 StageData data = new StageData();
-                data.stageId = $"Stage_{i}";
-                data.gridXString = values[2];
-                data.gridYString = values[1];
-                data.pieceNumString = values[6];
-                data.shapeTypeString = values[5];
+                data.stageId = $"Stage_{i - 1}";
+                data.gridXString = values[6];
+                data.gridYString = values[7];
+                data.pieceNumString = "-1";
+                data.shapeTypeString = values[1];
+                data.gridIds = values[5];
 
-                int.TryParse(values[2], out data.gridX);
-                int.TryParse(values[1], out data.gridY);
-                int.TryParse(values[6], out data.pieceNum);
-                data.shapeType = ParseShapeType(values[5]);
+                int.TryParse(data.gridXString, out data.gridX);
+                int.TryParse(data.gridYString, out data.gridY);
+                int.TryParse(data.pieceNumString, out data.pieceNum);
+                data.shapeType = ParseShapeType(data.shapeTypeString);
 
                 _classList.Add(data);
                 Debug.Log($"行 {i + 1} をパースしました: {data.ToString()}");
@@ -108,6 +113,21 @@ public class CSVLoader : MonoBehaviour
             }
         }
         Debug.Log($"全データのパースが完了しました。合計 {_classList.Count} クラスが作成されました。");
+    }
+
+    // データの生合成チェック
+    private bool ChkActiveData(string[] values)
+    {
+        if(values.Length < 7)
+            return false;
+        if(string.IsNullOrEmpty(values[1]))
+            return false;
+        if(string.IsNullOrEmpty(values[5]))
+        {
+            if(string.IsNullOrEmpty(values[6]) || string.IsNullOrEmpty(values[7]))
+                return false;
+        }
+        return true;
     }
 
     private ShapeType ParseShapeType(string value)

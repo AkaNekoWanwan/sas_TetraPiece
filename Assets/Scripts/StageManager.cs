@@ -84,6 +84,7 @@ public class StageManager : MonoBehaviour
         {
             GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
             GameDataManager.Initialize();
+            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
         }
         else
         {
