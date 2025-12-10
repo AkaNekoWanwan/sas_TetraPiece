@@ -12,7 +12,6 @@ public class GroupStickController : MonoBehaviour
 
     [Header("安定化再始動の判定設定")]
     public float reactivateAngleThreshold = 9f; // 再始動角度
-    private bool isInStableZone = false;        // 安定ゾーン判定
 
     [Header("判定設定")]
     public float angleThreshold = 6f;  // 安定とみなす角度差

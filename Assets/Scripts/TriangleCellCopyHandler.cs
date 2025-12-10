@@ -130,11 +130,6 @@ public class TriangleCellCopyHandler : MonoBehaviour
         outlineRect.sizeDelta = outlineSizeDelta;
         Vector2 setPivot = new Vector2();
 
-        // float collect = sizeDelta.x / outlineSizeDelta.x / Scale;
-        float collect = 1;
-        if( Scale <= 0f)
-            collect = 0f;
-
         // 周囲に何もない -> 全周にアウトライン表示
         if( !containsL && !containsR && !containsY )
         {
@@ -145,7 +140,6 @@ public class TriangleCellCopyHandler : MonoBehaviour
             posY = -addSize / 6f;
             if(!IsUpSide)
                 posY = -posY;
-            // Debug.Log($"setY:1:{outlineSizeDelta.x}, {sizeDelta.x}, {Scale}, {collect}, {posY}");
         }
         // 左だけ他のセルがある
         if(containsL && !containsR && !containsY)

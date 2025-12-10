@@ -19,6 +19,13 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
     public override void SplitImage()
     {
         base.SplitImage();
+        
+        // 既存の子オブジェクトを全て破棄
+        while (transform.childCount > 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+
         Image img = GetComponent<Image>();
         if (img == null || img.sprite == null)
         {
@@ -26,13 +33,41 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
             return;
         }
 
+        // 💡 実行モードチェック
+        if (!Application.isEditor)
+        {
+            Debug.LogError("この処理はエディターモードでのみ実行可能です。");
+            return;
+        }
+
         Sprite sprite = img.sprite;
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
+        
+        // 💡 読み書き可能チェック
+        if (!srcTex.isReadable)
+        {
+            Debug.LogError("元のテクスチャのインポート設定で 'Read/Write Enabled' が有効になっていません。有効にして再試行してください。");
+            return;
+        }
 
-        // 画像名を取得（拡張子なし）
-        string imageName = Path.GetFileNameWithoutExtension(srcTex.name);
+        // 画像名を取得（アセットパスから取得を試みる）
+        string imageName = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(srcTex));
+        if (string.IsNullOrEmpty(imageName))
+        {
+             imageName = Path.GetFileNameWithoutExtension(srcTex.name);
+        }
         string saveFolder = GetUniqueFolder(outputFolder, imageName);
+
+        if (!Directory.Exists(saveFolder))
+            Directory.CreateDirectory(saveFolder);
+
+        // 💡 パスをAssets/から始まる形に調整
+        string relativeSaveFolder = saveFolder.Replace(Application.dataPath, "Assets");
+        if (!relativeSaveFolder.StartsWith("Assets"))
+        {
+             relativeSaveFolder = "Assets/" + relativeSaveFolder;
+        }
 
         int fullW = (int)rect.width;
         int fullH = (int)rect.height;
@@ -47,10 +82,11 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         float triSize = squareSize / Mathf.Max(rows, cols);
         float triHeight = Mathf.Sqrt(3f) / 2f * triSize;
         SetCellScale(triSize);
+        
+        // すべての画像を一度ディスクに保存し、インポートを完了させるためのリスト
+        List<(int x, int y, string assetPath)> importList = new List<(int x, int y, string assetPath)>();
 
-        if (!Directory.Exists(saveFolder))
-            Directory.CreateDirectory(saveFolder);
-
+        // === 1️⃣ テクスチャの切り出しと保存 ===
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -63,33 +99,76 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 int w = Mathf.RoundToInt(triSize);
                 int h = Mathf.RoundToInt(triHeight);
 
-                if (px + w > srcTex.width || py + h > srcTex.height) continue;
+                // 範囲外チェック
+                if (px + w > srcTex.width || py + h > srcTex.height || px < 0 || py < 0) continue;
 
+                // 💡 CreateTriangleTextureで生成されたTexture2Dをファイルに保存
                 Texture2D triTex = CreateTriangleTexture(srcTex, px, py, w, h, pointingUp);
 
-                string assetPath = $"{saveFolder}/tri_{y}_{x}.png";
-                File.WriteAllBytes(assetPath, triTex.EncodeToPNG());
-
-                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
-                TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(assetPath);
-                if (importer != null)
-                {
-                    importer.textureType = TextureImporterType.Sprite;
-                    importer.alphaIsTransparency = true;
-                    importer.SaveAndReimport();
-                }
+                string fileName = $"tri_{y}_{x}.png";
+                string fullPath = Path.Combine(saveFolder, fileName);
+                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
                 
-                AssetDatabase.Refresh();
-                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceSynchronousImport);
+                File.WriteAllBytes(fullPath, triTex.EncodeToPNG());
+                
+                importList.Add((x, y, assetPath));
+                
+                // 💡 メモリ上のTexture2Dを破棄
+                Object.DestroyImmediate(triTex);
+            }
+        }
+        
+        // === 2️⃣ アセットデータベースの更新と再インポート ===
+        
+        // 全ファイルの書き込み後、一度アセットデータベースを更新してファイル群を認識させる
+        AssetDatabase.Refresh(); 
+
+        foreach (var item in importList)
+        {
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(item.assetPath);
+            if (importer != null)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.alphaIsTransparency = true;
+                importer.isReadable = false; // 読み込み不要なのでOFFに戻す
+                importer.spriteImportMode = SpriteImportMode.Single;
+                
+                importer.SaveAndReimport();
+            }
+        }
+        
+        AssetDatabase.Refresh(); // Spriteアセットが確実に生成されるのを待つ
+
+        // === 3️⃣ UI配置とSprite紐付け ===
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                bool pointingUp = ((x + y) % 2 == 0);
+
+                string fileName = $"tri_{y}_{x}.png";
+                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
+
+                // 💡 永続アセットのロード
+                Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+                
+                if (sp == null)
+                {
+                    // ファイルがロードできない場合はスキップ
+                    Debug.LogError($"Spriteアセットのロード失敗。ファイルを確認してください: {assetPath}");
+                    continue;
+                }
 
                 GameObject answerObj = new GameObject($"answer_{y}_{x}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(UnityEngine.UI.Outline));
                 GameObject cellObj   = new GameObject($"cell_{y}_{x}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(TriangleCellCopyHandler));
 
                 answerObj.transform.SetParent(this.transform, false);
                 cellObj.transform.SetParent(this.transform, false);
+                cellObj.transform.SetAsFirstSibling(); // CellをAnswerより手前に配置
 
-                SetupRectAndSprite(answerObj, img, assetPath, triSize, triHeight, x, y);
-                SetupRectAndSprite(cellObj,   img, assetPath, triSize, triHeight, x, y);
+                // 💡 Sprite引数を追加し、SetupRectAndSpriteを呼び出す
+                SetupRectAndSprite(answerObj, img, sp, triSize, triHeight, x, y);
+                SetupRectAndSprite(cellObj,   img, sp, triSize, triHeight, x, y);
 
                 GridCell answerCell = answerObj.AddComponent<GridCell>();
                 answerCell.isUpSide = pointingUp;
@@ -117,48 +196,27 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 copyHnandler.CellPos = new Vector2Int(x, y);
 
                 UnityEngine.UI.Outline outline = answerObj.GetComponent<UnityEngine.UI.Outline>();
-                if(outline != null && _param != null)
+                UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
+                if((outline != null || outline2 != null ) && _param != null)
                 {
                     outline.effectColor = _param.OutLineColor;
-                    outline.effectDistance = _param.OutLineSize;
+                    outline2.effectColor = _param.OutLineColor;
                 }
-
-                Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-                if (sp != null)
-                {
-                    GameObject copyObj = new GameObject("cell_copy", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-                    copyObj.transform.SetParent(cellObj.transform, false);
-
-                    RectTransform copyRT = copyObj.GetComponent<RectTransform>();
-
-                    float posY = 22f;
-                    if(!pointingUp)
-                        posY *= -1f;
-                    copyRT.localPosition = new Vector3(0, posY, 10);
-                    copyRT.localScale = new Vector3(1.1f, 1.1f, 1.1f);
-                    copyRT.sizeDelta = cellObj.GetComponent<RectTransform>().sizeDelta;
-
-                    Image copyImg = copyObj.GetComponent<Image>();
-                    copyImg.sprite = sp;
-                    if (cellCopyMaterial != null)
-                    {
-                        copyImg.material = cellCopyMaterial;
-                    }
-                    if(_param != null)
-                    {
-                        copyImg.material = _param.OutLineMaterial;
-                        copyImg.color = _param.OutLineColor;
-                    }
-                }
+                outline.effectDistance = Vector2.one * 2f;
+                outline2.effectDistance = Vector2.one * 3f;
             }
         }
+        
+        // === 4️⃣ コピー表示用オブジェクト生成 ===
+        // UI生成ループからコピー生成処理を分離し、後でまとめて実行
+        CreateCellCopies();
+
+        // 💡 最終的に変更をUnityに保存させる
+        EditorUtility.SetDirty(this.gameObject);
+        AssetDatabase.SaveAssets();
 
         Debug.Log($"三角形分割が完了！保存先: {saveFolder}");
-        
-        // UnityEditor.EditorApplication.delayCall += () => CreateCellCopies();
-        CreateCellCopies();
     }
-#endif
 
     void CreateCellCopies()
     {
@@ -170,10 +228,11 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 Image cellImg = child.GetComponent<Image>();
                 if (cellImg == null || cellImg.sprite == null) continue;
 
+                
                 GameObject copyObj = new GameObject("cell_copy", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-                copyObj.transform.SetParent(child, false);
-
                 AnswerGridPos ansPos = child.GetComponent<AnswerGridPos>();
+                CreateShadow(ansPos, child.GetComponent<RectTransform>().sizeDelta);
+                copyObj.transform.SetParent(child, false);
                 float posY = -22f;
                 if (!ansPos.isUpSide)
                     posY *= -1f;
@@ -243,9 +302,8 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                    (p.y <= slope * (p.x - w / 2f) + h);
         }
     }
-
-#if UNITY_EDITOR
-    void SetupRectAndSprite(GameObject obj, Image parentImg, string assetPath,
+    
+    void SetupRectAndSprite(GameObject obj, Image parentImg, Sprite sp,
                             float triSize, float triHeight, int gridX, int gridY)
     {
         RectTransform parentRT = parentImg.GetComponent<RectTransform>();
@@ -267,20 +325,12 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         rtChild.anchoredPosition = new Vector2(offsetX, offsetY);
 
         Image cImg = obj.GetComponent<Image>();
-        Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-        if (sp == null)
-        {
-            Texture2D tex = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-            if (tex != null)
-            {
-                sp = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-            }
-        }
-
+        
+        // 💡 ロード処理を削除し、受け取ったSpriteをそのまま使用
         if (sp != null)
             cImg.sprite = sp;
         else
-            Debug.LogError($"Spriteロード失敗: {assetPath}");
+            Debug.LogError($"Spriteが設定されていません。");
     }
 #endif
 }

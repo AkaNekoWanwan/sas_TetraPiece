@@ -6,8 +6,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement; // SceneManagerを使用するために必要
-using System.Collections;
 using System; // ShapeTypeを使用するために必要
+using System.Threading.Tasks;
+using System.Threading;
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
 #endif
@@ -27,6 +28,7 @@ public class StageCreator : MonoBehaviour
     public bool IsWaitBeforeSplit = true;
     public bool IsWaitAfterSplit = true;
     public bool IsDailyStage = true;
+    public bool IsLog = true;
     public List<StageData> _stageData = default;
 
     public List<StageInfo> _targetStages = default;
@@ -34,7 +36,31 @@ public class StageCreator : MonoBehaviour
 
     public List<AbstractGridImageSplitter> AllSplitters;
     public List<AbstractGridImageSplitter> _createPieceplitterList = new List<AbstractGridImageSplitter>();
+
+    public List<int> pieceListCounts = default;
+    public Sprite _shadowSpriteSquare   = default;
+    public Sprite _shadowSpriteHex      = default;
+    public Sprite _shadowSpriteTriangle = default;
     
+    // --- 【追加 1】プレハブ保存のフラグとパス設定 ---
+    [Header("Prefab Saving Settings")]
+    public bool IsSavePrefabAfterSplit = false; // プレハブ保存のON/OFFフラグ
+    [Tooltip("プレハブを保存するAssets/以下の相対パス。例: Prefabs/Stages")]
+    public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
+    // ------------------------------------------------
+    private void OnValidate() {
+        if(!IsLog)
+            return;
+        pieceListCounts = new List<int>();
+        Debug.Log("わわわ");
+        int i = 0;
+        foreach(AbstractGridImageSplitter spritter in AllSplitters)
+        {
+            pieceListCounts.Add(spritter._pieceNum);
+            Debug.Log($"{i}:{spritter._pieceNum}");
+            i++;
+        }
+    }
 
     private Coroutine _creationCoroutine = null;
 
@@ -52,7 +78,10 @@ public class StageCreator : MonoBehaviour
         if(!IsNewLogic)
             _creationCoroutine = StartCoroutine(CreateStagesCoroutine());
         else
-            _creationCoroutine = StartCoroutine(CreateStagesCoroutine2());
+        {
+            // _creationCoroutine = StartCoroutine(CreateStagesCoroutine2());
+            CreateStagesAsync();
+        }
     }
 
     // ステージパラメータ設定
@@ -76,7 +105,7 @@ public class StageCreator : MonoBehaviour
         // 2. 初期化処理の抽象化
         // 全ステージ取得 (AbstractGridImageSplitterを継承した全てを取得)
         List<AbstractGridImageSplitter> allSplitters = GetAllSplitters();
-        _seeds = new HashSet<string>();
+        // _seeds = new HashSet<string>();
         AllSplitters = new List<AbstractGridImageSplitter>();
 
         // スプリッターを種類ごとに分類し、参照用ステージを弾き、シード値を取得する処理を統一
@@ -90,7 +119,7 @@ public class StageCreator : MonoBehaviour
         foreach (var splitter in allSplitters)
         {
             // 参考用のステージは弾く
-            Debug.Log($"splitter:{splitter.GetType().Name}:{splitter.transform.parent.parent.name}, {splitter.isPrefs}, {splitter.PieceCreateSeed}");
+            Debug.Log($"StageCreator:splitter:{splitter.GetType().Name}:{splitter.transform.parent.parent.name}, {splitter.isPrefs}, {splitter.PieceCreateSeed}");
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
             stageObject.SetActive(false);
             if (splitter.isPrefs || splitter.isCreative)
@@ -98,20 +127,20 @@ public class StageCreator : MonoBehaviour
                 stageObject.name = splitter.isPrefs ? "Prefs" : "Creative";
                 continue; // 参照用ステージはリストに追加しない
             }
-            stageObject.name = $"Stage{index + 1} SetWait";
+            stageObject.name = $"Stage{index + 1:D3} SetWait";
             
             index++;
 
             // シード値取得
-            string pieceCreateSeed = splitter.PieceCreateSeed;
-            if (!string.IsNullOrEmpty(splitter.PieceCreateSeed))
-            {
-                // シード値が既存のものなら作り直す
-                if(_seeds.Contains(pieceCreateSeed))
-                    splitter.PieceCreateSeed = "";
-                else
-                    _seeds.Add(splitter.PieceCreateSeed);
-            }
+            // string pieceCreateSeed = splitter.PieceCreateSeed;
+            // if (!string.IsNullOrEmpty(splitter.PieceCreateSeed))
+            // {
+            //     // シード値が既存のものなら作り直す
+            //     if(_seeds.Contains(pieceCreateSeed))
+            //         splitter.PieceCreateSeed = "";
+            //     else
+            //         _seeds.Add(splitter.PieceCreateSeed);
+            // }
 
             // 種類ごとに分類 (ここではGetType()やis演算子で判断)
             if (splitter is GridImageSplitter)
@@ -124,7 +153,7 @@ public class StageCreator : MonoBehaviour
                 Debug.LogError($"未定義のSplitter型が検出されました: {splitter.GetType().Name}");
         }
 
-        Debug.Log($"全ステージセットアップ開始！:Square:{squareSplitters.Count}, Triangle:{triSplitters.Count}, Hex:{hexSplitters.Count}");
+        Debug.Log($"StageCreator:全ステージセットアップ開始！:Square:{squareSplitters.Count}, Triangle:{triSplitters.Count}, Hex:{hexSplitters.Count}");
 
         // 3. ステージ設定処理の統一と並び替えロジック
         int sumCount = squareSplitters.Count + hexSplitters.Count + triSplitters.Count;
@@ -158,6 +187,7 @@ public class StageCreator : MonoBehaviour
             StageData stageData = GetStageData(i);
             if(stageData != null && !IsDailyStage)
             {
+                Debug.Log($"StageCreator:StageCreator:shapeType:{i}, {stageData.shapeType}");
                 shapeType = stageData.shapeType;
             }
 
@@ -176,6 +206,7 @@ public class StageCreator : MonoBehaviour
                         currentSplitter = squareSplitters[indexSquare];
                         currentSplitter.targetPercent = 100;
                         indexSquare++;
+                        currentSplitter._shadowSprite = _shadowSpriteSquare;
                     }
                     break;
                 case ShapeType.Triangle:
@@ -184,6 +215,7 @@ public class StageCreator : MonoBehaviour
                         currentSplitter = triSplitters[indexTri];
                         currentSplitter.targetPercent = 120;
                         indexTri++;
+                        currentSplitter._shadowSprite = _shadowSpriteTriangle;
                     }
                     break;
                 case ShapeType.Hex:
@@ -192,6 +224,7 @@ public class StageCreator : MonoBehaviour
                         currentSplitter = hexSplitters[indexHex];
                         currentSplitter.targetPercent = 120;
                         indexHex++;
+                        currentSplitter._shadowSprite = _shadowSpriteHex;
                     }
                     break;
             }
@@ -216,22 +249,22 @@ public class StageCreator : MonoBehaviour
             
             if (string.IsNullOrEmpty(currentSplitter.PieceCreateSeed))
             {
-                Debug.Log($"更新対象！{stageObject.name}, シード値未設定");
+                Debug.Log($"StageCreator:更新対象！{stageObject.name}, シード値未設定");
                 currentSplitter.isSkip = false;
             }
             if (currentSplitter.cols != cols)
             {
-                Debug.Log($"更新対象！{stageObject.name}, cols {currentSplitter.cols} -> {cols}");
+                Debug.Log($"StageCreator:更新対象！{stageObject.name}, cols {currentSplitter.cols} -> {cols}");
                 currentSplitter.isSkip = false;
             }
             if (currentSplitter.rows != rows)
             {
-                Debug.Log($"更新対象！{stageObject.name}, rows {currentSplitter.rows} -> {rows}");
+                Debug.Log($"StageCreator:更新対象！{stageObject.name}, rows {currentSplitter.rows} -> {rows}");
                 currentSplitter.isSkip = false;
             }
             if (currentSplitter._pieceNum != pieceNum)
             {
-                Debug.Log($"更新対象！{stageObject.name}, pieceNum {currentSplitter._pieceNum} -> {pieceNum}");
+                Debug.Log($"StageCreator:更新対象！{stageObject.name}, pieceNum {currentSplitter._pieceNum} -> {pieceNum}");
                 currentSplitter.isSkip = false;
             }
             if(IsForce)
@@ -260,6 +293,7 @@ public class StageCreator : MonoBehaviour
             AbstractGridImageSplitter splitter = stageInfo.GetComponentInChildren<AbstractGridImageSplitter>();
             if(splitter != null)
             {
+                splitter.PrefabSavePath = PrefabSavePath;
                 _targetSplitters.Add(splitter);
             }
         }
@@ -271,12 +305,12 @@ public class StageCreator : MonoBehaviour
         if(_targetSplitters != null && 0 < _targetSplitters.Count)
         {
             allSplitters = _targetSplitters;
-            Debug.Log($"ターゲット指定:{_targetSplitters.Count}個");
+            Debug.Log($"StageCreator:ターゲット指定:{_targetSplitters.Count}個");
         }
         else
         {
             allSplitters = FindAllInScene<AbstractGridImageSplitter>();
-            Debug.Log($"ターゲット未指定:シーン内全取得:{allSplitters.Count}個");
+            Debug.Log($"StageCreator:ターゲット未指定:シーン内全取得:{allSplitters.Count}個");
         }
         return allSplitters;
     }
@@ -284,12 +318,12 @@ public class StageCreator : MonoBehaviour
     // ステージ作成コルーチン:ステージを一つずつ順番に作成していく
     public IEnumerator CreateStagesCoroutine()
     {
-        Debug.Log("ステージ生成コルーチン:実行！");
+        Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
         yield return null;
 
         if(IsPreSetUp)
         {
-            Debug.Log("ステージ生成コルーチン:PreSetUp");
+            Debug.Log($"StageCreator:ステージ生成コルーチン:PreSetUp");
             PreSetUp();
             yield return null;
         }
@@ -300,19 +334,21 @@ public class StageCreator : MonoBehaviour
         {
             if (beforeStage != null)
             {
-                beforeStage.SetActive(false);
+                if(IsWaitBeforeSplit || IsWaitAfterSplit)
+                    beforeStage.SetActive(false);
             }
             AbstractGridImageSplitter splitter = _createPieceplitterList[i];
             if(splitter.isSkip)
             {
-                Debug.Log($"ステージ生成コルーチン:{i}をスキップ");
+                Debug.Log($"StageCreator:ステージ生成コルーチン:{i}をスキップ");
                 continue;
             }
-            if(_seeds != null)
-                splitter.avoidPatternSeeds = _seeds.ToList();
+            // if(_seeds != null)
+            //     splitter.avoidPatternSeeds = _seeds.ToList();
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
-            stageObject.SetActive(true);
-            Debug.Log($"ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
+            if(IsWaitBeforeSplit || IsWaitAfterSplit)
+                stageObject.SetActive(true);
+            Debug.Log($"StageCreator:ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
             if(IsWaitBeforeSplit)
             {
                 yield return null;
@@ -324,16 +360,23 @@ public class StageCreator : MonoBehaviour
             }
             splitter.CreatePiece();
             splitter.isSkip = true;
-            if(_seeds == null)
-                _seeds = new HashSet<string>();
-            _seeds.Add(splitter.PieceCreateSeed);
+            // if(_seeds == null)
+            //     _seeds = new HashSet<string>();
+            // _seeds.Add(splitter.PieceCreateSeed);
             beforeStage = stageObject;
-            if(i % 2 == 0)
-                EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+            // if(i % 2 == 0)
+            //     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
             if(IsWaitAfterSplit)
             {
                 yield return null;
             }
+            
+            // --- 【変更 2-1】処理完了後のプレハブ保存呼び出し ---
+            // if (IsSavePrefabAfterSplit)
+            // {
+            //     SaveAsPrefab(stageObject);
+            // }
+            // --------------------------------------------------------
         }
 
         yield return null;
@@ -342,71 +385,147 @@ public class StageCreator : MonoBehaviour
     // ステージ作成コルーチン:各ステージの生成処理を一斉に開始する
     public IEnumerator CreateStagesCoroutine2()
     {
-        Debug.Log("ステージ生成コルーチン:実行！");
+        Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
         yield return null;
 
         if(IsPreSetUp)
         {
-            Debug.Log("ステージ生成コルーチン:PreSetUp");
+            Debug.Log($"StageCreator:ステージ生成コルーチン:PreSetUp");
             PreSetUp();
             yield return null;
         }
         List<Coroutine> runningTasks = new List<Coroutine>();
-
+        List<AbstractGridImageSplitter> activeSplitters = new List<AbstractGridImageSplitter>(); // 実行中のスプリッターを追跡
 
         for(int i = 0; i < _createPieceplitterList.Count; i++)
         {
             AbstractGridImageSplitter splitter = _createPieceplitterList[i];
-            if (beforeStage != null)
-            {
-                beforeStage.SetActive(false);
-            }
             if(splitter.isSkip)
             {
-                Debug.Log($"ステージ生成コルーチン:{i}をスキップ");
+                Debug.Log($"StageCreator:ステージ生成コルーチン:{i}をスキップ");
                 continue;
             }
-            if(_seeds != null)
-                splitter.avoidPatternSeeds = _seeds.ToList();
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
-            stageObject.SetActive(true);
-            Debug.Log($"ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
-
-            runningTasks.Add(StartCoroutine(splitter.CreatePieceCoroutine()));
+            Debug.Log($"StageCreator:ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
+            StartCoroutine(splitter.CreatePieceCoroutine());
+            activeSplitters.Add(splitter); // 実行中のスプリッターとしてリストに追加
 
             splitter.isSkip = true;
-            if(_seeds == null)
-                _seeds = new HashSet<string>();
-            _seeds.Add(splitter.PieceCreateSeed);
             beforeStage = stageObject;
         }
-        while (runningTasks.Count > 0)
-        {
-            // このフレームで、すべての実行中のコルーチンに処理時間を与える
-            yield return null; 
-            
-            // 完了したコルーチンを正確に追跡・削除するロジックは煩雑なため、
-            // 完了したコルーチンをリストから削除するのではなく、
-            // 完了するまで十分な時間待機するか、すべてのスプリッターが完了フラグを立てるのを待ちます。
-            
-            // 簡潔にするため、ここではすべてのタスクが完了するのを待つと仮定します。
-            // （実際には、すべてのスプリッターの完了を監視する外部フラグが必要です）
-            
-            // 処理を継続するために、ここでは単純にリストを空にします。
-            runningTasks.Clear(); 
-        }
-
         yield break;
     }
+
+    // 追加分
+    public async Task CreateStagesAsync()
+    {
+        Debug.Log($"StageCreator:ステージ生成Async:実行！");
+
+        if(IsPreSetUp)
+        {
+            PreSetUp();
+            Debug.Log($"StageCreator:ステージ生成Async:PreSetUp, {_createPieceplitterList.Count}");
+        }
+        const int MAX_PARALLELISM = 8; 
+        using var semaphore = new SemaphoreSlim(MAX_PARALLELISM); 
+        
+        List<Task> runningTasks = new List<Task>();
+        // List<AbstractGridImageSplitter> activeSplitters = new List<AbstractGridImageSplitter>(); // 実行中のスプリッターを追跡
+        
+        for(int i = 0; i < _createPieceplitterList.Count; i++)
+        {
+            int index = i;
+            AbstractGridImageSplitter splitter = _createPieceplitterList[i];
+            if(splitter.isSkip)
+            {
+                Debug.Log($"StageCreator:ステージ生成Async:{i}をスキップ");
+                continue;
+            }
+            GameObject stageObject = splitter.transform.parent.parent.gameObject;
+            Debug.Log($"StageCreator:ステージ生成Async:ステージ生成：{i}, {stageObject.name}");
+
+            // 1. セマフォを待機：
+            //    ここで、アクティブなタスク数が上限に達していた場合、次のスロットが空くまで待機します。
+            //    (この待機は非同期なので、メインスレッドはブロックされません)
+            await semaphore.WaitAsync();
+
+            // 2. タスクを起動し、リストに追加
+            //    Task.Runの完了後、finallyブロックでセマフォを解放するようにすることで、
+            //    確実に次のタスクにスロットを渡します。
+            Task pieceTask = splitter.CreatePieceAsync().ContinueWith(t => 
+            {
+                // 処理が完了したら（成功/失敗にかかわらず）、セマフォを解放
+                semaphore.Release();
+                Debug.Log($"StageCreator:ステージ生成Async:ステージ生成完了：{index}, {stageObject.name}");
+            }, TaskScheduler.Default); // バックグラウンドスレッドで実行
+            
+            runningTasks.Add(pieceTask);
+        }
+        // 全てのタスクが完了するのを待つ
+        await Task.WhenAll(runningTasks);
+
+        Debug.Log($"StageCreator:ステージ生成Async:全てのステージの生成が完了しました！");
+    }
+
+    // --- 【追加 3】プレハブ保存処理メソッド ---
+    /// <summary>
+    /// 指定されたゲームオブジェクトを、PrefabSavePathに、その名前でプレハブとして保存（または上書き）します。
+    /// </summary>
+    private void SaveAsPrefab(GameObject targetObject)
+    {
+        if (!IsSavePrefabAfterSplit) return;
+        
+        // プレハブの完全なパスを構築
+        string path = Path.Combine(PrefabSavePath, targetObject.name + ".prefab");
+        
+        // パスを標準化し、Assets/で始まっていることを確認
+        if (!path.StartsWith("Assets/"))
+        {
+            path = Path.Combine("Assets", PrefabSavePath, targetObject.name + ".prefab");
+        }
+        
+        // ディレクトリが存在しない場合は作成
+        string directory = Path.GetDirectoryName(path);
+        if (!AssetDatabase.IsValidFolder(directory))
+        {
+            // ディレクトリを再帰的に作成（Assets/Prefabs/Stages のような構造に対応）
+            string currentPath = "Assets";
+            string[] subDirs = PrefabSavePath.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string subDir in subDirs)
+            {
+                string newPath = Path.Combine(currentPath, subDir);
+                if (!AssetDatabase.IsValidFolder(newPath))
+                {
+                    AssetDatabase.CreateFolder(currentPath, subDir);
+                }
+                currentPath = newPath;
+            }
+            AssetDatabase.Refresh();
+        }
+
+        // プレハブを作成または上書き
+        // targetObjectはシーン内のGameObject
+        GameObject prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(targetObject, path, InteractionMode.UserAction);
+
+        if (prefab != null)
+        {
+            Debug.Log($"StageCreator:【Prefab Saved】: {targetObject.name} を {path} に保存/上書きしました。", prefab);
+        }
+        else
+        {
+            Debug.LogError($"【Prefab Save Failed】: {targetObject.name} のプレハブ保存に失敗しました。", targetObject);
+        }
+    }
+    // ----------------------------------------------------
 
     // 三角四角六角の共通処理
     private void CommonSplitterProcces(GameObject splitter, int i, ref bool isSkip)
     {
         GameObject stageObject = splitter.transform.parent.parent.gameObject;
         if(!IsDailyStage)
-            stageObject.name = $"Stage{i + 1}";
+            stageObject.name = $"Stage{i + 1:D3}";
         else
-            stageObject.name = $"DailyStage{i + 1}";
+            stageObject.name = $"DailyStage{i + 1:D3}";
 
         // stageObject.SetActive(true);
         if (0 < i)
@@ -428,7 +547,7 @@ public class StageCreator : MonoBehaviour
         if (stageImage.sprite != setSprite)
         {
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
-            Debug.Log($"更新対象！{stageObject.name}, 画像差し替え:{stageImage.sprite}->{setSprite}");
+            Debug.Log($"StageCreator:更新対象！{stageObject.name}, 画像差し替え:{stageImage.sprite}->{setSprite}");
             stageImage.sprite = setSprite;
             stageImage.SetNativeSize();
             // スキップフラグを下す
@@ -436,8 +555,14 @@ public class StageCreator : MonoBehaviour
         }
     }
 
+    // private int GetStageIndex(int index)
+    // {
+    //     int ret = -1;
+    //     return ret;
+    // }
     private StageData GetStageData(int index)
     {
+        int i = index;
         StageData ret = null;
         if(_stageData != null && 0 <= index)
         {
@@ -453,6 +578,7 @@ public class StageCreator : MonoBehaviour
                 ret = _stageData[index];
             }
         }
+        Debug.Log($"StageCreator:StageCreator:GetStageData:{i} -> {index}: _stageData?{_stageData != null}");
         return ret;
     }
     
@@ -490,9 +616,9 @@ public class StageCreator : MonoBehaviour
             }
 
             if(isSetToId)
-                Debug.Log($"StageCreator:ステージ{i}をgridIdから設定:{stageData.gridIds} -> ({cols}, {rows})");
+                Debug.Log($"StageCreator:StageCreator:ステージ{i}をgridIdから設定:{stageData.gridIds} -> ({cols}, {rows})");
             else
-                Debug.Log($"StageCreator:ステージ{i}をgridIdから設定できませんでした:{stageData.gridIds} -> ({cols}, {rows})");
+                Debug.Log($"StageCreator:StageCreator:ステージ{i}をgridIdから設定できませんでした:{stageData.gridIds} -> ({cols}, {rows})");
         }
         // 決め打ち
         else
@@ -566,6 +692,8 @@ public class StageCreator : MonoBehaviour
         {
             splitter._trimShift = new Vector2(247f, 68.8f);
             splitter._shiftY = -1.6f;
+            if( shapeType == ShapeType.Hex)
+                splitter.targetPercent = 110;
         }
         if(cols == 4)
         {
@@ -576,6 +704,8 @@ public class StageCreator : MonoBehaviour
         {
             splitter._trimShift = new Vector2(247.5f, 68f);
             splitter._shiftY = -1.28f;
+            if( shapeType == ShapeType.Hex)
+                splitter.targetPercent = 115;
         }
         if(cols == 5)
         {
@@ -585,7 +715,10 @@ public class StageCreator : MonoBehaviour
         if(cols == 5 && rows == 7)
         {
             // splitter._trimShift = new Vector2(260f, 87f);
-            splitter._shiftY = -0.955f;
+            // splitter._shiftY = -0.955f;
+            splitter._shiftY = -0.85f;
+            if( shapeType == ShapeType.Hex)
+                splitter.targetPercent = 115;
         }
         if(cols == 5 && rows == 8)
         {
@@ -594,7 +727,7 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 6)
         {
-            splitter._trimShift = new Vector2(212f, 68f);
+            splitter._trimShift = new Vector2(206f, 69f);
             splitter._shiftY = -0.89f;
         }
         if(cols == 6 && rows == 8)
@@ -604,14 +737,18 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 7 && rows == 7)
         {
-            splitter._trimShift = new Vector2(278f, 88f);
+            splitter._trimShift = new Vector2(212f, 68f);
             splitter._shiftY = -0.89f;
         }
         if(cols == 7 && rows == 8)
         {
-            Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
+            // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
             // splitter._trimShift = new Vector2(278f, 88f);
-            // splitter._shiftY = -0.7f;
+            splitter._shiftY = -0.75f;
+            if( shapeType == ShapeType.Square)
+                splitter.targetPercent = 88;
+            else
+                splitter.targetPercent = 105;
         }
         if(cols == 7 && rows == 9)
         {
@@ -620,14 +757,16 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 8 && rows == 7)
         {
-            Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
-            // splitter._trimShift = new Vector2(278f, 88f);
+            // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
+            splitter._trimShift = new Vector2(234f, 129f);
             // splitter._shiftY = -0.7f;
+            if( shapeType == ShapeType.Triangle)
+                splitter.targetPercent = 130;
         }
         if(cols == 8 && rows == 8)
         {
             splitter._trimShift = new Vector2(278f, 88f);
-            // splitter._shiftY = -0.7f;
+            splitter._shiftY = -0.69f;
         }
     }
 
@@ -637,7 +776,7 @@ public class StageCreator : MonoBehaviour
         Vector2Int ret = Vector2Int.zero;
         if(string.IsNullOrEmpty(gridIds))
         {
-            Debug.Log($"StageCreator:GetGridToId:1:{debugIndex}, {shapeType}");
+            Debug.Log($"StageCreator:StageCreator:GetGridToId:1:{debugIndex}, {shapeType}");
             return ret;
         }
         string[] values = gridIds.Split(" or ");
@@ -646,7 +785,7 @@ public class StageCreator : MonoBehaviour
         int gridId = -1;
         if(int.TryParse(value, out gridId))
         {
-            Debug.Log($"StageCreator:GetGridToId:2:{debugIndex}, {shapeType}");
+            Debug.Log($"StageCreator:StageCreator:GetGridToId:2:{debugIndex}, {shapeType}");
             if(gridId == 3){ ret.x = 3; ret.y = 4; }
             if(gridId == 4){ ret.x = 4; ret.y = 5; }
             if(gridId == 5)
@@ -672,7 +811,7 @@ public class StageCreator : MonoBehaviour
         }
         else
         {
-            Debug.Log($"StageCreator:GetGridToId:3:{debugIndex}, {shapeType}");
+            Debug.Log($"StageCreator:StageCreator:GetGridToId:3:{debugIndex}, {shapeType}");
         }
         return ret;
     }
@@ -768,3 +907,7 @@ public class StageCreatorEditor : Editor
     }
 }
 #endif
+
+
+
+

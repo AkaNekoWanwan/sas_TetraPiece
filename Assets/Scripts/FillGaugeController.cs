@@ -25,9 +25,6 @@ public class FillGaugeController : MonoBehaviour
     
     [Header("デバッグ")]
     public bool showDebugLog = false;
-    
-    private float targetFillAmount = 0f;
-    
     public enum ProgressCalculationMode
     {
         PieceProximity,    // ピースの近接度ベース

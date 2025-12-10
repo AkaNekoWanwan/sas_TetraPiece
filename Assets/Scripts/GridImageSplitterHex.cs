@@ -11,10 +11,16 @@ using System.Collections.Generic;
 public class GridImageSplitterHex : AbstractGridImageSplitter
 {
 #if UNITY_EDITOR
-    // public void SplitImageHex()
     public override void SplitImage()
     {
         base.SplitImage();
+        
+        // 既存の子オブジェクトを全て破棄 (EditorUtilityを使う)
+        while (transform.childCount > 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
+
         Image img = GetComponent<Image>();
         if (img == null || img.sprite == null)
         {
@@ -22,14 +28,39 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
             return;
         }
 
+        // 💡 実行モードチェック
+        if (!Application.isEditor)
+        {
+            Debug.LogError("この処理はエディターモードでのみ実行可能です。");
+            return;
+        }
+
         Sprite sprite = img.sprite;
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
+        
+        // 読み書き可能なテクスチャか確認
+        if (!srcTex.isReadable)
+        {
+            Debug.LogError("元のテクスチャのインポート設定で 'Read/Write Enabled' が有効になっていません。有効にして再試行してください。");
+            return;
+        }
 
-        string imageName = Path.GetFileNameWithoutExtension(srcTex.name);
+        // パスの整備
+        string imageName = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(srcTex));
+        if (string.IsNullOrEmpty(imageName))
+        {
+             imageName = Path.GetFileNameWithoutExtension(srcTex.name);
+        }
         string saveFolder = GetUniqueFolder(outputFolder, imageName);
         if (!Directory.Exists(saveFolder))
             Directory.CreateDirectory(saveFolder);
+
+        string relativeSaveFolder = saveFolder.Replace(Application.dataPath, "Assets");
+        if (!relativeSaveFolder.StartsWith("Assets"))
+        {
+             relativeSaveFolder = "Assets/" + relativeSaveFolder;
+        }
 
         int fullW = (int)rect.width;
         int fullH = (int)rect.height;
@@ -52,7 +83,10 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
         int startY = (int)(rect.y + (fullH - usedHeight) / 2f);
         SetCellScale(hexWidth);
 
-        // === 分割ループ ===
+        // すべての画像を一度ディスクに保存し、インポートを完了させるためのリスト
+        List<(int x, int y, string assetPath)> importList = new List<(int x, int y, string assetPath)>();
+
+        // === 1. テクスチャ生成とファイル書き込み ===
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
@@ -61,41 +95,67 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 int py = startY + Mathf.RoundToInt(y * hexHeight + (x % 2 == 1 ? hexHeight / 2f : 0));
                 int w = Mathf.RoundToInt(hexWidth);
                 int h = Mathf.RoundToInt(hexHeight);
-                if (px + w > srcTex.width || py + h > srcTex.height)
+                
+                // 範囲外チェック
+                if (px + w > srcTex.width || py + h > srcTex.height || px < 0 || py < 0)
                     continue;
+                
+                string fileName = $"hex_{y}_{x}.png";
+                string fullPath = Path.Combine(saveFolder, fileName);
+                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
 
-                // === テクスチャ作成 ===
+                // === 六角形マスク付きテクスチャ生成 ===
                 Texture2D hexTex = CreateHexTexture(srcTex, px, py, w, h);
-                string assetPath = $"{saveFolder}/hex_{y}_{x}.png";
-                File.WriteAllBytes(assetPath, hexTex.EncodeToPNG());
+                
+                // ディスクに保存
+                File.WriteAllBytes(fullPath, hexTex.EncodeToPNG());
+                
+                importList.Add((x, y, assetPath));
+                
+                // 💡 メモリ上のテクスチャを即座に破棄
+                Object.DestroyImmediate(hexTex);
+            }
+        }
 
-                // === アセット登録 ===
-                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
-                TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(assetPath);
-                if (importer != null)
-                {
-                    importer.textureType = TextureImporterType.Sprite;
-                    importer.spriteImportMode = SpriteImportMode.Single;
-                    importer.alphaIsTransparency = true;
-                    importer.SaveAndReimport();
-                }
+        // === 2. アセットデータベースの更新とインポート設定（永続化処理） ===
+        
+        // 全ファイルの書き込み後、一度アセットデータベースを更新してファイル群を認識させる
+        AssetDatabase.Refresh(); 
 
-                // 確実に反映させる
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+        foreach (var item in importList)
+        {
+            // 個別ファイルのインポート設定
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(item.assetPath);
+            if (importer != null)
+            {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.alphaIsTransparency = true;
+                importer.isReadable = false; // 読み込み不要なのでOFFに戻す
+                
+                // 💡 Sprite ModeをSingleに明示的に設定
+                importer.spriteImportMode = SpriteImportMode.Single;
+                
+                importer.SaveAndReimport();
+            }
+        }
+        
+        // 再度更新を強制し、Spriteアセットが確実に生成されるのを待つ
+        AssetDatabase.Refresh();
 
-                // === Spriteロード（確実に同期） ===
+        // === 3. UI生成と永続Spriteの紐付け ===
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                string fileName = $"hex_{y}_{x}.png";
+                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
+                
+                // 💡 ディスクから永続アセットをロード
                 Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-                if (sp == null)
-                {
-                    Debug.LogWarning($"⚠️ Spriteロード失敗: {assetPath} → 再試行中");
-                    AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceSynchronousImport);
-                    sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-                }
 
                 if (sp == null)
                 {
-                    Debug.LogError($"❌ 最終的にSpriteをロードできませんでした: {assetPath}");
+                    Debug.LogError($"❌ Spriteアセットのロード失敗: {assetPath}");
                     continue;
                 }
 
@@ -105,6 +165,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 answerObj.transform.SetParent(this.transform, false);
                 cellObj.transform.SetParent(this.transform, false);
 
+                // Spriteの紐付けはSetupRectAndSprite内で実施
                 SetupRectAndSprite(answerObj, img, sp, radius, hexWidth, hexHeight, x, y);
                 SetupRectAndSprite(cellObj, img, sp, radius, hexWidth, hexHeight, x, y);
 
@@ -127,10 +188,13 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                     cellImg.material = _param.CellsMaterial;
                 }
                 UnityEngine.UI.Outline outline = answerObj.GetComponent<UnityEngine.UI.Outline>();
-                if(outline != null && _param != null)
+                UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
+                outline.effectDistance = Vector2.one * 2f;
+                outline2.effectDistance = Vector2.one * 3f;
+                if((outline != null || outline2 != null ) && _param != null)
                 {
                     outline.effectColor = _param.OutLineColor;
-                    outline.effectDistance = _param.OutLineSize;
+                    outline2.effectColor = _param.OutLineColor;
                 }
 
                 Vector3 setPos = answerObj.transform.position;
@@ -143,6 +207,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 
 
                 // === cell_copy 生成（アウトライン付き）===
+                CreateShadow(ansPos, cellObj.GetComponent<RectTransform>().sizeDelta);
                 GameObject copyObj = new GameObject("cell_copy", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
                 copyObj.transform.SetParent(cellObj.transform, false);
 
@@ -152,7 +217,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 copyRT.sizeDelta = cellObj.GetComponent<RectTransform>().sizeDelta;
 
                 Image copyImg = copyObj.GetComponent<Image>();
-                copyImg.sprite = sp;
+                copyImg.sprite = sp; // 💡 永続Spriteを紐付け
                 copyImg.color = Color.white;
                 if (cellCopyMaterial != null)
                 {
@@ -165,6 +230,11 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 }
             }
         }
+        
+        // 💡 最終的に変更をUnityに保存させる
+        EditorUtility.SetDirty(this.gameObject);
+        AssetDatabase.SaveAssets();
+
 
         Debug.Log($"✅ 六角形分割が完了！保存先: {saveFolder}");
     }
@@ -234,6 +304,6 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
         rtChild.anchoredPosition = new Vector2(offsetX, offsetY);
 
         Image cImg = obj.GetComponent<Image>();
-        cImg.sprite = sp;
+        cImg.sprite = sp; // 💡 永続Spriteを紐付け
     }
 }

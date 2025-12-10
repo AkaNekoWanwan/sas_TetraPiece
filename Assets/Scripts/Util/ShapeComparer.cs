@@ -12,6 +12,7 @@ public static class ShapeComparer
     /// <returns>形が一致すれば true、そうでなければ false を返します。</returns>
     public static bool CheckShapeEquality(List<Vector2Int> shapeA, List<Vector2Int> shapeB, ShapeType shapeType)
     {
+        Debug.Log($"ShapeComparer:形状一致チェック:{shapeA == null}, {shapeB == null}, {shapeA.Count}, {shapeB.Count}");
         // 1. 要素数が異なる場合は、形は絶対に一致しない。
         if (shapeA == null || shapeB == null || shapeA.Count != shapeB.Count)
         {
@@ -25,14 +26,10 @@ public static class ShapeComparer
             return true;
         }
         // 四角ならとりあえず無視する
-        if(shapeType == ShapeType.Square)
-        {
-            return true;
-        }
-        if(shapeType == ShapeType.Triangle)
-        {
-            return true;
-        }
+        // if(shapeType == ShapeType.Square)
+        // {
+        //     return true;
+        // }
 
         // 2. shapeBの要素を、オフセットを使ってハッシュセットに格納する。
         // これにより、O(1)で点の存在チェックが可能になる。
@@ -47,7 +44,7 @@ public static class ShapeComparer
             Vector2Int baseOffset = shapeB[i] - shapeA[0];
             bool matchFound = true;
 
-            // Debug.Log($"比較情報: {shapeType}, {baseOffset.x}, {baseOffset.x % 2}, {shapeA[0]}, {shapeB[i]}");
+            // Debug.Log($"ShapeComparer: baseOffset->{baseOffset}");
 
             // 4. この仮定のオフセットを使って、shapeAの全要素を移動させてみる。
             // 移動後の点がsetBの中に全て存在するか確認する。
@@ -82,17 +79,22 @@ public static class ShapeComparer
                 if (!setB.Contains(translatedPoint))
                 {
                     matchFound = false;
-                    break;
                 }
+
+                Debug.Log($"ShapeComparer:比較情報: {shapeType}, baseOffset:{baseOffset}, offset:{offset}, shapeA[0]:{shapeA[0]}, shapeA[{j}]:{shapeA[j]}, shapeB[{i}]:{shapeB[i]}, matchFound:{matchFound}");
+                if(!matchFound)
+                    break;
             }
 
             // 5. shapeAの全要素がsetBにマッチしたら、形は一致している。
             if (matchFound)
             {
+                Debug.Log($"ShapeComparer:形状の一致を検知！");
                 return true;
             }
         }
 
+        Debug.Log($"ShapeComparer:捜査の末一致が見つかりませんでした: {shapeA}, {shapeB}");
         // どのオフセットを試しても完全な一致が見つからなかった場合。
         return false;
     }

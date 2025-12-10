@@ -63,7 +63,11 @@ public class MovePieces : MonoBehaviour
         Debug.Log("[初期化] MovePieces初期化開始");
 
         // 各ピースの初期化
-        PieceTransforms[] pieces = FindObjectsOfType<PieceTransforms>();
+        PieceTransforms[] pieces = FindObjectsByType<PieceTransforms>(FindObjectsSortMode.None);
+        // 変更後（以前と同じソート順を維持）
+        // PieceTransforms[] pieces = FindObjectsByType<PieceTransforms>(FindObjectsSortMode.InstanceID);
+        // 非アクティブなものも含め、ソートなしで取得
+        // PieceTransforms[] pieces = FindObjectsByType<PieceTransforms>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Debug.Log($"[初期化] 発見されたピース数: {pieces.Length}");
         
         foreach (var pieceTransform in pieces)

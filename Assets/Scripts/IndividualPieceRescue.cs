@@ -109,44 +109,6 @@ public class IndividualPieceRescue : MonoBehaviour
         if (mainCamera == null || myRenderer == null) return true;
 
         return true;
-        // カメラからピースの中心に向かってレイキャスト
-        Vector3 pieceCenter = myRenderer.bounds.center;
-        Vector3 cameraPosition = mainCamera.transform.position;
-        Vector3 direction = (pieceCenter - cameraPosition).normalized;
-        float distance = Vector3.Distance(cameraPosition, pieceCenter);
-        
-        // レイキャストで遮蔽物をチェック
-        RaycastHit[] hits = Physics.RaycastAll(cameraPosition, direction, distance);
-        
-        // ヒットしたオブジェクトの中に、自分以外のPieceTransformsがあるかチェック
-        foreach (RaycastHit hit in hits)
-        {
-            // 自分自身は無視
-            if (hit.collider.transform == myTransform) continue;
-            
-            PieceTransforms hitPiece = hit.collider.GetComponent<PieceTransforms>();
-            if (hitPiece != null)
-            {
-                // 他のピースに遮られている
-                return false;
-            }
-            
-            // 親階層をチェック
-            Transform parent = hit.collider.transform.parent;
-            while (parent != null)
-            {
-                if (parent == myTransform) break; // 自分自身の子オブジェクトは無視
-                
-                PieceTransforms parentPiece = parent.GetComponent<PieceTransforms>();
-                if (parentPiece != null)
-                {
-                    return false;
-                }
-                parent = parent.parent;
-            }
-        }
-        
-        return true;
     }
     
     // 隠れピース用のアウトラインを表示

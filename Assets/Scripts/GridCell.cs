@@ -29,10 +29,10 @@ public class GridCell : MonoBehaviour
 
     // アウトラインの色合を変えたら全体に共有
 #if UNITY_EDITOR
-    private bool _isActice = false;
+    private bool _isActive = false;
 
     private void OnValidate() {
-        if(!_isActice)
+        if(!_isActive)
             return;
         Debug.Log("ああああああああああ:1");
         if(UnityEditor.EditorApplication.isPlaying)

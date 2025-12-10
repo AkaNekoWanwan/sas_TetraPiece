@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -49,11 +50,16 @@ public class PieceDragController : MonoBehaviour,
     private bool isDragging = false;
     public List<string> avoidPatternSeeds = default;
     public GridPieceListController _listCtrl = default;
+    public List<AnswerGridPos> _answerGridPoses = default;
 
     public List<Vector2Int> _cellsPositions = null;
 	public List<Vector2Int> _comparisonPositions = null;
+    public bool IsRandomPiece = false;  // 選択肢３個のうち１つのランダム枠か
     private Vector2Int workPos = Vector2Int.zero;
     private Vector3 lastSnappedPos = Vector3.zero;
+    private int addQueue = 0;
+    private StageManager _stageManager = default;
+    private bool _isMove = false;
 
     void Awake()
     {
@@ -68,13 +74,17 @@ public class PieceDragController : MonoBehaviour,
         _listCtrl = GetComponentInParent<GridPieceListController>();
         SetOutlineAlpha(1f, 0f, true);
 
-        AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
-        for (int i = 0; i < cells.Length; i++)
+        // AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
+        _answerGridPoses = GetComponentsInChildren<AnswerGridPos>(false).ToList();
+        for (int i = 0; i < _answerGridPoses.Count; i++)
 		{
-			workPos.x = cells[i].x;
-			workPos.y = cells[i].y;
+			workPos.x = _answerGridPoses[i].x;
+			workPos.y = _answerGridPoses[i].y;
 			_cellsPositions.Add(workPos);
+            // if(_answerGridPoses[i].shadowTransform != null)
+            //     _answerGridPoses[i].shadowTransform.gameObject.SetActive(false);
 		}
+        _stageManager = FindAnyObjectByType<StageManager>();
     }
 
     private void OnValidate()
@@ -120,6 +130,7 @@ public class PieceDragController : MonoBehaviour,
 
     void RestoreChildrenMaterials()
     {
+        // foreach (AnswerGridPos child in _answerGridPoses)
         foreach (Transform child in transform)
         {
             if (originalMaterials.ContainsKey(child))
@@ -133,6 +144,8 @@ public class PieceDragController : MonoBehaviour,
 
             foreach (Transform grandChild in child)
             {
+                if(grandChild == child.GetComponent<AnswerGridPos>().shadowTransform)
+                    continue;
                 if (originalMaterials.ContainsKey(grandChild))
                 {
                     Image grandImg = grandChild.GetComponent<Image>();
@@ -209,6 +222,7 @@ public class PieceDragController : MonoBehaviour,
 
     void ReturnToOrigin()
     {
+        // Debug.Log("サイズ不具合チェック：１");
         _moveTween?.Kill();
         if(!isCreative)
             _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad);
@@ -217,6 +231,7 @@ public class PieceDragController : MonoBehaviour,
 
     void ReturnToOriginWithOccupancy()
     {
+        // Debug.Log("サイズ不具合チェック：２");
         _moveTween?.Kill();
         _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad);
         rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
@@ -267,7 +282,7 @@ bool SnapChildrenToGridsAndRecenterParent()
         children.Add(child);
         
         // ★ 全てのanswerGridの中から最も近いものを探す
-        GridCell nearestAnswerCell = FindNearestAnswerGrid(child.position);
+        GridCell nearestAnswerCell = FindNearestAnswerGrid(child.position, child);
         
         if (nearestAnswerCell == null)
         {
@@ -304,6 +319,7 @@ bool SnapChildrenToGridsAndRecenterParent()
     }
     if (!ShapeComparer.CheckShapeEquality(_cellsPositions, _comparisonPositions, _listCtrl.ShapeType))
     {
+        Debug.LogWarning($"スナップ失敗: 形状の相対位置の不一致");
         return false;
     }
 
@@ -335,6 +351,11 @@ bool SnapChildrenToGridsAndRecenterParent()
     // ★ 親を瞬時に新しい中心に移動
     rt.position = newParentCenter;
     // ★ 追加: スナップ成功時の位置を記録
+    if(lastSnappedPos == newParentCenter)
+        _isMove = false;
+    else
+        _isMove = true;
+
     lastSnappedPos = newParentCenter;
 
     // ★ 子のワールド座標を元の位置に戻す（親が動いたのでローカル座標が変わっているため）
@@ -360,17 +381,20 @@ bool SnapChildrenToGridsAndRecenterParent()
         Debug.Log($"スナップ完了: {gameObject.name}");
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
-        AudioManager.Instance.PlayMergeSound();
     });
 
     return true;
 }
 
 // ★ 全てのanswerGridの中から最も近いものを探す新しいメソッド
-GridCell FindNearestAnswerGrid(Vector3 worldPos)
+GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
 {
     float minDist = float.MaxValue;
     GridCell nearest = null;
+    AnswerGridPos agp = null;
+    
+    if(_listCtrl.ShapeType == ShapeType.Triangle)
+        agp = child.gameObject.GetComponent<AnswerGridPos>();
 
     // gridParent配下の全GridCellをチェック
     foreach (Transform gridChild in gridParent)
@@ -378,10 +402,23 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         GridCell gc = gridChild.GetComponent<GridCell>();
         if (gc != null)
         {
+            // 三角形なら上下の向きも見る
+            if(_listCtrl.ShapeType == ShapeType.Triangle)
+            {
+                if(agp != null)
+                {
+                    if(agp.isUpSide != gc.isUpSide)
+                        continue;
+                }
+                else
+                {
+                    Debug.Log($"FindNearestAnswerGrid：三角形でAnswerGridPosが取得できなかったよ:{gridChild.name}");
+                }
+            }
             // ★ このGridCellが誰かのanswerGridかどうかをチェック
             // (gridParent内の全てのセルをanswerGridとして扱う想定)
             float dist = Vector2.Distance(worldPos, gridChild.position);
-            if (dist < minDist)
+            if (dist < minDist )
             {
                 minDist = dist;
                 nearest = gc;
@@ -413,6 +450,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
     void ResetChildren(List<Transform> children, List<Vector3> savedWorldPos, Vector3 parentBefore)
     {
+        // Debug.Log("サイズ不具合チェック：３");
         rt.position = FixZ(parentBefore);
         rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
 
@@ -427,6 +465,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
     {
         Debug.Log($"[ResetChildrenPartial] {gameObject.name} を復元開始 (処理中のインデックス: {processedIndex})");
 
+        // Debug.Log("サイズ不具合チェック：４");
         rt.position = FixZ(parentBefore);
         rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
 
@@ -440,6 +479,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
     public Tween ReturnToList()
     {
+        // Debug.Log("サイズ不具合チェック：５");
         return rt.DOScale(initialScale, 0.15f).SetEase(Ease.OutBack);
     }
 
@@ -479,6 +519,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
     bool CheckAnswer()
     {
         foreach (Transform child in transform)
+        // foreach (AnswerGridPos agp in _answerGridPoses)
         {
             AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
             if (agp != null && agp.answerGrid != null)
@@ -494,18 +535,14 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         RemoveChildrenMaterials();
         
         Debug.Log($"Piece {gameObject.name} completed the answer!");
-        FindAnyObjectByType<StageManager>().CountDownPic();
-        var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
-        this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear).OnComplete(() =>
-        {
-            this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.12f).SetEase(Ease.Linear);
-        });
+        _stageManager.CountDownPic();
         return true;
     }
 
     void FadeOutAnswerOutline()
     {
         foreach (Transform child in transform)
+        // foreach (AnswerGridPos agp in _answerGridPoses)
         {
             AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
             if (agp != null && agp.answerGrid != null)
@@ -523,6 +560,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
     void SnapChildrenZToAnswer()
     {
         foreach (Transform child in transform)
+        // foreach (AnswerGridPos agp in _answerGridPoses)
         {
             AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
             if (agp != null && agp.answerGrid != null)
@@ -534,22 +572,22 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         }
     }
 
-    void TryMergeNearbyPieces()
-    {
-        var allPieces = FindObjectsOfType<PieceDragController>();
-        foreach (var other in allPieces)
-        {
-            if (other == this) continue;
-            if (other.isLocked || this.isLocked) continue;
+    // void TryMergeNearbyPieces()
+    // {
+    //     var allPieces = FindObjectsOfType<PieceDragController>();
+    //     foreach (var other in allPieces)
+    //     {
+    //         if (other == this) continue;
+    //         if (other.isLocked || this.isLocked) continue;
 
-            float dist = Vector3.Distance(rt.position, other.transform.position);
-            if (dist < 20f && CanMerge(other))
-            {
-                DoMerge(other);
-                break;
-            }
-        }
-    }
+    //         float dist = Vector3.Distance(rt.position, other.transform.position);
+    //         if (dist < 20f && CanMerge(other))
+    //         {
+    //             DoMerge(other);
+    //             break;
+    //         }
+    //     }
+    // }
 
     bool CanMerge(PieceDragController other)
     {
@@ -727,8 +765,9 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         Destroy(other.gameObject, 0.05f);
 
         bool snapResult = SnapChildrenToGridsAndRecenterParent();
+        Debug.Log($"OnEndDrag.DoMerge:配置チェック:{snapResult}");
         RemoveChildrenMaterials();
-        FindAnyObjectByType<StageManager>().CountDownPic();
+        _stageManager.CountDownPic();
 
         if(1 <= CellCopyHandlers.Count)
             StartCoroutine(CellCopyHandlers[0].UpdateAllCellCopyTransformCoroutine(CellCopyHandlers));
@@ -737,6 +776,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         _cellsPositions.Clear();
         AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
         for (int i = 0; i < cells.Length; i++)
+        // for (int i = 0; i < _answerGridPoses.Count; i++)
 		{
 			workPos.x = cells[i].x;
 			workPos.y = cells[i].y;
@@ -764,6 +804,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
 
     void SetOutlineAlpha(float targetAlpha, float duration, bool isFirst = false)
     {
+        // _answerGridPoses
         foreach (Transform child in transform)
         {
             TriangleCellCopyHandler triOutlineHandler = child.GetComponent<TriangleCellCopyHandler>();
@@ -775,51 +816,72 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
             // if(triOutlineHandler != null)
             //     scale = triOutlineHandler.Scale;
             RectTransform childRect = child.GetComponent<RectTransform>();
-            foreach (Transform grandChild in child)
+            AnswerGridPos gridPos = child.GetComponent<AnswerGridPos>();
+            RectTransform outLineRect = gridPos.outLine;
+            if(outLineRect != null)
             {
-                RectTransform grandChildRect = grandChild.GetComponent<RectTransform>();
-                // アウトラインの大きさ設定
-                if(isFirst)
+                UpdateOutLine(outLineRect, childRect, scale, targetAlpha, duration, isFirst);
+            }
+            else
+            {
+                foreach (Transform grandChild in child)
                 {
-                    Vector2 setSize = childRect.sizeDelta;
-                    if(_listCtrl.ShapeType == ShapeType.Hex)
-                    {
-                        setSize.x += 13f;
-                        setSize.y += 13f;
-                    }
-                    if(_listCtrl.ShapeType == ShapeType.Square)
-                    {
-                        setSize.x += 4.25f;
-                        setSize.y += 4.25f;
-                    }
-                    if(_listCtrl.ShapeType != ShapeType.Triangle)
-                        grandChildRect.sizeDelta = setSize;
-                }
-
-                Image img = grandChild.GetComponent<Image>();
-                if (targetAlpha == 1f)
-                {
-                    grandChildRect.localScale = Vector3.one * scale;
-                }
-                else
-                {
-                    grandChildRect.localScale = Vector3.one;
-                }
-                if (img != null)
-                {
-                    Debug.Log($"Setting outline alpha for {grandChild.name} to {targetAlpha} over {duration}s");
-                    if (img.material.name.IndexOf("(Instance)") == -1)
-                    {
-                        img.material = Instantiate(img.material);
-                    }
-
-                    DOTween.Kill(img.material);
-                   
-                    img.material.DOFade(targetAlpha, duration).OnComplete(() =>
-                    {
-                    });
+                    if(grandChild == gridPos.shadowTransform)
+                        continue;
+                    outLineRect = grandChild.GetComponent<RectTransform>();
+                    UpdateOutLine(outLineRect, childRect, scale, targetAlpha, duration, isFirst);
                 }
             }
+            // foreach (Transform grandChild in child)
+            // {
+            //     RectTransform grandChildRect = grandChild.GetComponent<RectTransform>();
+            
+            // }
+        }
+    }
+
+    void UpdateOutLine(RectTransform outLine, RectTransform cellRT, float scale, float targetAlpha, float duration, bool isFirst)
+    {
+        // アウトラインの大きさ設定
+        if(isFirst)
+        {
+            Vector2 setSize = cellRT.sizeDelta;
+            if(_listCtrl.ShapeType == ShapeType.Hex)
+            {
+                setSize.x += 13f;
+                setSize.y += 13f;
+            }
+            if(_listCtrl.ShapeType == ShapeType.Square)
+            {
+                setSize.x += 4.25f;
+                setSize.y += 4.25f;
+            }
+            if(_listCtrl.ShapeType != ShapeType.Triangle)
+                outLine.sizeDelta = setSize;
+        }
+
+        Image img = outLine.gameObject.GetComponent<Image>();
+        if (targetAlpha == 1f)
+        {
+            outLine.localScale = Vector3.one * scale;
+        }
+        else
+        {
+            outLine.localScale = Vector3.one;
+        }
+        if (img != null)
+        {
+            // Debug.Log($"Setting outline alpha for {grandChild.name} to {targetAlpha} over {duration}s");
+            if (img.material.name.IndexOf("(Instance)") == -1)
+            {
+                img.material = Instantiate(img.material);
+            }
+
+            DOTween.Kill(img.material);
+            
+            img.material.DOFade(targetAlpha, duration).OnComplete(() =>
+            {
+            });
         }
     }
 
@@ -902,7 +964,8 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         SetOutlineAlpha(1f, 0f);
         
         // ★ RenderQueueを変更
-        SetRenderQueue(3004, 3003);
+        SetRenderQueue(3004 + addQueue, 3003 + addQueue);
+        addQueue++;
 
         VibratorManager.Vibrate(70, 40);
 
@@ -930,6 +993,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
         isDragging = false;
 
         bool snapStarted = SnapChildrenToGridsAndRecenterParent();
+        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted}");
         if (!snapStarted)
         {
             ReleaseOccupiedCells();
@@ -951,12 +1015,12 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
                     // ★ 変更箇所: shouldShake: false を渡してシェイクを抑制
                     _listCtrl.NotifyReturned(this, shouldShake: false); 
                 }
+                // Debug.Log("サイズ不具合チェック：５");
                 rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
             }
             
             return;
         }
-
         DOVirtual.DelayedCall(0.4f, () =>
         {
             var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
@@ -969,6 +1033,21 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
             {
                 isLocked = true;
                 SetOutlineAlpha(0f, 0f);
+
+                Sequence seq = DOTween.Sequence();
+                foreach (Transform child in transform)
+                // foreach (AnswerGridPos agp in _answerGridPoses)
+                {
+                    AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
+                    if (agp != null && agp.answerGrid != null)
+                    {
+                        agp.answerGrid.SetActive(false);
+                    }
+                }
+                AudioManager.Instance.PlayMergeSound();
+                var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
+                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear));
+                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.15f).SetEase(Ease.Linear));
             }
             else
             {
@@ -976,8 +1055,10 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
                 SetOutlineAlpha(1f, 0f);
             }
 
-            TryMergeNearbyPieces();
+            // TryMergeNearbyPieces();
         });
+        if(_isMove)
+            _stageManager.CountDownMove();
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -990,7 +1071,11 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
             // ★ RenderQueueを元に戻す
             RestoreRenderQueue();
             
-            ReturnToOrigin();
+            // ReturnToOrigin();
+        }
+        if(lastSnappedPos == Vector3.zero && !isDragging)
+        {
+            rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         }
     }
 
@@ -1035,15 +1120,15 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos)
     // ★ RenderQueueを元に戻すメソッド
     void RestoreRenderQueue()
     {
-        foreach (var kvp in originalRenderQueues)
-        {
-            if (kvp.Key != null)
-            {
-                kvp.Key.renderQueue = kvp.Value;
-                Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
-            }
-        }
-        originalRenderQueues.Clear();
+        // foreach (var kvp in originalRenderQueues)
+        // {
+        //     if (kvp.Key != null)
+        //     {
+        //         kvp.Key.renderQueue = kvp.Value;
+        //         Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
+        //     }
+        // }
+        // originalRenderQueues.Clear();
     }
 
     // PieceDragController クラス内に追加

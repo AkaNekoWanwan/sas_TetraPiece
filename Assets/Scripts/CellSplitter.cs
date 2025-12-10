@@ -96,6 +96,7 @@ public static class CellSplitter
 
     // ピースのグループ化リスト (キー: セル数)
     private static Dictionary<int, List<PieceShape>> _shapesByCellCount;
+    // private static List<Vector2Int> _neighbors;
 
     // ピースの最大セル数 (枝刈り、ユーティリティ用に利用)
     private static int _maxCellCount = 0;
@@ -103,7 +104,7 @@ public static class CellSplitter
     // ★ 静的コンストラクタで一度だけ初期化
     static CellSplitter()
     {
-        Debug.Log($"CellSplitter：ピース初期化！！");
+        // Debug.Log($"CellSplitter：ピース初期化！！");
         // C#の静的コンストラクタは、クラスが初めて使用される前に一度だけ実行されます。
         // ここで全ての形状を定義し、実行時（Run-time）の初期化コストを削減します。
         
@@ -332,15 +333,17 @@ public static class CellSplitter
         // 作成したピース情報をもとにピースオブジェクトに反映させる
         // コントローラーの前準備
         orderPieceNum = _successfulPlacements.Count;
-        gridPieceListController.pieceNum = orderPieceNum;
-        bool backupFlg = gridPieceListController.isOverrayPieceNum;
-        gridPieceListController.isOverrayPieceNum = false;
-        gridPieceListController.PreSetPieceDragControllers();
-        gridPieceListController.isOverrayPieceNum = backupFlg;
-        List<PieceDragController> pieceList = gridPieceListController.gameObject.GetComponentsInChildren<PieceDragController>().ToList();
-        
-        // セルを対応するピースの子オブジェクトにする
-        RegisterCellsAsPieces(pieceList, cells);
+        if(gridPieceListController != null)
+        {
+            gridPieceListController.pieceNum = orderPieceNum;
+            bool backupFlg = gridPieceListController.isOverrayPieceNum;
+            gridPieceListController.isOverrayPieceNum = false;
+            gridPieceListController.PreSetPieceDragControllers();
+            gridPieceListController.isOverrayPieceNum = backupFlg;
+            List<PieceDragController> pieceList = gridPieceListController.gameObject.GetComponentsInChildren<PieceDragController>().ToList();   
+            // セルを対応するピースの子オブジェクトにする
+            RegisterCellsAsPieces(pieceList, cells);
+        }
     }
 
     // セルを対応するピースの子オブジェクトにする
@@ -356,7 +359,7 @@ public static class CellSplitter
             // そのピースの形状(基礎セルからの相対位置)情報を取得
             List<GridCoord> Cells = cellsInfo.Shape.Cells;
 
-            Debug.Log($"Debug:{i}, Count:{_successfulPlacements.Count}, cellNum:{Cells.Count}, shapeName:{cellsInfo.Shape.Name}");
+            // Debug.Log($"Debug:{i}, Count:{_successfulPlacements.Count}, cellNum:{Cells.Count}, shapeName:{cellsInfo.Shape.Name}");
 
             // 三角形アウトライン用
             List<TriangleCellCopyHandler> triCellCopyList;
@@ -395,18 +398,20 @@ public static class CellSplitter
 
     private static void SetAvailableShapes()
     {
-        switch (CurrentShapeType)
+        _availableShapes = GetPieceShapes(CurrentShapeType);
+    }
+
+    public static List<PieceShape> GetPieceShapes(ShapeType shapeType)
+    {
+        switch (shapeType)
         {
             case ShapeType.Square:
             default:
-                _availableShapes = new List<PieceShape>(SQUARE_SHAPES);
-                break;
+                return new List<PieceShape>(SQUARE_SHAPES);
             case ShapeType.Hex:
-                _availableShapes = new List<PieceShape>(HEX_SHAPES);
-                break;
+                return new List<PieceShape>(HEX_SHAPES);
             case ShapeType.Triangle:
-                _availableShapes = new List<PieceShape>(TRIANGLE_SHAPES);
-                break;
+                return new List<PieceShape>(TRIANGLE_SHAPES);
         }
     }
 
@@ -421,9 +426,9 @@ public static class CellSplitter
         if (_isPatternSeedActive)
         {
             PreSolve();
-            Debug.Log($"--- 第1パス開始: パターンシードの再現 ---");
             success = Solve(0, 0, true, true);
             isRandom = false;
+            // Debug.Log($"CellSplitter.CreatePiecePlacements:--- 第1パス開始: パターンシードの再現 ---, success:{success}");
         }
 
         // =========================================================
@@ -431,6 +436,7 @@ public static class CellSplitter
         // =========================================================
         if (!success)
         {
+            _isPatternSeedActive = false;
             const int MAX_UNIQUE_ATTEMPTS = 5; // ユニーク生成の試行回数上限
             List<string> _avoidSeeds = avoidPatternSeeds ?? new List<string>();
             
@@ -454,14 +460,14 @@ public static class CellSplitter
                 if (!currentAttemptSuccess)
                 {
                     PreSolve();
-                    _grid = new int[GridX, GridY];
-                    for(int x = 0; x < GridX; x++)
-                    {
-                        for(int y = 0; y < GridY; y++)
-                        {
-                            Debug.Log($"_grid[{x},{y}]={_grid[x, y]}");
-                        }
-                    }
+                    // _grid = new int[GridX, GridY];
+                    // for(int x = 0; x < GridX; x++)
+                    // {
+                    //     for(int y = 0; y < GridY; y++)
+                    //     {
+                    //         Debug.Log($"_grid[{x},{y}]={_grid[x, y]}");
+                    //     }
+                    // }
                     if (Solve(0, 0, false)) currentAttemptSuccess = true;
                 }
 
@@ -475,35 +481,37 @@ public static class CellSplitter
                         // ユニーク性が確認された！
                         success = true;
                         PatternSeed = newPatternSeed;
-                        Debug.Log($"<color=green>第{attempt + 2}パス成功 (ユニーク)！</color>");
+                        // Debug.Log($"<color=green>第{attempt + 2}パス成功 (ユニーク)！</color>");
                         break; // ループを抜けて成功
                     }
-                    else
-                    {
-                        Debug.LogWarning($"生成されたパターンは既知のシードと重複しました。再試行します (試行回数: {attempt + 1})");
-                    }
+                    // else
+                    // {
+                    //     Debug.LogWarning($"生成されたパターンは既知のシードと重複しました。再試行します (試行回数: {attempt + 1})");
+                    // }
                 }
             }
             
-            if (!success)
-            {
-                Debug.LogError($"ランダム探索 ({MAX_UNIQUE_ATTEMPTS}回試行) でユニークなパターンの生成に失敗しました。");
-            }
+            // if (!success)
+            // {
+            //     Debug.LogError($"ランダム探索 ({MAX_UNIQUE_ATTEMPTS}回試行) でユニークなパターンの生成に失敗しました。");
+            // }
         }
         
         if (success)
         {
-            Debug.Log($"<color=green>敷き詰め完了！</color> 最終ピース数: {_pieceIdCounter - 1}, 使用パターンシード: {PatternSeed}");
+            // Debug.Log($"<color=green>敷き詰め完了！</color> 最終ピース数: {_pieceIdCounter - 1}, 使用パターンシード: {PatternSeed}");
+            MergeSmallPieces();
+            
             if(isRandom)
             {
                 // ランダム探索で成功した場合、新しいパターンシードを生成・更新
                 PatternSeed = EncodePlacement(_successfulPlacements);
             }
         }
-        else
-        {
-            Debug.LogError($"全パス失敗。グリッドサイズ ({GridX}x{GridY}) は敷き詰め不可能です。");
-        }
+        // else
+        // {
+        //     Debug.LogError($"全パス失敗。グリッドサイズ ({GridX}x{GridY}) は敷き詰め不可能です。");
+        // }
     }
     
     // ピースの使用フラグをリセット
@@ -527,30 +535,6 @@ public static class CellSplitter
         
         // ランダム探索がブレないよう、乱数生成器もリセット（再初期化）
         _random = new System.Random(_randomSeed);
-    }
-
-
-    // ========== ピース形状の定義例（ポリオミノ） ==========
-    // 四角形セル用
-    private static void InitializeShapesSquare()
-    {
-
-    }
-    // 六角形セル用
-    private static void InitializeShapesHex()
-    {
-        
-    }
-    // 三角形セル用
-    private static void InitializeShapesTriangle()
-    {
-
-    }
-
-    private static int SubMaxUse(int value, int subNum)
-    {
-        int ret = Mathf.Max(value - subNum, 0);
-        return ret;
     }
 
     // ========== バックトラッキングの中核ロジック ==========
@@ -582,17 +566,22 @@ public static class CellSplitter
     private static bool Solve(int startX, int startY, bool enforceCount, bool isPatternSeedActive = false) // 引数を追加
     {
         // 探索に使用するピースのリストを決定
-        List<PieceShape> shapesToTry;
-        Debug.Log($"CellSplitter:1:{_availableShapes.Count}, startX:{startX}, startY:{startY}");
+        Debug.Log($"CellSplitter.Solve:1:{_availableShapes.Count}, startX:{startX}, startY:{startY}, isPatternSeedActive:{isPatternSeedActive}");
         // Count厳守モードで、ピース数が上限を超えた場合は失敗 (早期終了)
         // 終了条件: すべてのセルが埋まった
         if (!FindNextEmptyCell(out startX, out startY))
         {
-            if (enforceCount && _pieceIdCounter - 1 != TargetPieceCount) return false;
+            // Debug.Log($"CellSplitter.Solve, 全て埋まった！, _isPatternSeedActive:{_isPatternSeedActive}, _pieceIdCounter:{_pieceIdCounter}, enforceCount:{enforceCount}, TargetPieceCount:{TargetPieceCount}");
+            if(_isPatternSeedActive)
+                return true;
+            if (_pieceIdCounter != -1 && enforceCount && _pieceIdCounter - 1 != TargetPieceCount) return false;
             // ランダム探索で成功した場合、CreatePiecePlacementsでPatternSeedを更新する
             return true;
         }
-        Debug.Log($"CellSplitter:2, startX:{startX}, startY:{startY}");
+        // Debug.Log($"CellSplitter.Solve:2, startX:{startX}, startY:{startY}");
+        // ★ ここで次の探索原点として origin を定義
+        GridCoord origin = new GridCoord(startX, startY);
+
         // ★ リファクタリング箇所: パターン復元モードの処理を専用関数に委譲
         if (isPatternSeedActive)
         {
@@ -600,26 +589,22 @@ public static class CellSplitter
         }
         // ★ 1. ランダム探索モード: 抽選ロジックを実装 ★
         // セル数とその抽選確率に基づいて、試行するセル数の順序リストを生成
-        List<int> availableCellCounts = GetShuffledCellCounts();
-
-        Debug.Log($"CellSplitter:3:{availableCellCounts.Count}, startX:{startX}, startY:{startY}");
-        
+        List<int> availableCellCounts = GetShuffledCellCounts();        
         // 試行済みだが失敗したセル数を除外するためのセット
         HashSet<int> failedCellCounts = new HashSet<int>();
+
+        // Debug.Log($"CellSplitter.Solve:3:{availableCellCounts.Count}, startX:{startX}, startY:{startY}");
         
         while(failedCellCounts.Count < availableCellCounts.Count)
         {
             // 1. 確率に基づいてセル数を抽選 (失敗済みのセル数は除外)
             int selectedCellCount = SelectCellCountByProbability(availableCellCounts, failedCellCounts);
-            Debug.Log($"CellSplitter:4:{selectedCellCount}, startX:{startX}, startY:{startY}");
-            if (selectedCellCount == -1) // 抽選対象が残っていない
-            {
-                break;
-            }
-            Debug.Log($"CellSplitter:5:{selectedCellCount}, startX:{startX}, startY:{startY}");
+            // Debug.Log($"CellSplitter.Solve:4:{selectedCellCount}, startX:{startX}, startY:{startY}");
+            if (selectedCellCount == -1) break;  // 抽選対象が残っていない
+            // Debug.Log($"CellSplitter.Solve:5:{selectedCellCount}, startX:{startX}, startY:{startY}");
             // 2. 指定のセル数のピースから UseCount が最も少ないものから優先して選択
             //    (同UseCount内ではランダムに試行)
-            List<PieceShape> candidates = GetPrioritizedCandidates(selectedCellCount);
+            List<PieceShape> candidates = GetPrioritizedCandidates(selectedCellCount, origin);
 
             // 試行済みだが失敗したピースを除外するためのセット（この再帰レベル内のみ）
             HashSet<PieceShape> failedShapes = new HashSet<PieceShape>();
@@ -629,11 +614,10 @@ public static class CellSplitter
             {
                 // UseCountが最も少ないグループの中からランダムに選択
                 PieceShape shape = SelectRandomCandidate(candidates, failedShapes);
-                Debug.Log($"CellSplitter:6:tryGetShape, startX:{startX}, startY:{startY}");
-                
+                // Debug.Log($"CellSplitter.Solve:6:tryGetShape, startX:{startX}, startY:{startY}");
                 if (shape == null) break; // 選択対象なし (本来はcandidates.Count == failedShapes.Countでループ終了)
-                Debug.Log($"CellSplitter:7:{shape.Name}, startX:{startX}, startY:{startY}");
-                GridCoord origin = new GridCoord(startX, startY);
+
+                // Debug.Log($"CellSplitter.Solve:7:{shape.Name}, startX:{startX}, startY:{startY}");
 
                 // ピースの配置、再帰、後戻りのコアロジック
                 if (TryPlaceAndSolve(origin, shape, enforceCount))
@@ -653,49 +637,62 @@ public static class CellSplitter
         return false;
     }
 
-    // ※ TryPlaceAndSolve メソッドは、Solveのコアロジックを抽出したものです
+    // TryPlaceAndSolve メソッド全体の修正
     private static bool TryPlaceAndSolve(GridCoord origin, PieceShape shape, bool enforceCount)
-    {
+    {   
         // MaxUse制約チェック
         if (0 <= shape.MaxUse && shape.MaxUse <= shape.UseCount) return false;
+
+        // 1. シフト量の計算
+        GridCoord shift = CalculateOptimalShift(shape); 
+
+        // 2. シフト後の最終的な原点座標 (IsUpSideチェックに使用する基準位置)
+        int finalOriginX = origin.X + shift.X;
+        int finalOriginY = origin.Y + shift.Y;
+        
+        // ★ 3. シフト後の基準位置に基づいて IsUpSide 規制チェックを実行 ★
         
         // 三角形セルの向きチェック
         if (CurrentShapeType == ShapeType.Triangle)
         {
-            bool isUpSide = ((origin.X + origin.Y) % 2) == 0;
+            // 基準: シフト後の原点 (finalOriginX, finalOriginY)
+            bool isUpSide = ((finalOriginX + finalOriginY) % 2) == 0; 
             if (shape.IsUpSide == 2 && isUpSide) return false;
             if (shape.IsUpSide == 1 && !isUpSide) return false;
         }
         // 六角形の位置チェック
         if (CurrentShapeType == ShapeType.Hex)
         {
-            if (shape.IsUpSide == 2 && origin.X % 2 == 1) return false;
-            if (shape.IsUpSide == 1 && origin.X % 2 == 0) return false;
+            // 基準: シフト後の原点 (finalOriginX)
+            if (shape.IsUpSide == 2 && finalOriginX % 2 == 1) return false;
+            if (shape.IsUpSide == 1 && finalOriginX % 2 == 0) return false;
         }
 
-        Debug.Log($"CellSplitter:8:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
+        // Debug.Log($"CellSplitter:8:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
+        
+        // 4. 配置可能性チェック (CanPlaceはシフトを考慮)
         if (CanPlace(origin.X, origin.Y, shape))
         {
-            Debug.Log($"CellSplitter:9:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
-            // 1. 配置
+            // Debug.Log($"CellSplitter:9:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
+            // 1. 配置（PlacePieceは内部でシフトと finalOrigin を使用）
             PlacePiece(origin.X, origin.Y, shape);
 
             // 2. ピースの使用フラグをセット
             shape.UseCount++;
 
-            // FindNextEmptyCell(out int nextX, out int nextY);
-            
             // 3. 次のセルへ再帰
-            if (Solve(origin.X, origin.Y, enforceCount, false)) // 再帰
+            if (Solve(origin.X, origin.Y, enforceCount, false))
             {
                 return true; // 成功
             }
 
             // 4. 後戻り (Backtrack)
-            RemovePiece(origin.X, origin.Y, shape);
+            // RemovePieceにシフト前の原点とシフト後の原点の両方が必要になるため、
+            // 呼び出し側でシフト後の原点を計算し直すか、RemovePiece自体を修正する必要がある。
+            RemovePiece(origin.X, origin.Y, shape); // RemovePieceの修正が必要
             shape.UseCount--; 
         }
-        Debug.Log($"CellSplitter:10:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
+        // Debug.Log($"CellSplitter:10:{shape.Name}, origin.X:{origin.X}, origin.Y:{origin.Y}");
         return false;
     }
 
@@ -706,29 +703,35 @@ public static class CellSplitter
     /// </summary>
     private static bool SolveWithPatternSeed(int startX, int startY, bool enforceCount)
     {
+        // Debug.Log($"CellSplitter.SolveWithPatternSeed:1: startX:{startX}, startY:{startY}, enforceCount:{enforceCount}, _pieceNameSequence.Count:{_pieceNameSequence.Count}, _placementIndex:{_placementIndex}");
         // 復元リストが尽きた場合、グリッド全体が埋まっていれば成功と見なす
         if (_placementIndex >= _pieceNameSequence.Count)
         {
             // グリッドが埋まっているか再確認
             if (!FindNextEmptyCell(out int nextX, out int nextY))
             {
-                if (enforceCount && _pieceIdCounter - 1 != TargetPieceCount) return false;
+                // Debug.Log($"CellSplitter.SolveWithPatternSeed:2:");
+                if (_pieceIdCounter != -1 && enforceCount && _pieceIdCounter - 1 != TargetPieceCount) return false;
+                // Debug.Log($"CellSplitter.SolveWithPatternSeed:3:");
                 return true; // 成功
             }
             // グリッドが埋まっていないのにピースリストが尽きた場合は失敗
+            // Debug.Log($"CellSplitter.SolveWithPatternSeed:4:");
             return false;
         }
         
         // 復元リストから次のピース名と座標を取得
         string requiredName = _pieceNameSequence[_placementIndex];
         GridCoord requiredOrigin = _originCoordSequence[_placementIndex];
-
+        startX = requiredOrigin.X;
+        startY = requiredOrigin.Y;
         // 復元された原点座標と現在の探索開始座標が一致しない場合は失敗（シードとの整合性エラー）
-        if (requiredOrigin.X != startX || requiredOrigin.Y != startY)
-        {
-            // ピースが復元リスト順に配置されていないため、ここではスキップ（このパスは失敗）
-            return false;
-        }
+        // if (requiredOrigin.X != startX || requiredOrigin.Y != startY)
+        // {
+        //     Debug.Log($"CellSplitter.SolveWithPatternSeed:5: requiredOrigin.X:{requiredOrigin.X}, startX:{startX}, requiredOrigin.Y:{requiredOrigin.Y}, startY:{startY},");
+        //     // ピースが復元リスト順に配置されていないため、ここではスキップ（このパスは失敗）
+        //     return false;
+        // }
 
         // ピース定義リストから形状オブジェクトを探す
         PieceShape requiredShape = _availableShapes.FirstOrDefault(s => s.Name == requiredName);
@@ -759,8 +762,8 @@ public static class CellSplitter
             // 1. 配置
             PlacePiece(requiredOrigin.X, requiredOrigin.Y, requiredShape);
 
-            // 2. ピースの使用フラグをセット
-            requiredShape.UseCount++;
+            // // 2. ピースの使用フラグをセット
+            // requiredShape.UseCount++;
             
             // 3. パターン復元モードの場合、インデックスを進める
             _placementIndex++;
@@ -768,17 +771,20 @@ public static class CellSplitter
             // 4. 次のセルへ再帰
             if (Solve(startX, startY, enforceCount, true)) // isPatternSeedActive = true で再帰
             {
+                // Debug.Log($"CellSplitter.SolveWithPatternSeed:6:");
                 return true; // 成功
             }
 
+            // フォールバック=失敗で、次のパスで初期化するので後戻り処理は不要
             // 5. 後戻り (Backtrack)
-            RemovePiece(requiredOrigin.X, requiredOrigin.Y, requiredShape);
-            requiredShape.UseCount--; 
+            // RemovePiece(requiredOrigin.X, requiredOrigin.Y, requiredShape);
+            // requiredShape.UseCount--; 
 
             // パターン復元モードの場合、インデックスを元に戻す
-            _placementIndex--;
+            // _placementIndex--;
         }
 
+        // Debug.Log($"CellSplitter.SolveWithPatternSeed:7:");
         return false; // 配置できなかったか、配置後の再帰に失敗した
     }
 
@@ -819,27 +825,45 @@ public static class CellSplitter
     }
 
     /// <summary>
-    /// 2. 指定セル数のピースから、UseCountが最も少ないものを候補として返す
+    /// 2. 指定セル数のピースから、そのグループ内での UseCount が最も少ないものを候補とする。
+    ///    選出は同じセルサイズのピース群の中で完結する。
     /// </summary>
-    private static List<PieceShape> GetPrioritizedCandidates(int cellCount)
+    private static List<PieceShape> GetPrioritizedCandidates(int cellCount, GridCoord currentOrigin)
     {
+        // 指定されたセル数 (cellCount) のピースのリストを取得
         if (!_shapesByCellCount.ContainsKey(cellCount)) return new List<PieceShape>();
 
         List<PieceShape> pool = _shapesByCellCount[cellCount];
         
-        // UseCountが最も少ない値を取得
-        int minUseCount = pool.Min(s => s.UseCount);
+        // ★ 最小使用回数 (minUseCount) は、この pool（同じセルサイズのピース群）内でのみ計算する
+        int minUseCount = int.MaxValue;
+        List<PieceShape> viableShapes = new List<PieceShape>();
 
-        // UseCountが最小値のピースを候補とする
-        List<PieceShape> candidates = pool
-            .Where(s => s.UseCount == minUseCount)
-            .ToList();
+        foreach (var shape in pool)
+        {
+            // 0. 制約チェック
+            if (0 <= shape.MaxUse && shape.MaxUse <= shape.UseCount) continue;
+            
+            // 配置可能性チェック（前回導入したヒューリスティック改善）
+            if (!CanPlace(currentOrigin.X, currentOrigin.Y, shape)) continue;
 
-        // 候補内でのランダム性を確保するためシャッフル
-        // Note: ShuffleAvailableShapes()を直接使わず、Listの静的拡張メソッドとして実装するとより汎用的です
-        ShuffleList(candidates, _random);
+            // ★ 1. UseCountが最小のものを比較（絶対値比較に戻す）
+            if (shape.UseCount < minUseCount)
+            {
+                minUseCount = shape.UseCount;
+                viableShapes.Clear();
+                viableShapes.Add(shape);
+            }
+            else if (shape.UseCount == minUseCount)
+            {
+                viableShapes.Add(shape);
+            }
+        }
+
+        // 候補リストをシャッフル
+        ShuffleList(viableShapes, _random);
         
-        return candidates;
+        return viableShapes;
     }
 
     /// <summary>
@@ -885,6 +909,7 @@ public static class CellSplitter
     /// </summary>
     private static void AnalysisPatternSeed(string seed)
     {
+        // Debug.Log($"CellSplitter.AnalysisPatternSeed:1:{seed}");
         _isPatternSeedActive = false; // 初期化
         if (string.IsNullOrEmpty(seed)) return;
 
@@ -892,13 +917,14 @@ public static class CellSplitter
         string[] headerAndData = seed.Split('|');
 
         // ヘッダー (GX-GY-TC-Type) の解析
-        string[] headerParts = headerAndData[0].Split('-');
+        string[] headerParts = headerAndData[0].Split('=');
+        // Debug.Log($"CellSplitter.AnalysisPatternSeed:2: Length:{headerParts.Length}, {seed}");
         if (headerParts.Length != 4) return;
-
+        // Debug.Log($"CellSplitter.AnalysisPatternSeed:3: headerParts[0]:{headerParts[0]}, headerParts[1]:{headerParts[1]}, headerParts[3]:{headerParts[3]}, GridX:{GridX}, GridY:{GridY}, {CurrentShapeType}");
         // パラメータの確認
         if (int.TryParse(headerParts[0], out int decodedX) && decodedX == GridX &&
             int.TryParse(headerParts[1], out int decodedY) && decodedY == GridY &&
-            int.TryParse(headerParts[2], out int decodedCount) && decodedCount == TargetPieceCount &&
+            // int.TryParse(headerParts[2], out int decodedCount) && decodedCount == TargetPieceCount &&
             int.TryParse(headerParts[3], out int shapeInt) && (ShapeType)shapeInt == CurrentShapeType)
         {
             // パラメータが一致した場合のみ復元を試みる
@@ -924,6 +950,7 @@ public static class CellSplitter
                     }
                 }
             }
+            // Debug.Log($"CellSplitter.AnalysisPatternSeed:4: _isPatternSeedActive:{_isPatternSeedActive}");
         }
     }
     
@@ -934,7 +961,7 @@ public static class CellSplitter
     {
         // ヘッダー: "GX-GY-TC-Type"
         int shapeInt = (int)CurrentShapeType;
-        string seed = $"{GridX}-{GridY}-{TargetPieceCount}-{shapeInt}";
+        string seed = $"{GridX}={GridY}={TargetPieceCount}={shapeInt}";
         
         // データ部: "|Name1:X1,Y1|Name2:X2,Y2|..."
         foreach (var record in placements)
@@ -964,16 +991,18 @@ public static class CellSplitter
         }
     }
     
-    // ピースが(x, y)に配置可能かチェック
+    // ピースが(x, y)に配置可能かチェック (CanPlaceの修正)
     private static bool CanPlace(int originX, int originY, PieceShape shape)
     {
-        Debug.Log($"CellSplitter:8.1:{shape.Name}, originX:{originX}, originY:{originY}");
+        // ★ ピースの最適シフトを計算
+        GridCoord shift = CalculateOptimalShift(shape); 
+
         // ピースを構成するセルの位置
         foreach (var cell in shape.Cells)
         {
-            int x = originX + cell.X;
-            int y = originY + cell.Y;
-            // Debug.Log($"CellSplitter:8.2:{shape.Name}, originX:{originX}, originY:{originY}, cell.X:{cell.X}, cell.Y:{cell.Y}, x:{x}, y:{y}, {_grid[x, y]}");
+            // ★ シフトを適用した後の絶対座標
+            int x = originX + cell.X + shift.X;
+            int y = originY + cell.Y + shift.Y;
             
             // グリッド範囲外、またはすでに埋まっているセルと重複する場合は配置不可
             if (x < 0 || x >= GridX || y < 0 || y >= GridY || _grid[x, y] != 0)
@@ -982,42 +1011,62 @@ public static class CellSplitter
             }
         }
         
-        // TODO: 2x2などの大きな長方形の形成チェックをここに追加する（非常に複雑）
-        // 現時点では、ピースの定義段階でその制約を満たしていることを前提としています。
-        
         return true;
     }
 
-    // ピースをグリッドに配置
+    /// <summary>
+    /// ピースをグリッドに配置（シフトを適用し、空きセル(originX, originY)を覆うように調整）
+    /// </summary>
     private static void PlacePiece(int originX, int originY, PieceShape shape)
     {
+        // ★ 1. ピースの最適シフトを計算
+        GridCoord shift = CalculateOptimalShift(shape); 
+        
+        // ★ 2. シフト後の最終的な配置原点を決定
+        int finalOriginX = originX + shift.X;
+        int finalOriginY = originY + shift.Y;
+        
         int id = _pieceIdCounter++;
+
+        // 3. シフトを適用した後の絶対座標でグリッドを埋める
         foreach (var cell in shape.Cells)
         {
-            _grid[originX + cell.X, originY + cell.Y] = id;
+            // ★ finalOriginX/Y を使用
+            _grid[finalOriginX + cell.X, finalOriginY + cell.Y] = id; 
         }
+        
+        // 4. ピースレコードには、実際に配置された原点（シフト後）を記録
         _successfulPlacements.Add(new PieceRecord 
         { 
             Shape = shape, 
-            Origin = new GridCoord(originX, originY), 
+            Origin = new GridCoord(finalOriginX, finalOriginY), // ★ シフト後の原点を記録
             PieceId = id 
         });
     }
 
-    // ピースをグリッドから除去 (後戻り用)
+    // RemovePiece メソッドの修正
     private static void RemovePiece(int originX, int originY, PieceShape shape)
     {
         if (_successfulPlacements != null && 1 <= _successfulPlacements.Count)
         {
-            // ピース配置リストから削除
+            // 1. ピース配置リストから削除（この時、シフト後の座標が記録されている）
+            // ここでの削除は、配置されたピースのRemovePieceで実行されるため、リストの末尾を削除します。
+            // ただし、バックトラックのロジックを確実にするため、削除する前にそのピースが
+            // 最後に配置されたピースであることを確認するのが安全ですが、ここではシンプルに削除します。
             _successfulPlacements.RemoveAt(_successfulPlacements.Count - 1);
         }
-        // _successfulPlacements.RemoveAt(_successfulPlacements.Count - 1);
+        // _pieceIdCounter--; // このカウンターのデクリメントは、グリッドクリア後に行う方が論理的だが、ここでは場所を変更しない
 
+        // ★ グリッドをクリアする座標をシフト後のものに修正 ★
+        GridCoord shift = CalculateOptimalShift(shape);
+        int finalOriginX = originX + shift.X;
+        int finalOriginY = originY + shift.Y;
+        
         // グリッドをクリア
         foreach (var cell in shape.Cells)
         {
-            _grid[originX + cell.X, originY + cell.Y] = 0;
+            // ★ finalOriginX/Y を使用
+            _grid[finalOriginX + cell.X, finalOriginY + cell.Y] = 0;
         }
         _pieceIdCounter--;
     }
@@ -1042,7 +1091,7 @@ public static class CellSplitter
         int shapeInt = (int)shapeType;
         
         // シード形式: "GX-GY-TC-Numeric"
-        return $"{gridX}-{gridY}-{targetCount}-{shapeInt}-{numericPart}";
+        return $"{gridX}={gridY}={targetCount}={shapeInt}={numericPart}";
     }
 
     /// <summary>
@@ -1134,5 +1183,348 @@ public static class CellSplitter
             }
         }
         return count;
+    }
+
+    // CellSplitter クラス内に追加/修正
+
+    /// <summary>
+    /// ピース形状が占有するセルのうち、最も左上のセルを (0, 0) に合わせるためのシフト座標を計算する。
+    /// </summary>
+    /// <returns>シフト座標 (GridCoord)</returns>
+    // CalculateOptimalShift メソッドの修正
+    private static GridCoord CalculateOptimalShift(PieceShape shape)
+    {
+        if (shape.Cells == null || shape.Cells.Count == 0) return new GridCoord(0, 0);
+
+        // 1. シフトが必要かどうか（原点(0, 0)が含まれているか）を判断
+        bool containsOrigin = shape.Cells.Any(c => c.X == 0 && c.Y == 0);
+        
+        // 原点が含まれていればシフトは不要
+        if (containsOrigin)
+        {
+            return new GridCoord(0, 0);
+        }
+        
+        // 2. 原点が含まれていない場合、最適なシフト量（最も左上のセルを(0, 0)に合わせる）を計算
+        int minX = shape.Cells.Min(c => c.X);
+        int minY = shape.Cells.Min(c => c.Y);
+        
+        GridCoord calculatedShift = new GridCoord(-minX, -minY);
+        
+        // ★ 3. 【重要】前回の修正で追加した対称性チェックのロジックを削除する
+        //     ここでは常に計算されたシフト量を返す
+        
+        return calculatedShift;
+    }
+
+    /// <summary>
+    /// 探索成功後、1セルピースを起点に隣接するピースと統合し、
+    /// より大きな利用可能なピースに置き換える処理を網羅的に実行する。
+    /// </summary>
+    private static void MergeSmallPieces()
+    {
+        // 統合が成功する限りループ
+        bool merged = true;
+        while (merged)
+        {
+            merged = false;
+            
+            // 現在の配置リストから1セルピースのみを抽出
+            var oneCellPieces = _successfulPlacements.Where(r => r.Shape.Cells.Count == 1).ToList();
+            
+            foreach (var targetRecord in oneCellPieces)
+            {
+                // 1. 対象の1セルピースと隣接するピースのレコードを取得
+                var neighbors = GetAdjacentPieceRecords(targetRecord);
+                
+                // 2. 隣接ピースとの組み合わせ候補を作成し、チェック
+                // 1セルピース + 1ピース（隣接）の統合を試行
+                foreach (var neighborRecord in neighbors)
+                {
+                    // 1セルピース + 1セルピース = 2セルピース
+                    // 1セルピース + 2セルピース = 3セルピース
+                    // 統合候補のセル集合を取得
+                    List<GridCoord> combinedCells = new List<GridCoord>();
+                    combinedCells.AddRange(GetAbsoluteCells(targetRecord));
+                    combinedCells.AddRange(GetAbsoluteCells(neighborRecord));
+
+                    // 統合したセル集合に一致する利用可能な形状を探索
+                    PieceShape integratedShape = FindMatchingShape(combinedCells);
+
+                    if (integratedShape != null)
+                    {
+                        // 3. 置き換え実行
+                        ReplacePieces(targetRecord, neighborRecord, integratedShape, combinedCells);
+                        merged = true;
+                        // Debug.Log($"<color=blue>ピース統合成功: {targetRecord.Shape.Name} ({targetRecord.PieceId}) + {neighborRecord.Shape.Name} ({neighborRecord.PieceId}) -> {integratedShape.Name}</color>");
+                        
+                        // 成功したらリストが変更されたため、再チェックのためにループを抜ける
+                        goto NextOuterLoop; 
+                    }
+                }
+            }
+            
+            NextOuterLoop:;
+        }
+    }
+
+    // ========== ユーティリティ (GetAdjacentPieceRecords, GetAbsoluteCells, FindMatchingShape が必要) ==========
+
+    // ターゲットピースレコードに隣接するピースレコードを取得
+    private static List<PieceRecord> GetAdjacentPieceRecords(PieceRecord targetRecord)
+    {
+        // ターゲットピースの全セルを取得（絶対座標）
+        List<GridCoord> targetCells = GetAbsoluteCells(targetRecord);
+        
+        // 隣接するピースレコードを重複なく格納
+        HashSet<PieceRecord> adjacentPieces = new HashSet<PieceRecord>();
+
+        // ターゲットのピースID
+        int targetId = targetRecord.PieceId;
+        
+        // ターゲットピースの全てのセルについて処理
+        foreach (var cell in targetCells)
+        {
+            // グリッド形状に応じた隣接セルのオフセットを取得
+            GridCoord[] neighbors = GetNeighborOffsets(CurrentShapeType, cell.X, cell.Y);
+
+            foreach (var offset in neighbors)
+            {
+                int nx = cell.X + offset.X;
+                int ny = cell.Y + offset.Y;
+                
+                // 隣接するセルのピースレコードを取得
+                PieceRecord neighborRecord = GetPieceRecordToGridCoord(nx, ny);
+
+                // 1. レコードが有効である (ピースが存在する)
+                // 2. ターゲットピース自身ではない
+                if (neighborRecord.PieceId != 0 && neighborRecord.PieceId != targetId)
+                {
+                    adjacentPieces.Add(neighborRecord);
+                }
+            }
+        }
+
+        return adjacentPieces.ToList();
+    }
+
+    /// <summary>
+    /// 指定座標に配置されているピースのレコードを取得する。
+    /// 範囲外または空きセルの場合は、PieceId=0のデフォルト値を返す。
+    /// </summary>
+    private static PieceRecord GetPieceRecordToGridCoord(int x, int y)
+    {
+        // 範囲外チェック
+        if (x < 0 || x >= GridX || y < 0 || y >= GridY)
+        {
+            return default; // PieceId=0で返る
+        }
+
+        int id = _grid[x, y];
+        if (id == 0)
+        {
+            return default; // PieceId=0で返る
+        }
+        
+        // _successfulPlacementsはPieceId=1から始まるため、Findで探索
+        PieceRecord piece = _successfulPlacements.Find(value => value.PieceId == id);
+        
+        // ピースが見つからなければデフォルト値（異常系）
+        return piece; 
+    }
+
+    // 形状と座標に応じた隣接オフセットを取得するユーティリティ（GetAdjacentPieceRecordsで使用）
+    private static GridCoord[] GetNeighborOffsets(ShapeType type, int x, int y)
+    {        
+        // 六角形グリッドの場合の隣接セル（X座標の偶奇でYオフセットが変わる）
+        if (type == ShapeType.Hex)
+        {
+            if (x % 2 == 0) // Xが偶数
+            {
+                return new GridCoord[] {
+                    new GridCoord(1, 0), new GridCoord(-1, 0), // 左右
+                    new GridCoord(0, 1), new GridCoord(0, -1), // 上下
+                    new GridCoord(1, -1), new GridCoord(-1, -1) // 斜め下
+                };
+            }
+            else // Xが奇数
+            {
+                return new GridCoord[] {
+                    new GridCoord(1, 0), new GridCoord(-1, 0), // 左右
+                    new GridCoord(0, 1), new GridCoord(0, -1), // 上下
+                    new GridCoord(1, 1), new GridCoord(-1, 1) // 斜め上
+                };
+            }
+        }
+        // 三角形グリッドの場合の隣接セル（未実装の場合は四角形と同じものを暫定的に返すか、要定義）
+        else if (type == ShapeType.Triangle)
+        {   
+            // 辺が上向き(下向き三角形)
+            if ((x + y) % 2 == 0)
+            {
+                return new GridCoord[] {
+                    new GridCoord(1, 0), new GridCoord(-1, 0), 
+                    new GridCoord(0, 1), new GridCoord(0, -1),
+                    new GridCoord(-2, 1), new GridCoord(2, 1)
+                };
+            }
+            // 辺が下向き(上向き三角形)
+            else
+            {
+                return new GridCoord[] {
+                    new GridCoord(1, 0), new GridCoord(-1, 0), 
+                    new GridCoord(0, 1), new GridCoord(0, -1),
+                    new GridCoord(-2, -1), new GridCoord(2, -1)
+                };
+            }
+        }
+        // 四角形グリッドの場合の隣接セル 
+        return new GridCoord[] {
+                new GridCoord(1, 0), new GridCoord(-1, 0), 
+                new GridCoord(0, 1), new GridCoord(0, -1),
+                new GridCoord(1, 1), new GridCoord(-1, 1), 
+                new GridCoord(-1, 1), new GridCoord(-1, -1)
+            };
+    }
+
+    // ピースレコードから絶対座標リストを取得（再掲、MergeSmallPiecesからGetAbsoluteCellsに変更）
+    private static List<GridCoord> GetAbsoluteCells(PieceRecord record)
+    {
+        return record.Shape.Cells.Select(c => new GridCoord(record.Origin.X + c.X, record.Origin.Y + c.Y)).ToList();
+    }
+
+    // セル集合に一致する利用可能な形状を見つける（IsUpSide制約も考慮）
+    private static PieceShape FindMatchingShape(List<GridCoord> combinedCells)
+    {
+        if (combinedCells == null || combinedCells.Count == 0) return null;
+
+        // 1. セル数をチェックし、同じセル数のプールに絞り込む（高速化）
+        int targetCount = combinedCells.Count;
+        if (!_shapesByCellCount.ContainsKey(targetCount)) return null;
+        
+        // 2. 統合されたセル集合を正規化（絶対座標を相対座標に変換）
+        //    -> 最も左上（Min X, Min Y）のセルを (0, 0) にシフト
+        int minX = combinedCells.Min(c => c.X);
+        int minY = combinedCells.Min(c => c.Y);
+        
+        List<GridCoord> normalizedCells = combinedCells
+            .Select(c => new GridCoord(c.X - minX, c.Y - minY))
+            .OrderBy(c => c.Y) // 比較のために安定した順序にソート
+            .ThenBy(c => c.X)
+            .ToList();
+
+        // 3. 候補のピース形状と一つずつ比較
+        foreach (var shape in _shapesByCellCount[targetCount])
+        {
+            // 形状リスト内のピース形状も正規化（既にされているはずだが念のため）
+            // PieceShapeのCellsリストは静的コンストラクタで定義されているため、ソートするだけでよい
+            List<GridCoord> targetShapeCells = shape.Cells
+                .OrderBy(c => c.Y)
+                .ThenBy(c => c.X)
+                .ToList();
+
+            // セル数が一致し、座標が一つ一つ一致するかチェック
+            if (targetShapeCells.Count == normalizedCells.Count)
+            {
+                bool shapeMatch = true;
+                for (int i = 0; i < targetCount; i++)
+                {
+                    if (targetShapeCells[i].X != normalizedCells[i].X || 
+                        targetShapeCells[i].Y != normalizedCells[i].Y)
+                    {
+                        shapeMatch = false;
+                        break;
+                    }
+                }
+
+                if (shapeMatch)
+                {
+                    // 4. IsUpSide制約チェック
+                    if (IsUpSideCheckPassed(minX, minY, shape))
+                    {
+                         // 見つかったピース形状のUseCountを増やしすぎないよう、ここでMaxUseチェック
+                        if (shape.MaxUse == -1 || shape.UseCount < shape.MaxUse)
+                        {
+                            return shape; // 一致する形状が見つかった
+                        }
+                    }
+                }
+            }
+        }
+
+        return null; // 一致する形状は見つからなかった
+    }
+
+    // IsUpSideの制約を満たしているかチェックするユーティリティ
+    private static bool IsUpSideCheckPassed(int originX, int originY, PieceShape shape)
+    {
+        if (CurrentShapeType == ShapeType.Square) return true; // 四角形は常にOK
+
+        if (CurrentShapeType == ShapeType.Triangle)
+        {
+            bool isUpSide = ((originX + originY) % 2) == 0;
+            if (shape.IsUpSide == 2 && isUpSide) return false; // 下向き指定なのに上向き
+            if (shape.IsUpSide == 1 && !isUpSide) return false; // 上向き指定なのに下向き
+        }
+        else if (CurrentShapeType == ShapeType.Hex)
+        {
+            if (shape.IsUpSide == 2 && originX % 2 == 1) return false; // X奇数用指定なのにX偶数
+            if (shape.IsUpSide == 1 && originX % 2 == 0) return false; // X偶数用指定なのにX奇数
+        }
+        
+        return true;
+    }
+
+    // ピースの置き換えを実行し、成功リストとグリッドを更新
+    private static void ReplacePieces(PieceRecord rec1, PieceRecord rec2, PieceShape newShape, List<GridCoord> newCells)
+    {
+        // 1. グリッドから元のピースのIDを0に戻す
+        //    rec1とrec2の全セルに対して、グリッドのIDを0に戻します。
+        
+        // 元のIDを取得（RemovePieceを使わない方が安全）
+        int id1 = rec1.PieceId;
+        int id2 = rec2.PieceId;
+
+        // グリッドをクリア（新しいセルの座標リストnewCellsは絶対座標）
+        foreach (var cell in newCells)
+        {
+            // 配置されているのがrec1かrec2のIDでなければ、ロジックエラーの可能性があるが、
+            // 統合チェックが成功している前提なので単純にクリア
+            _grid[cell.X, cell.Y] = 0;
+        }
+
+        // 2. _successfulPlacementsからrec1とrec2を削除
+        _successfulPlacements.Remove(rec1);
+        _successfulPlacements.Remove(rec2);
+        
+        // 3. 新しいピース（newShape）を配置
+        
+        // 新しいピースの配置原点（正規化された原点）を取得
+        // FindMatchingShapeで使われた minX/minY が、新しいピースの最適な原点になります
+        int minX = newCells.Min(c => c.X);
+        int minY = newCells.Min(c => c.Y);
+
+        // 新しいピースのIDをインクリメント（PlacePieceロジックを流用せず、最小限の処理で）
+        int newId = _pieceIdCounter++;
+        
+        // グリッドに新しいIDを書き込み
+        foreach (var cell in newShape.Cells) // newShape.Cellsは相対座標
+        {
+            _grid[minX + cell.X, minY + cell.Y] = newId;
+        }
+
+        // 4. 成功リストに追加
+        _successfulPlacements.Add(new PieceRecord 
+        { 
+            Shape = newShape, 
+            Origin = new GridCoord(minX, minY), // 配置されたシフト後の原点
+            PieceId = newId 
+        });
+
+        // 5. 新しいピースのUseCountをインクリメント
+        newShape.UseCount++;
+        
+        // 統合されたピースの元々のUseCountはリセットすべきだが、ここでは単純にインクリメント
+        // 元のピースのUseCountはそのまま残るが、もう使われないため無視できる
     }
 }

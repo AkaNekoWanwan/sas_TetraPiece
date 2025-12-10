@@ -11,7 +11,6 @@ public class ImageResizerAndCropper : EditorWindow
     private int targetHeight = 1350;
     private string outputFolderPath = "Assets/Textures/Originals/ResizedImages";
 
-    // スクロール位置を保持するための変数
     private Vector2 scrollPosition;
 
     [MenuItem("Tools/Image Resizer & Cropper")]
@@ -22,18 +21,21 @@ public class ImageResizerAndCropper : EditorWindow
 
     void OnGUI()
     {
+        // ... (GUI描画部分は変更なし) ...
+        
         // スクロールビューの開始
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
         GUILayout.Label("Image Resizer & Cropper", EditorStyles.boldLabel);
 
-        // ソース画像リストの表示とD&Dエリア
+        // ソース画像リストの表示とD&Dエリア (省略)
+        // --- 中略：D&Dエリアとリスト表示 ---
         GUILayout.Space(10);
         EditorGUILayout.LabelField("Source Images (Drag & Drop here):");
         Rect dropArea = GUILayoutUtility.GetRect(0.0f, 100.0f, GUILayout.ExpandWidth(true));
         GUI.Box(dropArea, "Drag Textures Here");
 
-        // ドロップされたオブジェクトの処理
+        // ドロップされたオブジェクトの処理 (省略)
         if (dropArea.Contains(Event.current.mousePosition) && Event.current.type == EventType.DragUpdated)
         {
             DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
@@ -53,7 +55,7 @@ public class ImageResizerAndCropper : EditorWindow
             Event.current.Use();
         }
 
-        // リスト内の画像を表示
+        // リスト内の画像を表示 (省略)
         if (sourceImages.Count > 0)
         {
             EditorGUILayout.LabelField("Images to process:");
@@ -103,9 +105,8 @@ public class ImageResizerAndCropper : EditorWindow
 
         // スクロールビューの終了
         EditorGUILayout.EndScrollView();
-
-        // 処理実行ボタンはスクロールビューの外側に配置することで、
-        // ウィンドウの一番下に固定されます。（ここは好みで調整可能です）
+        
+        // 処理実行ボタン (省略)
         EditorGUI.BeginDisabledGroup(sourceImages.Count == 0 || string.IsNullOrEmpty(outputFolderPath));
         if (GUILayout.Button("Resize and Crop Images", GUILayout.Height(40)))
         {
@@ -114,115 +115,49 @@ public class ImageResizerAndCropper : EditorWindow
         EditorGUI.EndDisabledGroup();
     }
 
+    // ProcessImages 関数は変更なし
     void ProcessImages()
     {
         if (!Directory.Exists(outputFolderPath))
         {
             Directory.CreateDirectory(outputFolderPath);
-            AssetDatabase.Refresh(); // Unityエディタにフォルダ作成を通知
+            AssetDatabase.Refresh();
         }
 
         foreach (Texture2D originalTexture in sourceImages)
         {
             if (originalTexture == null) continue;
 
-            Texture2D resizedTexture = ResizeAndCrop(originalTexture, targetWidth, targetHeight);
+            // 新しいロジックのResizeAndCropを呼び出す
+            Texture2D finalTexture = ResizeAndCrop(originalTexture, targetWidth, targetHeight);
 
-            // PNGとして保存
-            byte[] bytes = resizedTexture.EncodeToPNG();
-            string filePath = Path.Combine(outputFolderPath, originalTexture.name + "_" + targetWidth + "x" + targetHeight + ".png");
-            File.WriteAllBytes(filePath, bytes);
+            if (finalTexture != null)
+            {
+                // PNGとして保存
+                byte[] bytes = finalTexture.EncodeToPNG();
+                string filePath = Path.Combine(outputFolderPath, originalTexture.name + "_" + targetWidth + "x" + targetHeight + ".png");
+                File.WriteAllBytes(filePath, bytes);
 
-            // ログとメモリ解放
-            Debug.Log($"Processed: {originalTexture.name} -> {filePath}");
-            DestroyImmediate(resizedTexture); // 生成したTexture2Dを解放
+                // ログとメモリ解放
+                Debug.Log($"Processed: {originalTexture.name} -> {filePath}");
+                DestroyImmediate(finalTexture); // 最終生成したTexture2Dを解放
+            }
+            // 中間テクスチャはResizeAndCrop内でDestroyされる
         }
 
-        AssetDatabase.Refresh(); // Unityエディタに新しいアセットの生成を通知
+        AssetDatabase.Refresh();
         EditorUtility.DisplayDialog("Image Processing Complete", $"{sourceImages.Count} images processed successfully!", "OK");
 
         // 処理後、元のテクスチャの読み書き設定を元に戻す
         foreach (var img in sourceImages) SetTextureReadable(img, false);
         sourceImages.Clear();
     }
-
-    /// <summary>
-    /// 画像を指定されたターゲット解像度にリサイズし、アスペクト比を維持しつつ中央をトリミングします。
-    /// </summary>
-    /// <param name="source">元のTexture2D</param>
-    /// <param name="targetW">目標幅</param>
-    /// <param name="targetH">目標高さ</param>
-    /// <returns>リサイズ＆トリミングされた新しいTexture2D</returns>
-    private Texture2D ResizeAndCrop(Texture2D source, int targetW, int targetH)
-    {
-        // sourceTextureが読み込み可能であることを確認
-        if (!source.isReadable)
-        {
-            Debug.LogError($"Texture '{source.name}' is not readable. Please set 'Read/Write Enabled' in its Import Settings.");
-            return null;
-        }
-
-        // 目標のアスペクト比
-        float targetAspect = (float)targetW / targetH;
-        // 元画像のアスペクト比
-        float sourceAspect = (float)source.width / source.height;
-
-        int cropX = 0;
-        int cropY = 0;
-        int cropWidth = source.width;
-        int cropHeight = source.height;
-
-        if (sourceAspect > targetAspect) // 元画像が目標より横長
-        {
-            // 目標アスペクト比に合わせて高さを基準に幅をトリミング
-            cropWidth = Mathf.RoundToInt(source.height * targetAspect);
-            cropX = (source.width - cropWidth) / 2; // 中央からトリミング
-        }
-        else if (sourceAspect < targetAspect) // 元画像が目標より縦長
-        {
-            // 目標アスペクト比に合わせて幅を基準に高さをトリミング
-            cropHeight = Mathf.RoundToInt(source.width / targetAspect);
-            cropY = (source.height - cropHeight) / 2; // 中央からトリミング
-        }
-        // else の場合、アスペクト比が同じなのでトリミングは不要
-
-        // トリミングされた領域のピクセルを取得
-        Color[] croppedPixels = source.GetPixels(cropX, cropY, cropWidth, cropHeight);
-        Texture2D croppedTexture = new Texture2D(cropWidth, cropHeight);
-        croppedTexture.SetPixels(croppedPixels);
-        croppedTexture.Apply();
-
-        // ここでリサイズを行う（UnityのTexture2Dは直接リサイズするメソッドがないため、手動またはGraphics.Blitを使用）
-        // 簡素化のため、今回はGetPixels/SetPixelsでリサイズを行う関数を作成します。
-        // より高品質なリサイズが必要な場合は、Graphics.Blitを使ったレンダーテクスチャ経由のリサイズが推奨されます。
-
-        Texture2D finalTexture = new Texture2D(targetW, targetH, TextureFormat.RGBA32, false);
-        Color[] pixels = new Color[targetW * targetH];
-        float dx = (float)croppedTexture.width / targetW;
-        float dy = (float)croppedTexture.height / targetH;
-
-        for (int y = 0; y < targetH; y++)
-        {
-            for (int x = 0; x < targetW; x++)
-            {
-                // バイリニア補間などの高品質なリサイズではないが、機能デモ用
-                pixels[y * targetW + x] = croppedTexture.GetPixelBilinear(x * dx / croppedTexture.width, y * dy / croppedTexture.height);
-            }
-        }
-        finalTexture.SetPixels(pixels);
-        finalTexture.Apply();
-
-        DestroyImmediate(croppedTexture); // 中間生成したテクスチャを解放
-        return finalTexture;
-    }
-
-    /// <summary>
-    /// テクスチャのImport SettingsでRead/Write Enabledを切り替えます。
-    /// </summary>
+    
+    // SetTextureReadable 関数は変更なし
     private void SetTextureReadable(Texture2D texture, bool readable)
     {
         string path = AssetDatabase.GetAssetPath(texture);
-        if (string.IsNullOrEmpty(path)) return; // Runtimeで生成されたテクスチャなどの場合はパスがない
+        if (string.IsNullOrEmpty(path)) return;
 
         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
         if (importer == null) return;
@@ -232,6 +167,77 @@ public class ImageResizerAndCropper : EditorWindow
             importer.isReadable = readable;
             importer.SaveAndReimport();
         }
+    }
+
+
+    /// <summary>
+    /// 画像を目標アスペクト比を維持しつつ目標サイズをカバーするように拡大縮小し、中央をトリミングします。
+    /// </summary>
+    private Texture2D ResizeAndCrop(Texture2D source, int targetW, int targetH)
+    {
+        if (!source.isReadable)
+        {
+            Debug.LogError($"Texture '{source.name}' is not readable.");
+            return null;
+        }
+
+        // 1. トリミング先のサイズBと比率Bを取得
+        float targetAspect = (float)targetW / targetH;
+
+        // 3. 受け取った画像のサイズAと比率Aを取得
+        int sourceW = source.width;
+        int sourceH = source.height;
+        float sourceAspect = (float)sourceW / sourceH;
+
+        // 3-A1. 比率を保ったまま目標サイズをカバーするように拡大縮小する倍率を計算
+        // 目標サイズを覆う（カバー）ためには、目標比率と元画像比率の差分が大きい方の倍率を採用する
+        float widthRatio = (float)targetW / sourceW;
+        float heightRatio = (float)targetH / sourceH;
+
+        // 目標サイズを「満たす(Fill/Cover)」ために、大きい方のスケール倍率を採用
+        float resizeScale = Mathf.Max(widthRatio, heightRatio);
+
+        // 新しい（拡大/縮小後の）サイズを計算
+        int resizedW = Mathf.RoundToInt(sourceW * resizeScale);
+        int resizedH = Mathf.RoundToInt(sourceH * resizeScale);
+
+        // =======================================================
+        // ステップ 4: 拡大縮小（リサイズ）の実行 (Graphics.Blitを使用し高品質化)
+        // =======================================================
+        
+        // Render Textureに画像をリサイズして描画
+        RenderTexture rt = RenderTexture.GetTemporary(resizedW, resizedH, 0, RenderTextureFormat.ARGB32);
+        Graphics.Blit(source, rt);
+        
+        // リサイズされたテクスチャを中間生成
+        Texture2D resizedTexture = new Texture2D(resizedW, resizedH, TextureFormat.RGBA32, false);
+        RenderTexture.active = rt;
+        resizedTexture.ReadPixels(new Rect(0, 0, resizedW, resizedH), 0, 0);
+        resizedTexture.Apply();
+        
+        RenderTexture.active = null;
+        RenderTexture.ReleaseTemporary(rt); // Render Textureを解放
+
+        // =======================================================
+        // ステップ 5: トリミングの実行 (目標サイズW x Hに中央をクロップ)
+        // =======================================================
+
+        int cropX = Mathf.FloorToInt((resizedW - targetW) / 2.0f);
+        int cropY = Mathf.FloorToInt((resizedH - targetH) / 2.0f);
+
+        // 3-A2. トリミングして出力
+        // GetPixels はテクスチャのピクセルを取得する
+        Color[] finalPixels = resizedTexture.GetPixels(cropX, cropY, targetW, targetH);
+        
+        // 最終的なテクスチャの生成
+        Texture2D finalTexture = new Texture2D(targetW, targetH, TextureFormat.RGBA32, false);
+        finalTexture.SetPixels(finalPixels);
+        finalTexture.Apply();
+
+        // 中間生成したリサイズ済みテクスチャを解放
+        DestroyImmediate(resizedTexture); 
+
+        return finalTexture;
     }
 }
 #endif

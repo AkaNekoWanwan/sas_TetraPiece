@@ -54,7 +54,7 @@ public class PicController : MonoBehaviour
     Collider2D col2d;
 
     Vector3 grabOffsetLocal;
-    int? draggingFingerId;
+    // int? draggingFingerId;
     float fixedZ;
 
     Tween currentTween;
@@ -72,7 +72,7 @@ public class PicController : MonoBehaviour
         cam = Camera.main;
         sr  = GetComponent<SpriteRenderer>();
         if(!handCursorController)
-            handCursorController = FindObjectOfType<HandCursorController>();
+            handCursorController = (HandCursorController)FindAnyObjectByType (typeof(HandCursorController));
 
             
         // --- コライダー確保 ---
@@ -164,7 +164,7 @@ outlineOnAlpha = 0.8f;
         currentTween?.Kill();
         outlineTween?.Kill();
         isSelected = false;
-        draggingFingerId = null;
+        // draggingFingerId = null;
 
         // 念のためアウトライン消灯
         SetOutlineVisible(false);
@@ -194,7 +194,7 @@ outlineOnAlpha = 0.8f;
             if (Input.GetMouseButtonDown(0) && HitSelf(Input.mousePosition))
             {
                 BeginDrag(Input.mousePosition);
-                draggingFingerId = null;
+                // draggingFingerId = null;
             }
         }
 
@@ -288,7 +288,7 @@ outlineOnAlpha = 0.8f;
     void EndDrag()
     {
         isSelected = false;
-        draggingFingerId = null;
+        // draggingFingerId = null;
 
         var (closest, dist) = FindClosestTarget();
 

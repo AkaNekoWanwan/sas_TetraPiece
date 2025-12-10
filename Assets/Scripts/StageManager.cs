@@ -5,6 +5,8 @@ using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Globalization;
+using UnityEditor;
+using System.Linq;
 
 public class StageManager : MonoBehaviour
 {
@@ -12,19 +14,13 @@ public class StageManager : MonoBehaviour
     public bool isClear;
     public bool isDoClearGame = false;
     public bool isGameOver;
-    public Image stagePic;
-    public Image stagePicBG;
-
-    public GameObject[] transparentObjects; // 透明化するオブジェクトの配列
-
-    public float timeLimit; // タイムリミット（秒）
-    public Text timerText;         // タイマー表示用 UI Text
-
-    private float timeRemaining;
-    private bool hasStartedTimer = false;
     public bool isPause;
     public GameObject[] stages;
     public GameObject[] dailyStages;
+    public bool _isStageLoadFromScene = true;
+    public StageInfo[] _stagePrefabs;
+    public StageInfo[] _dailyStagePrefabs;
+    public Transform stageParent;
     public int isNowStage;
     public bool isRestart;
     public bool isTest;
@@ -34,9 +30,13 @@ public class StageManager : MonoBehaviour
     public int clearBuffer;
     public int startBuffer;
     public int picCount;
+    public int _moveCount;
     public int goalPicCount;
     public ParticleSystem ps;
     public Text levelText;
+    public Text _moveCountText;
+    public Text _moveText;
+    public Image _imageLevelBack;
     public HardEfffectManager _hardEfffectManager;
     public float pureElapsedTime; // 純粋な経過時間
     private Coroutine autoSaveRoutine;
@@ -44,11 +44,81 @@ public class StageManager : MonoBehaviour
 
     public ClearViewManager _clearViewManager = default;
     public GameObject _defaultCanvas = default;
-    public GameObject _debugCanvas = default;
     public DebugUIManager _debugUIManager = default;
     public GameObject _creativeCanvas = default;
+    private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
+    private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
 
     private int _dailyStage = -1;
+    private int _MoveCount {get=>_moveCount;
+        set
+        {
+            _moveCount = value;
+            if(_moveCountText != null)
+            {
+                _moveCountText.text = "" + value;
+                if(_moveCount <= 2)
+                {
+                    _moveCountText.color = new Color32( 200, 10, 10, 255 );
+                    _moveText.color = new Color32( 200, 10, 10, 255 );
+                }
+            }
+        }}
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        // ゲーム実行中は実行しない
+        if (EditorApplication.isPlaying) 
+            return;
+
+        if(_isStageLoadFromScene)
+        {
+            _stagePrefabs = new StageInfo[0];
+            _dailyStagePrefabs = new StageInfo[0];
+            return;
+        }
+
+        SetPrefabs(STAGE_PREFABS_PATH, ref _stagePrefabs);
+        SetPrefabs(DAILY_STAGE_PREFABS_PATH, ref _dailyStagePrefabs);
+    }
+
+    private void SetPrefabs(string path, ref StageInfo[] prefabArray)
+    {
+
+        // 一時的に結果を格納するためのList
+        List<StageInfo> loadedPrefabs = new List<StageInfo>();
+
+        // 1. 指定されたフォルダ内の全アセットのGUIDを取得
+        // string[] guids = AssetDatabase.FindAssets("t:StageInfo", new[] { path });
+        string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { path });
+        
+        // 2. GUIDをパスに変換し、プレハブとしてロード
+        foreach (string guid in guids)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+
+            // フォルダ内のアセットがプレハブであることを確認してロード
+            StageInfo prefab = AssetDatabase.LoadAssetAtPath<StageInfo>(assetPath);
+            
+            // PrefabUtility.GetPrefabAssetType で通常のプレハブか確認
+            if (prefab != null && PrefabUtility.GetPrefabAssetType(prefab) == PrefabAssetType.Regular)
+            {
+                loadedPrefabs.Add(prefab);
+            }
+        }
+        
+        // （オプション）リストを名前順などでソート
+        // OrderByを使用しない場合はこの行は不要
+        loadedPrefabs = loadedPrefabs.OrderBy(p => p.name).ToList();
+
+        // 🟨 変更点2: Listを配列に変換してpublic変数に格納
+        prefabArray = loadedPrefabs.ToArray();
+
+        // リストに更新があったことをエディターに通知し、Inspectorを再描画
+        EditorUtility.SetDirty(this);
+    }
+#endif
 
 
     public void Awake()
@@ -94,24 +164,57 @@ public class StageManager : MonoBehaviour
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
         // 🔸ステージに応じてアクティブ設定
-        if (!isTest)
+        if(_isStageLoadFromScene)
         {
-            for (int i = 0; i < stages.Length; i++)
+            if (!isTest)
             {
-                bool isActive = (i == isNowStage && _dailyStage == -1);
-                stages[i].SetActive(isActive);
-                if(isActive)
-                    isHard = stages[i].GetComponent<StageInfo>().isHard;
-            }
-            for(int i = 0; i < dailyStages.Length; i++)
-            {
-                dailyStages[i].SetActive(i + 1 == _dailyStage);
+                for (int i = 0; i < stages.Length; i++)
+                {
+                    bool isActive = (i == isNowStage && _dailyStage == -1);
+                    stages[i].SetActive(isActive);
+                    if(isActive)
+                        isHard = stages[i].GetComponent<StageInfo>().isHard;
+                }
+                for(int i = 0; i < dailyStages.Length; i++)
+                {
+                    dailyStages[i].SetActive(i + 1 == _dailyStage);
+                }
             }
         }
+        else
+        {
+            Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
+            StageInfo stage = null;
+            if(_dailyStage == -1)
+                stage = Instantiate(_stagePrefabs[isNowStage]);
+            else
+                stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
+            if( stageParent != null)
+                stage.transform.parent = stageParent;
+            stage.transform.localScale = Vector3.one;
+            stage.transform.localPosition = Vector3.zero;
+            stage.gameObject.SetActive(true);
+            isHard = stage.isHard;
+        }
 
+        if(isHard)
+            _imageLevelBack.color = new Color32(126, 10, 16, 255);
         
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
+
+        if(GameDataManager.InitMoveCount <= 0)
+        {
+            _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+            if(13 <= _MoveCount)
+            {
+                _MoveCount += UnityEngine.Random.Range(-1, 2);
+            }
+            GameDataManager.InitMoveCount = _MoveCount;
+            Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+        }
+        else
+            _MoveCount = GameDataManager.InitMoveCount;
 
         // 🔸前回の経過時間を読み込み
         string key = GetElapsedTimeKey();
@@ -158,12 +261,7 @@ public class StageManager : MonoBehaviour
 
     void Update()
     {
-        if (isStart && !hasStartedTimer)
-        {
-            hasStartedTimer = true;
-            // StartCoroutine(CountdownTimer());
-        }
-         if ( !isClear)
+        if ( !isClear)
         {
             pureElapsedTime += Time.deltaTime;
         }
@@ -201,6 +299,19 @@ public class StageManager : MonoBehaviour
             ClearTrigger();
         }
     }
+    public void CountDownMove()
+    {
+        if(_moveCountText == null)
+            return;
+        _MoveCount--;
+        if (_MoveCount == 0 && !isClear)
+        {
+            Sequence seq = DOTween.Sequence();
+            seq.Append(_moveCountText.transform.parent.DOScale(Vector3.one * 1.05f, 0.3f).SetEase(Ease.OutCubic).SetLink(_moveCountText.gameObject));
+            seq.Append(_moveCountText.transform.parent.DOScale(Vector3.one, 0.32f).SetEase(Ease.OutCubic).SetLink(_moveCountText.gameObject));
+            seq.AppendCallback(()=>{ if(!isClear)RestartGame(); });
+        }
+    }
     public void RestartGame()
     {
         if (!isRestart)
@@ -214,8 +325,12 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.SetFloat(key, pureElapsedTime);
             PlayerPrefs.Save();
 
-            FadeManager.Instance.LoadScene(SceneManager.GetActiveScene().name, 0.2f);
+            // FadeManager.Instance.LoadScene(SceneManager.GetActiveScene().name, 0.2f);
             isRestart = true;
+            
+            float rotateZ = reloadButtonImage.transform.localEulerAngles.z - 360f;
+            reloadButtonImage.transform.DORotate(new Vector3(0, 0, rotateZ), 0.5f, RotateMode.FastBeyond360);
+            ClearGame();
         }
     }
 
@@ -224,8 +339,6 @@ public class StageManager : MonoBehaviour
         isGameOver = true;
         firebaseManager.StageFail(stageName); // Firebaseにステージ失敗を通知
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
-
-
     }
     public void ClearGame()
     {
@@ -237,12 +350,17 @@ public class StageManager : MonoBehaviour
             AdsTimerManager.instance.IsCounter = false;
             AdsManager.instance.OnInterstitialHidden += OnInterstitialHidden;
             FadeManager.Instance.FadeIn(()=>{
+                string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                SceneManager.LoadScene (sceneName); 
                 AdsManager.instance.ShowAd();
-            }, 0.5f, true);
+            }, 0.5f, false);
         }
         else
         {
             ReLoadScene(0.25f);
+            // FadeManager.Instance.FadeIn(()=>{
+            //     OnInterstitialHidden();
+            // }, 0.5f, false);
         }  
         // FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         
@@ -252,9 +370,7 @@ public class StageManager : MonoBehaviour
     }
     private void OnInterstitialHidden()
     {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene (sceneName); 
-        FadeManager.Instance.FadeOut(0.5f); 
+        FadeManager.Instance.FadeOut(0.25f); 
         AdsTimerManager.instance.IsCounter = true;
     }
 
@@ -262,8 +378,10 @@ public class StageManager : MonoBehaviour
     {
         if (isClear == false)
         {
+            GameDataManager.InitMoveCount = -1;
             firebaseManager.StageClear(stageName,pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
+            AudioManager.Instance.PlayClearSound();
             Debug.Log("🎉 ゲームクリア！:1");
             
             int _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
@@ -272,7 +390,7 @@ public class StageManager : MonoBehaviour
             {
                 PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
                 PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
-                if (isNowStage + 1 >= stages.Length)
+                if (isNowStage + 1 >= GetStageLength())
                 {
                     // 25ステージ目からループさせる
                     PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
@@ -315,20 +433,22 @@ public class StageManager : MonoBehaviour
 
     public void NextStage()
     {
+        Debug.Log($"デバッグ：ステージを進める:{!isClear}");
         if (isClear == false)
         {
             firebaseManager.StageClear(stageName,pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
-            Debug.Log("🎉 ゲームクリア！:2");
             PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
+            Debug.Log($"ステージリロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}");
             PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
-            if (PlayerPrefs.GetInt("Stage") >= stages.Length)
+            if ( PlayerPrefs.GetInt("Stage") >= GetStageLength() )
             {
                 PlayerPrefs.SetInt("Stage", 0); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
-            // ReLoadScene(0.0f); 
-            SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            ReLoadScene(0.0f); 
+            GameDataManager.InitMoveCount = -1;
+            // SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
 
@@ -339,19 +459,28 @@ public class StageManager : MonoBehaviour
 
     public void BackGame()
     {
-         if (isClear == false)
+        Debug.Log($"デバッグ：ステージ戻す:{!isClear}");
+        if (isClear == false)
         {
             isClear = true;
-            Debug.Log("🎉 ゲームクリア！:3");
             PlayerPrefs.SetInt("Stage", isNowStage - 1); // 次のステージを保存
             PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) - 1); // 全ステージ数を保存
             if (PlayerPrefs.GetInt("Stage") <0)
             {
-                PlayerPrefs.SetInt("Stage", stages.Length-1); // 最後のステージをクリアしたら最初のステージに戻す
+                PlayerPrefs.SetInt("Stage", GetStageLength()-1); // 最後のステージをクリアしたら最初のステージに戻す
             }
             PlayerPrefs.Save();
-            SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            ReLoadScene(0.0f); 
+            GameDataManager.InitMoveCount = -1;
+            // SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
+    }
+
+    private int GetStageLength()
+    {
+        if(_isStageLoadFromScene)
+            return stages.Length;
+        return _stagePrefabs.Length;
     }
 
 

@@ -25,6 +25,7 @@ public static class PieceSorter
         {
             return new List<PieceDragController>();
         }
+        Debug.Log($"PieceSorter:1:{source.Count}");
 
         // 1. コピーを作成し、初期ソートを行う
         
@@ -120,13 +121,32 @@ public static class PieceSorter
         // ３ピースのうち何個目が外周以外のピースかは一見ランダムなようにする（seedStringを使う？）
         for(int i = 0; i < sortedQueue.Count; i += 3)
         {
-            int insertTargetIndex = sortedQueue.Count - 1;
-            int insertIndex = i + (int)directions[i / 2 % directions.Count] % 3;
+            // 最後のピースをターゲットにする
+            int insertTargetIndex = sortedQueue.Count - 1; 
+            
+            // ループの外側でCountチェックを行う
             if( sortedQueue.Count <= i )
                 break;
+            // 追加分：最初の1個分だけ処理する。残りは動的にする
+            if( 3 <= i )
+                break;
+            
+            // 挿入インデックスを計算
+            int calculatedIndex = i + (int)directions[i / 2 % directions.Count] % 3;
+            
+            // 挿入インデックスが現在のリストサイズを超えないように制限
+            int insertIndex = Mathf.Min(calculatedIndex, sortedQueue.Count - 1);
             
             PieceDragController piece = sortedQueue[insertTargetIndex];
-            sortedQueue.Remove(piece);
+            piece.IsRandomPiece = true;
+            
+            // 削除と挿入を同一ループ内で行うことで、必ずピースがリスト内に残るようにする
+            sortedQueue.RemoveAt(insertTargetIndex); 
+            
+            // 削除後のCountに基づいてインデックスを再チェックするのではなく、
+            // 削除前のCount-1を最大値とする。
+            // insertTargetIndex は削除後に無効になるため、RemoveAtを使用。
+            
             sortedQueue.Insert(insertIndex, piece);
         }
         

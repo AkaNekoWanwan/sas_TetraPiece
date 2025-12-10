@@ -3,9 +3,6 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using UnityEditor;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 
 public class GridPieceListController : MonoBehaviour
@@ -24,6 +21,7 @@ public class GridPieceListController : MonoBehaviour
     public bool isOrderSort = false;   // ピースの並びを手動で指定するか
     public string PieceCreateSeed = ""; // ピース作成のシード値
     public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
+    public int randomSeed = 0;
     public List<string> avoidPatternSeeds = default;
 
     public ShapeType ShapeType = default;
@@ -33,7 +31,7 @@ public class GridPieceListController : MonoBehaviour
     
     [Header("Hidden Pieces")]
     [Tooltip("4つ目以降を配置する画面外のX座標")]
-    public float hiddenX = 1000f;
+    public float hiddenX = 1000;
 
     [Header("Rule")]
     [Tooltip("左から何個まで選択可能か")]
@@ -48,9 +46,7 @@ public class GridPieceListController : MonoBehaviour
     public float shakeDuration = 0.3f;
     public Transform _boardTransform = null;
     public RectTransform _rectTransform = null;
-
-    private Vector2 _targetSizeDelta = default;
-
+    public List<int> _randomIndexs = default;
     // パーツリストのスケール
     [Tooltip("ピースリストのサイズ")]
     public float _PieceDragControllersScale = -1f;
@@ -59,14 +55,20 @@ public class GridPieceListController : MonoBehaviour
     private readonly List<PieceDragController> queue = new();
     private Sequence _alignSequence = null; // ★ 追加：進行中の整列アニメーションを管理
 
+    private bool randomRock = true; // ランダム順ピースの補充をロック
+    private int _initQueueCount = 0;
+
 #if UNITY_EDITOR
     private void OnValidate() {
         if(UnityEditor.EditorApplication.isPlaying)
             return;
+        baseX = -8f;
+        spacing = 8f;
         baseY = -18f;
+        hiddenX = 100;
+        selectableCount = 3;
         if(_rectTransform == null)
             _rectTransform = GetComponent<RectTransform>();
-
         UpdateSizeDelta();
     }
 #endif
@@ -84,15 +86,15 @@ public class GridPieceListController : MonoBehaviour
             pcs = GetComponentsInChildren<PieceDragController>(false).ToList();
 
         Debug.Log($"queue:{queue}, {queue.Count}");
-        Vector2 size = _rectTransform.sizeDelta;
-        size.x = pcs.Count * spacing + 2f;
+        // Vector2 size = _rectTransform.sizeDelta;
+        // size.x = pcs.Count * spacing + 2f;
 
         // if(!UnityEditor.EditorApplication.isPlaying)
-            _rectTransform.sizeDelta = size;
-        var pos = _rectTransform.anchoredPosition;
-        pos.x += spacing / 4;
-        _rectTransform.anchoredPosition = pos;
-        _targetSizeDelta = size;
+        //     _rectTransform.sizeDelta = size;
+        // var pos = _rectTransform.anchoredPosition;
+        // pos.x += spacing / 4;
+        // _rectTransform.anchoredPosition = pos;
+        // _targetSizeDelta = size;
     }
 
     void Awake()
@@ -101,9 +103,8 @@ public class GridPieceListController : MonoBehaviour
         shakeVibrato = 25;
         shakeDuration = 0.2f;
         var pcs = GetComponentsInChildren<PieceDragController>(false);
-        selectableCount = 999;
-        _targetSizeDelta = _rectTransform.sizeDelta;
-
+        // _targetSizeDelta = _rectTransform.sizeDelta;
+        Debug.Log($"GridPieceListController:Awake:{pcs.Length}");
         // queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
         if(!isOrderSort)
         {
@@ -115,6 +116,7 @@ public class GridPieceListController : MonoBehaviour
         }
         
         _queue = queue;
+        _initQueueCount = _queue.Count;
 
         // AlignAll(withDelay: false);
         AlignAll(withDelay: false, onComplete: () => {
@@ -129,6 +131,8 @@ public class GridPieceListController : MonoBehaviour
             ShapeType = gridImageSplitter.GetShapeType();
             IsSetShapeType = true;   
         }
+
+        _randomIndexs = new List<int>();
         for(int i = 0; i < pcs.Length; i++)
         {
             PieceDragController ps = pcs[i];
@@ -140,6 +144,14 @@ public class GridPieceListController : MonoBehaviour
             }
             ps.transform.localScale = Vector3.one * _PieceDragControllersScale;
             ps.OriginalScale = Vector3.one * _PieceDragControllersScale;
+
+            // ランダムピース補充用のインデックス
+            if(i <= pcs.Length / 3)
+            {
+                int index = ((randomSeed + i) * (i + 1)) % 3 + i * 3 + 1;
+                // Debug.Log($"ランダムインデックスセット:{i}, {index}");
+                _randomIndexs.Add(index);
+            }
         }
     }
 
@@ -192,6 +204,7 @@ public class GridPieceListController : MonoBehaviour
             _PieceDragControllersScale *= 1f;
     }
 
+    // 選択可能ピースの更新。isAddRandomがtrueならランダム順のピースを補充する時がある
     void UpdateSelectability()
     {
         if(isCreative)
@@ -303,10 +316,49 @@ public class GridPieceListController : MonoBehaviour
         // ピースをキューから削除
         queue.Remove(snapped);
         _queue = queue;
+
         if(_boardTransform != null)
         {
             snapped.transform.parent = _boardTransform;
             UpdateSizeDelta();
+        }
+        
+        bool isAddRandom = true;
+        // ランダムピース挿入をするほど残りのピースが多く残っているか
+        if( queue.Count < selectableCount + 1)
+            isAddRandom = false;
+        // 選択肢にランダムピースがあるかの確認。ないならランダム補充アリ
+        if(isAddRandom)
+        {
+            for (int i = 0; i < queue.Count; i++)
+            {
+                if( selectableCount <= i )
+                    break;
+                if(queue[i].IsRandomPiece)
+                {
+                    isAddRandom = false;
+                    break;
+                }
+            }
+        }
+        // 盤面に置いたピース数が指定ならランダム補充する
+        if(isAddRandom)
+        {
+            int putPieceNum = _initQueueCount - queue.Count;
+            // Debug.Log($"ランダムインデックスチェック:{putPieceNum}"); 
+            if(!_randomIndexs.Contains(putPieceNum))
+                isAddRandom = false;   
+        }
+        // ランダム補充実行
+        if(isAddRandom)
+        {
+            // Debug.Log("ランダム挿入！！");
+            int insertTargetIndex = queue.Count - 1;
+            int insertIndex = 2;
+            PieceDragController piece = queue[insertTargetIndex];
+            piece.IsRandomPiece = true;
+            queue.RemoveAt(insertTargetIndex); 
+            queue.Insert(insertIndex, piece);
         }
         
         // ★ AlignAllを実行し、そのアニメーションが完了した後に選択性を更新する
@@ -518,34 +570,6 @@ public class GridPieceListController : MonoBehaviour
         Debug.Log($"queueDebug8:{queue.Count}");
     }
 
-    public void RescanAndAlign()
-    {
-        queue.Clear();
-        
-        // ★ 変更: FindObjectsOfType<PieceDragController>() の結果を PieceSorter でソート
-        var unsortedPieces = FindObjectsOfType<PieceDragController>().ToList();
-        
-        // ピースを PieceSorter で並び替える
-        // この並び替えによって、queue の順番が「外周から順番」になる
-        var sortedPieces = PieceSorter.SortBySeededAlternatingDirections(unsortedPieces, PieceCreateSeed); 
-
-        // 既存のリストにあるピースのみを queue に追加 (シーン内に残っているピースのみ)
-        foreach (var piece in sortedPieces)
-        {
-            if (piece.GetComponentInParent<GridPieceListController>() == this)
-            {
-                // リストコンポーネントの子であるピースのみを追加する想定
-                queue.Add(piece);
-            }
-        }
-        
-        // ★ 以前の修正と同様に AlignAll でアニメーションを完了保証する
-        AlignAll(withDelay: true, onComplete: () => {
-            UpdateSelectability();
-        });
-        _queue = queue;
-    }
-
     public bool IsSelectable(PieceDragController pc)
     {
         int idx = queue.IndexOf(pc);
@@ -606,6 +630,11 @@ public class GridPieceListController : MonoBehaviour
             childPiece.transform.localScale = Vector3.one * _PieceDragControllersScale;
             childPiece.isCreative = isCreative;
         }
+        AbstractGridImageSplitter gridImageSplitter = this.transform.parent.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+        if(gridImageSplitter != null)
+            randomSeed = gridImageSplitter.uniqueId;
+        else
+            randomSeed = 0;
     }
 }
 

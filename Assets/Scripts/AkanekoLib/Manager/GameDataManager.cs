@@ -10,6 +10,8 @@ public static class GameDataManager
     public static StageManager CurrentStage => _currentStage;
     public static void SetCurrentStage(StageManager stageManager) { _currentStage = stageManager; }
 
+    public static int InitMoveCount = -1;
+
     public static bool IsClear = false;
     public static bool IsBlockTouch = false;
     public static float FixScale = 1f;
@@ -50,13 +52,6 @@ public static class GameDataManager
         _onStageStart = new UnityEvent();
         _waitEventStageStart = false;
     }
-
-    // private static TargetInfoContainer _activeTargetInfoContainer = null;
-    // public static TargetInfoContainer ActiveTargetInfoContainer => _activeTargetInfoContainer;
-    // public static void SetActiveTargetInfoContainer(TargetInfoContainer targetInfoContainer)
-    // {
-    //     _activeTargetInfoContainer = targetInfoContainer;
-    // }
 
     private static bool _isRestart = false;
     public static bool IsRestart => _isRestart;

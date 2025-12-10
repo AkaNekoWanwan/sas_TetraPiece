@@ -15,7 +15,7 @@ namespace AkanekoLib
                 if (_instance == null)
                 {
                     // シーン内でインスタンスを探す
-                    _instance = FindObjectOfType<T>();
+                    _instance = (T)FindAnyObjectByType (typeof(T));
                     // // Debug.Log("_instance:" + _instance + ", " + typeof(T).Name);
                     if (_instance == null)
                     {
