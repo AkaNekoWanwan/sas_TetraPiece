@@ -7,6 +7,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip mergeSound;
     public AudioClip holdSound;
     public AudioClip placeSound;
+    public AudioClip clearSound;
     public AudioClip bgmAudioClip;
 
     public AudioSource audioSource;
@@ -51,6 +52,11 @@ public class AudioManager : MonoBehaviour
     public void PlayPlaceSound()
     {
         audioSource.PlayOneShot(placeSound);
+    }
+    public void PlayClearSound()
+    {
+        audioSource.volume = 0.3f;
+        audioSource.PlayOneShot(clearSound);
     }
 
     private bool IsMute(string key)

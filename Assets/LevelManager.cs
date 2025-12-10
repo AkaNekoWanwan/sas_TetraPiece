@@ -340,8 +340,6 @@ public class LevelManager : MonoBehaviour, IInitializer
         if (!GameDataManager.IsRestart)
         {
             int limitTime = 0;
-            int targetMatchNum = 0;
-            int targetMergePoint = 0;
             List<int> targetMatchNumList = new List<int>();
             List<int> targetMergePointList = new List<int>();
 

@@ -32,9 +32,6 @@ public class CSVLoader : MonoBehaviour
 #if UNITY_EDITOR
     private const string SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1xz2He2ydHgi1OdS-PIpgq10ybxWeYPfjUOmWiBefCJ0/export?format=csv";
 
-    [SerializeField, Tooltip("テスト中か")] private bool isTest = false;
-    [SerializeField, Tooltip("テスト有効ステージ")] private int activeStageIndex = 0;
-
     [Header("Imported Data")]
     [SerializeField, Tooltip("インポートデータ")] private List<StageData> _classList = new List<StageData>();
     [SerializeField, Tooltip("ステージクリエーター")] private StageCreator _stageCreator = null;
@@ -138,6 +135,7 @@ public class CSVLoader : MonoBehaviour
             case "🔺":
                 ret = ShapeType.Triangle;
                 break;
+            case "六":
             case "六角":
                 ret = ShapeType.Hex;
                 break;
