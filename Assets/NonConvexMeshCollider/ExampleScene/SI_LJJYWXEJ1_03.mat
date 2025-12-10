@@ -13,8 +13,9 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _DETAIL_MULX2
+  - _EMISSION
   m_InvalidKeywords: []
-  m_LightmapFlags: 5
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -71,13 +72,17 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Gloss: 0.3
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
+    - _GlossyReflections: 1
     - _LightBrightness: 3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
     - _Specular: 0.5
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 1
     - _ZWrite: 1
@@ -86,3 +91,4 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _TransmissionColor: {r: 0.625, g: 0.5489351, b: 0.3492647, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
