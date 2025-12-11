@@ -1,8 +1,8 @@
 if(NOT TARGET games-frame-pacing::swappy)
 add_library(games-frame-pacing::swappy SHARED IMPORTED)
 set_target_properties(games-frame-pacing::swappy PROPERTIES
-    IMPORTED_LOCATION "/Users/Akaneko/.gradle/caches/8.11/transforms/8d4d590cf58c75af23a8b3285e3043cf/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy/libs/android.armeabi-v7a/libswappy.so"
-    INTERFACE_INCLUDE_DIRECTORIES "/Users/Akaneko/.gradle/caches/8.11/transforms/8d4d590cf58c75af23a8b3285e3043cf/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy/include"
+    IMPORTED_LOCATION "/Users/Akaneko/.gradle/caches/8.11/transforms/88769407ce5155fc6a4baca8cffcc1dd/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy/libs/android.armeabi-v7a/libswappy.so"
+    INTERFACE_INCLUDE_DIRECTORIES "/Users/Akaneko/.gradle/caches/8.11/transforms/88769407ce5155fc6a4baca8cffcc1dd/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy/include"
     INTERFACE_LINK_LIBRARIES ""
 )
 endif()
@@ -10,8 +10,8 @@ endif()
 if(NOT TARGET games-frame-pacing::swappy_static)
 add_library(games-frame-pacing::swappy_static STATIC IMPORTED)
 set_target_properties(games-frame-pacing::swappy_static PROPERTIES
-    IMPORTED_LOCATION "/Users/Akaneko/.gradle/caches/8.11/transforms/8d4d590cf58c75af23a8b3285e3043cf/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy_static/libs/android.armeabi-v7a/libswappy_static.a"
-    INTERFACE_INCLUDE_DIRECTORIES "/Users/Akaneko/.gradle/caches/8.11/transforms/8d4d590cf58c75af23a8b3285e3043cf/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy_static/include"
+    IMPORTED_LOCATION "/Users/Akaneko/.gradle/caches/8.11/transforms/88769407ce5155fc6a4baca8cffcc1dd/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy_static/libs/android.armeabi-v7a/libswappy_static.a"
+    INTERFACE_INCLUDE_DIRECTORIES "/Users/Akaneko/.gradle/caches/8.11/transforms/88769407ce5155fc6a4baca8cffcc1dd/transformed/jetified-games-frame-pacing-2.1.2/prefab/modules/swappy_static/include"
     INTERFACE_LINK_LIBRARIES ""
 )
 endif()

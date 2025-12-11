@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip holdSound;
     public AudioClip placeSound;
     public AudioClip clearSound;
+    public AudioClip cardFlipSound;
     public AudioClip bgmAudioClip;
 
     public AudioSource audioSource;
@@ -57,6 +58,11 @@ public class AudioManager : MonoBehaviour
     {
         audioSource.volume = 0.3f;
         audioSource.PlayOneShot(clearSound);
+    }
+    public void PlayCardFlipSound()
+    {
+        audioSource.volume = 0.3f;
+        audioSource.PlayOneShot(cardFlipSound);
     }
 
     private bool IsMute(string key)
