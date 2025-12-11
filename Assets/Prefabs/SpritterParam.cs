@@ -6,6 +6,7 @@ public class SpritterParam : ScriptableObject
     public Material OutLineMaterial;
     public Material AnswerMaterial;
     public Material CellsMaterial;
+    public Material ShadowMaterial;
     public Color32 AnswerColor;
     public Color32 OutLineColor;
     public Vector2 OutLineSize;
