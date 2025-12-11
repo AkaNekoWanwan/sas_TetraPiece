@@ -24,6 +24,11 @@ public class OptionButton : MonoBehaviour
         bool isOn = PlayerPrefs.GetInt(optionKey, 1) == 1;
         SetOption(!isOn);
     }
+    public void UpdateView()
+    {
+        bool isOn = PlayerPrefs.GetInt(optionKey, 1) == 1;
+        SetOption(isOn);
+    }
     
     public void SetOption(bool isOn)
     {

@@ -4,6 +4,7 @@ using AkanekoLib;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SettingManager : MonoBehaviour
 {
@@ -11,16 +12,26 @@ public class SettingManager : MonoBehaviour
     public CustomButton _closeButton = default;
     public CustomButton _openButton = default;
 
+    public Transform _stageUI = default;
+    public Transform _homeUI = default;
+
     public OptionButton _buttonSound;
     public OptionButton _buttonBgm;
     public OptionButton _buttonVib;
     public AudioSource audioSource;
     public AudioSource bgmAudioSource;
 
+    public List<OptionButton> _optionButtions = default;
+
     public bool IsOpen { get { return _settingView.localScale == Vector3.one; } }
 
     private Tween _viewTween = null; 
 
+
+    private void OnValidate() {
+        _optionButtions = new List<OptionButton>();
+        _optionButtions = GetComponentsInChildren<OptionButton>().ToList();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -95,6 +106,13 @@ public class SettingManager : MonoBehaviour
         _settingView.gameObject.SetActive(true);
         _viewTween?.Kill();
         _viewTween = _settingView.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutBack).SetLink(this.gameObject);
+        _stageUI.gameObject.SetActive(!GameDataManager.IsHome);
+        _homeUI.gameObject.SetActive(GameDataManager.IsHome);
+
+        for(int i = 0; i < _optionButtions.Count; i++)
+        {
+            _optionButtions[i].UpdateView();
+        }
     }
 
     public void CloseView()

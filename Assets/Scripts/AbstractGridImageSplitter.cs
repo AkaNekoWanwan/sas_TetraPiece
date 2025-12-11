@@ -46,6 +46,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     [Header("TriangleParam")]
     public Vector2 _trimShift = Vector2.zero;
     public int uniqueId = 0;
+    public int index = 0;
 
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
     
@@ -56,7 +57,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             return;
             
         Vector3 pos = this.transform.localPosition;
-        pos.y = 3.7f;
+        // pos.y = 3.7f;
         this.transform.localPosition = pos;
 
         GameObject shadow = SiblingFinder.FindSiblingByName(this.gameObject, "shadow");
@@ -259,12 +260,14 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     {
         _gridPieceListController = GetGridPieceListController();
         // _gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
-
-        _gridPieceListController._PieceDragControllersScale = 0.67f * 185f / size;
-        if(GetShapeType() == ShapeType.Square)
-            _gridPieceListController._PieceDragControllersScale *= 0.75f;
-        else
-            _gridPieceListController._PieceDragControllersScale *= 1f;
+        if(_gridPieceListController != null)
+        {
+            _gridPieceListController._PieceDragControllersScale = 0.67f * 185f / size;
+            if(GetShapeType() == ShapeType.Square)
+                _gridPieceListController._PieceDragControllersScale *= 0.75f;
+            else
+                _gridPieceListController._PieceDragControllersScale *= 1f;
+        }
     }
 
     public void SetShapeType()
@@ -279,24 +282,24 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     protected void CreateShadow(AnswerGridPos answerGridPos, Vector2 size)
     {
-        // GameObject shadowObj = new GameObject("shadow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        // shadowObj.transform.SetParent(answerGridPos.transform, false);
+        GameObject shadowObj = new GameObject("shadow", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        shadowObj.transform.SetParent(answerGridPos.transform, false);
 
-        // Image shadowImg = shadowObj.GetComponent<Image>();
-        // shadowImg.sprite = _shadowSprite;
-        // shadowImg.color = new Color32(0, 0, 0, 50);
-        // shadowImg.material = _param.AnswerMaterial;
+        Image shadowImg = shadowObj.GetComponent<Image>();
+        shadowImg.sprite = _shadowSprite;
+        shadowImg.color = new Color32(0, 0, 0, 50);
+        shadowImg.material = _param.ShadowMaterial;
 
-        // RectTransform shadowRT = shadowObj.GetComponent<RectTransform>();
-        // shadowRT.localPosition = new Vector3(0f, -50f, 0f);
-        // shadowRT.localScale = Vector3.one;
-        // shadowRT.sizeDelta = new Vector2( size.x * 355f / 270f, size.y * 355f / 270f);
-        // answerGridPos.shadowTransform = shadowObj.transform;
+        RectTransform shadowRT = shadowObj.GetComponent<RectTransform>();
+        shadowRT.localPosition = new Vector3(0f, -30f, 0f);
+        shadowRT.localScale = Vector3.one;
+        shadowRT.sizeDelta = new Vector2( size.x * 355f / 270f, size.y * 355f / 270f);
+        answerGridPos.shadowTransform = shadowObj.transform;
 
-        // if(answerGridPos.isUpSide)
-        // {
-        //     shadowRT.localScale = new Vector3(1f, -1f, 1f);
-        // }
+        if(answerGridPos.isUpSide)
+        {
+            shadowRT.localScale = new Vector3(1f, -1f, 1f);
+        }
     }
 }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class DailyMissionManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class DailyMissionManager : MonoBehaviour
     private DailyButton _selectedButton;
     private int _today = -1;
     private int _lastDay = -1;
+    public bool _isDailyStage = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -81,8 +83,8 @@ public class DailyMissionManager : MonoBehaviour
             BackStage();
         };
         int currentDailyStage = PlayerPrefs.GetInt("DailyStage", -1);
-        _showDailyMissionButton.gameObject.SetActive(currentDailyStage == -1);
-        _homeButton.gameObject.SetActive(currentDailyStage != -1);
+        // _showDailyMissionButton.gameObject.SetActive(!_isDailyStage);
+        _homeButton.gameObject.SetActive(currentDailyStage != -1 && _isDailyStage);
 
         _showDailyMissionButton.onClick += () =>
         {
@@ -160,12 +162,16 @@ public class DailyMissionManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("DailyStage", _selectedButton._day);
         PlayerPrefs.Save();
-        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
+        // HomeManager.Instance.FedeGoStage();
+        GameDataManager.IsHome = false;
+        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.25f);
     }
     private void BackStage()
     {
         PlayerPrefs.SetInt("DailyStage", -1);
         PlayerPrefs.Save();
-        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
+        // HomeManager.Instance.FedeGoHome();
+        GameDataManager.IsHome = true;
+        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.25f);
     }
 }

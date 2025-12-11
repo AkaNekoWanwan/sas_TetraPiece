@@ -20,6 +20,8 @@ public static class GameDataManager
 
     private static bool _isInit = false;
     public static bool IsInit => _isInit;
+    public static bool IsHome = true;
+    public static bool IsHard = false;
 
     public static bool IsDebugView = false;
 
@@ -76,4 +78,5 @@ public static class GameDataManager
     private static Vector2 _creativeLastCursorPos = Vector2.zero;
     public static Vector2 CreativeLastCursorPos { get => _creativeLastCursorPos; set { _creativeLastCursorPos = value; } }
 
+    public static bool isPlayHomePieceAnimation = false;
 }

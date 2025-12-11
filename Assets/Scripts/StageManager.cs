@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using System.Globalization;
 using UnityEditor;
 using System.Linq;
+using AkanekoLib;
 
 public class StageManager : MonoBehaviour
 {
@@ -46,6 +47,7 @@ public class StageManager : MonoBehaviour
     public GameObject _defaultCanvas = default;
     public DebugUIManager _debugUIManager = default;
     public GameObject _creativeCanvas = default;
+    public CustomButton _clearNextButton = default;
     private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
     private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
 
@@ -227,9 +229,15 @@ public class StageManager : MonoBehaviour
         // 🔸5秒ごとに経過時間を保存
         autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
 
-        _hardEfffectManager.PlayHardAnimation(isHard);
+        if(!GameDataManager.IsHome)
+            _hardEfffectManager.PlayHardAnimation(isHard);
+
+        GameDataManager.IsHard = isHard;
 
         TryRequestReview();
+
+        _clearNextButton.transform.localScale = Vector3.zero;
+        _clearNextButton.onClick += OnClearNext;
     }
 
     private string GetElapsedTimeKey()
@@ -273,11 +281,12 @@ public class StageManager : MonoBehaviour
             if(!isDoClearGame)
             {
                 clearBuffer++;
-                if (clearBuffer == 180)
+                if (clearBuffer == 60)
                 {
                     isDoClearGame = true;
-                    ClearGame();
+                    // ClearGame(true);
                     clearBuffer = 0;
+                    _clearNextButton.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetLink(_clearNextButton.gameObject);
                 }
             }
         }
@@ -330,7 +339,7 @@ public class StageManager : MonoBehaviour
             
             float rotateZ = reloadButtonImage.transform.localEulerAngles.z - 360f;
             reloadButtonImage.transform.DORotate(new Vector3(0, 0, rotateZ), 0.5f, RotateMode.FastBeyond360);
-            ClearGame();
+            ClearGame(false);
         }
     }
 
@@ -340,8 +349,12 @@ public class StageManager : MonoBehaviour
         firebaseManager.StageFail(stageName); // Firebaseにステージ失敗を通知
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
     }
-    public void ClearGame()
+
+    public void ClearGame(bool isGoHome)
     {
+        GameDataManager.IsHome = isGoHome;
+        if(isGoHome)
+            GameDataManager.isPlayHomePieceAnimation = true; // ホームのステージ進行アニメーション実行
         // 広告再生の判定
         Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
         if( 60 <= AdsTimerManager.instance.ElapsedTime && 4 <= PlayerPrefs.GetInt("totalLevel", 1))
@@ -365,6 +378,12 @@ public class StageManager : MonoBehaviour
         // FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         
     }
+
+    private void OnClearNext()
+    {
+        ClearGame(true);
+    }
+
     private void OnDisable() {
         AdsManager.instance.OnInterstitialHidden -= OnInterstitialHidden;
     }
@@ -415,9 +434,9 @@ public class StageManager : MonoBehaviour
             if (cam != null)
             {
                 // Y座標 +2.5f に移動
-                cam.DOOrthoSize(cam.orthographicSize-1.5f, 0.8f)
+                cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
                     .SetEase(Ease.InOutSine).SetDelay(0.1f);
-                cam.transform.DOMoveY(cam.transform.position.y + 2.5f, 0.7f)
+                cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
                     .SetEase(Ease.InOutSine).OnComplete(() =>
                     {    // Orthographic Size を 17 に
             

@@ -4,12 +4,28 @@ using DG.Tweening;
 
 public class HardEfffectManager : MonoBehaviour
 {
+    public static HardEfffectManager Instance;
     public Transform _hardLevelText = default;
     public Transform _hardLevelTextBanner = default;
     public CanvasGroup _canvasGroup = default;
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void PlayHardAnimation(bool isHard)
     {
+        if(GameDataManager.IsHome)
+            return;
         this.gameObject.SetActive(isHard);
         if (!isHard)
             return;

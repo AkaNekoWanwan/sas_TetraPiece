@@ -18,6 +18,12 @@ public class StageInfo : MonoBehaviour
         AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
         spritter.CreatePiece();
     }
+    public void SplitImage()
+    {
+        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+        spritter.Deletepiece();
+        spritter.SplitImage();
+    }
 #endif
 }
 
@@ -64,6 +70,17 @@ public class StageInfo : MonoBehaviour
                 {
                     // 各 StageInfo インスタンスに対して処理を実行
                     script.SetUpStage(); 
+                }
+            }
+            if (GUILayout.Button("画像分割"))
+            {
+                // 処理をUndo可能にするための記述（推奨）
+                Undo.RecordObjects(scripts, "SetUp Stages"); 
+
+                foreach (StageInfo script in scripts)
+                {
+                    // 各 StageInfo インスタンスに対して処理を実行
+                    script.SplitImage(); 
                 }
             }
         }

@@ -87,11 +87,11 @@ public class PieceDragController : MonoBehaviour,
         _stageManager = FindAnyObjectByType<StageManager>();
     }
 
-    private void OnValidate()
-    {
-        if( 1 <= CellCopyHandlers.Count )
-            CellCopyHandlers[0].UpdateAllCellCopyTransform(CellCopyHandlers);
-    }
+    // private void OnValidate()
+    // {
+    //     if( 1 <= CellCopyHandlers.Count )
+    //         CellCopyHandlers[0].UpdateAllCellCopyTransform(CellCopyHandlers);
+    // }
 
     void Update()
     {
@@ -981,6 +981,15 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         }
 
         AudioManager.Instance.PlayHoldSound();
+        SetActiveShadow(false);
+    }
+
+    public void SetActiveShadow(bool isActive)
+    {
+        foreach (AnswerGridPos agp in _answerGridPoses)
+        {
+            agp.shadowTransform.gameObject.SetActive(isActive);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -1017,6 +1026,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
                 }
                 // Debug.Log("サイズ不具合チェック：５");
                 rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+                SetActiveShadow(true);
             }
             
             return;
@@ -1084,10 +1094,11 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     {
         originalRenderQueues.Clear();
         
-        foreach (Transform child in transform)
+        // foreach (Transform child in transform)
+        foreach(AnswerGridPos agp in _answerGridPoses)
         {
             // 子セル（cell）のマテリアル
-            Image cellImg = child.GetComponent<Image>();
+            Image cellImg = agp.transform.GetComponent<Image>();
             if (cellImg != null && cellImg.material != null)
             {
                 // 元のRenderQueueを保存
@@ -1096,11 +1107,11 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
                     originalRenderQueues[cellImg.material] = cellImg.material.renderQueue;
                 }
                 cellImg.material.renderQueue = cellQueue;
-                Debug.Log($"[RenderQueue] {child.name} のセルを {cellQueue} に設定");
+                // Debug.Log($"[RenderQueue] {child.name} のセルを {cellQueue} に設定");
             }
 
             // Outlineのマテリアル
-            foreach (Transform grandChild in child)
+            foreach (Transform grandChild in agp.transform)
             {
                 Image outlineImg = grandChild.GetComponent<Image>();
                 if (outlineImg != null && outlineImg.material != null)
@@ -1110,8 +1121,11 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
                     {
                         originalRenderQueues[outlineImg.material] = outlineImg.material.renderQueue;
                     }
-                    outlineImg.material.renderQueue = outlineQueue;
-                    Debug.Log($"[RenderQueue] {grandChild.name} のアウトラインを {outlineQueue} に設定");
+                    if(grandChild != agp.shadowTransform)
+                        outlineImg.material.renderQueue = outlineQueue;
+                    // else
+                    //     outlineImg.material.renderQueue = outlineQueue - 1;
+                    // Debug.Log($"[RenderQueue] {grandChild.name} のアウトラインを {outlineQueue} に設定");
                 }
             }
         }
