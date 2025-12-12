@@ -114,7 +114,7 @@ public class DailyMissionManager : MonoBehaviour
         _DailyMissionWindowParentBack.SetActive(true);
         _DailyMissionWindow.SetActive(true);
         _DailyMissionWindow.transform.localScale = Vector3.zero;
-        _DailyMissionWindow.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack).SetLink(_DailyMissionWindow);
+        _DailyMissionWindow.transform.DOScale(1.85f, 0.2f).SetEase(Ease.OutBack).SetLink(_DailyMissionWindow);
     }
 
     // 未クリアの最終日を取得

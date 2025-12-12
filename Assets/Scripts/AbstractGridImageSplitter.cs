@@ -291,7 +291,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         shadowImg.material = _param.ShadowMaterial;
 
         RectTransform shadowRT = shadowObj.GetComponent<RectTransform>();
-        shadowRT.localPosition = new Vector3(0f, -30f, 0f);
+        shadowRT.localPosition = new Vector3(0f, -24f, 0f);
         shadowRT.localScale = Vector3.one;
         shadowRT.sizeDelta = new Vector2( size.x * 355f / 270f, size.y * 355f / 270f);
         answerGridPos.shadowTransform = shadowObj.transform;

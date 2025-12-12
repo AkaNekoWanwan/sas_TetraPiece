@@ -17,26 +17,26 @@ public class HomePuzzleCreator : MonoBehaviour
 {
 #if UNITY_EDITOR
     public string PrefabSavePath = "Assets/Prefabs/HomePuzzles"; // プレハブ保存先ディレクトリ
-    public List<StageInfo> _stageInfos = default;
+    public List<HomePanelsManager> _panelManagers = default;
     public List<Sprite> _sprites = default;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void CreatePiece()
     {
-        for(int i = 0; i < _stageInfos.Count; i++)
+        for(int i = 0; i < _panelManagers.Count; i++)
         {
-            StageInfo info = _stageInfos[i];
-            AbstractGridImageSplitter spritter = info.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+            HomePanelsManager panelManager = _panelManagers[i];
+            AbstractGridImageSplitter spritter = panelManager.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
             spritter.uniqueId = 10000 + i;
             spritter.index = i;
-            Image image = info.gameObject.GetComponentInChildren<Image>();
+            Image image = panelManager.baseImage;
             if(i < _sprites.Count)
             {
                 image.sprite = _sprites[i];
             }
-            info.gameObject.name = $"HomePanels{(i + 1).ToString("D3")}";
-            info.SplitImage();
+            panelManager.gameObject.name = $"HomePanels{(i + 1).ToString("D3")}";
+            panelManager.SplitImage();
 
-            SaveAsPrefab.Save(info.gameObject, PrefabSavePath);
+            SaveAsPrefab.Save(panelManager.gameObject, PrefabSavePath);
         }
     }
 #endif

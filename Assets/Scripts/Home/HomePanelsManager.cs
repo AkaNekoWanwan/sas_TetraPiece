@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;  
 #if UNITY_EDITOR
 using UnityEngine.SceneManagement; // SceneManagerを使用するために必要
 using Unity.EditorCoroutines.Editor;
@@ -16,6 +17,8 @@ using System.Linq;
 public class HomePanelsManager : MonoBehaviour
 {
     public List<HomePanel> HomePanels = default;
+    public Image baseImage = default;
+    public int StartIndex = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 #if UNITY_EDITOR
     public void SplitImage()
@@ -29,22 +32,35 @@ public class HomePanelsManager : MonoBehaviour
     private void OnValidate() {
         if(UnityEditor.EditorApplication.isPlaying)
             return;
-        GridImageSplitterHome spritter = this.gameObject.GetComponentInChildren<GridImageSplitterHome>();
-        HomePanels = spritter.HomePanels;
+        // GridImageSplitterHome spritter = this.gameObject.GetComponentInChildren<GridImageSplitterHome>();
+        // HomePanels = spritter.HomePanels;
+        RectTransform rect = this.transform.GetChild(0).GetComponent<RectTransform>();
+        rect.anchoredPosition = new Vector2(0f, 50f);
     }
 #endif
         
-    private void Start() {
+    public void Initialize() {
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-        int startIndex = ( totalLevel - 1 ) / 30 * 30;
         for(int i = 0; i < HomePanels.Count; i++)
         {
-            int cellNum = startIndex + HomePanels[i].cellNumber;
-            Debug.Log($"数字セット！：totalLevel:{totalLevel}, cellNum:{cellNum}, i:{i}, startIndex:{startIndex}, ");
-            // HomePanels[i].cellNumber = cellNum;
+            int cellNum = StartIndex + HomePanels[i].cellNumber;
             HomePanels[i].NumText.text = "" + cellNum;
-            HomePanels[i].UpdateView(totalLevel);
+            HomePanels[i].UpdateView(cellNum, totalLevel);
         }
+    }
+
+    public void PlayClearAnimation()
+    {
+        Sequence seq = DOTween.Sequence();
+        
+        baseImage.color = new Color32(255, 255, 255, 0);
+        baseImage.enabled = true;
+        for(int i = 0; i < HomePanels.Count; i++)
+        {
+            int cellNum = StartIndex + HomePanels[i].cellNumber;
+            HomePanels[i].rectTransform.DOSizeDelta(new Vector2(216, 216), 0.2f).SetLink(HomePanels[i].gameObject);
+        }
+        seq.Append(baseImage.DOColor(new Color32(255, 255, 255, 255), 0.2f).SetLink(baseImage.gameObject));
     }
 }
 #if UNITY_EDITOR

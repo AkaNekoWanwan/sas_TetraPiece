@@ -18,9 +18,10 @@ public class HomeManager : MonoBehaviour
     public CustomButton _playButton = default;
     public CustomButton _backButton = default;
     public GameObject _backGameObject = default;
-    public StageInfo[] _homePuzzlePrefabs;
+    public HomePanelsManager[] _homePuzzlePrefabs;
     public Transform _homeParent;
     public HardEfffectManager _hardEfffectManager;
+    public ParticleSystem _particle;
 
     private const string HOME_STAGE_PREFABS_PATH = "Assets/Prefabs/HomePuzzles/";
 
@@ -39,20 +40,71 @@ public class HomeManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // PlayerPrefs.SetInt("totalLevel", 901);
+        // GameDataManager.isPlayHomePieceAnimation = true;
+
         if(!GameDataManager.IsHome)
+        {
             this.gameObject.SetActive(false);
+            return;
+        }
         _playButton.onClick += OnPlayButton;
         _backButton.onClick += OnHomeButton;
-
-
+        
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-        int isNowStage = (totalLevel - 1) / 30 % _homePuzzlePrefabs.Length;
+        int nowBoardIndex = (totalLevel - 1) / 30;
 
-        StageInfo stage = null;
-        stage = Instantiate(_homePuzzlePrefabs[isNowStage]);
-        stage.transform.parent = _homeParent;
-        stage.transform.localScale = Vector3.one;
-        stage.transform.localPosition = Vector3.zero;
+        // ボード完成→次のボードへ移動アニメーションを流すか
+        bool isBoardChangeAnimation = false;
+        int beforeBoardIndex = 0;
+        // クリアして戻ってきたか
+        if(GameDataManager.isPlayHomePieceAnimation)
+        {
+            beforeBoardIndex = (totalLevel - 2) / 30;
+            if( 0 <= beforeBoardIndex && beforeBoardIndex != nowBoardIndex)
+                isBoardChangeAnimation = true;
+        }
+
+        Debug.Log($"アニメーションチェック: isAnim:{GameDataManager.isPlayHomePieceAnimation}, totalLevel:{totalLevel}, nowBoardIndex:{nowBoardIndex}, beforeBoardIndex:{beforeBoardIndex}, isBoardChangeAnimation:{isBoardChangeAnimation}");
+
+        HomePanelsManager homePanelsManager = null;
+        // ボード切り替え演出なし
+        if(!isBoardChangeAnimation)
+        {
+            homePanelsManager = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager.transform.parent = _homeParent;
+            homePanelsManager.transform.localScale = Vector3.one;
+            homePanelsManager.transform.localPosition = Vector3.zero;
+            homePanelsManager.StartIndex = nowBoardIndex * 30;
+            homePanelsManager.Initialize();
+        }
+        else
+        {
+            // 前のボードを出す
+            homePanelsManager = Instantiate(_homePuzzlePrefabs[beforeBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager.transform.parent = _homeParent;
+            homePanelsManager.transform.localScale = Vector3.one;
+            homePanelsManager.transform.localPosition = Vector3.zero;
+            homePanelsManager.StartIndex = beforeBoardIndex * 30;
+            homePanelsManager.Initialize();
+            // 次のボードも用意しておく
+            HomePanelsManager homePanelsManager2 = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager2.transform.parent = _homeParent;
+            homePanelsManager2.transform.localScale = Vector3.one * 0.5f;
+            homePanelsManager2.transform.localPosition = new Vector3(0f, -2000f, 0f);
+            homePanelsManager2.StartIndex = nowBoardIndex * 30;
+            homePanelsManager2.Initialize();
+
+            Sequence seq = DOTween.Sequence();
+            seq.AppendInterval(1.3f);
+            seq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayClearSound(); homePanelsManager.PlayClearAnimation();});
+            seq.Append(homePanelsManager.transform.DOScale(Vector3.one * 1.05f, 1f).SetEase(Ease.Linear).SetLink(homePanelsManager.gameObject));
+            seq.AppendInterval(2f);
+            seq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayCardFlipSound();});
+            seq.Append(homePanelsManager.transform.DOLocalMoveY(1500f, 1.2f).SetEase(Ease.InBack).SetLink(homePanelsManager.gameObject));
+            seq.Join(homePanelsManager2.transform.DOLocalMoveY(0f, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
+            seq.Join(homePanelsManager2.transform.DOScale(Vector3.one, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
+        }
     }
 
 #if UNITY_EDITOR
@@ -65,13 +117,13 @@ public class HomeManager : MonoBehaviour
         SetPrefabs(HOME_STAGE_PREFABS_PATH, ref _homePuzzlePrefabs);
     }
 
-    private void SetPrefabs(string path, ref StageInfo[] prefabArray)
+    private void SetPrefabs(string path, ref HomePanelsManager[] prefabArray)
     {
         // 一時的に結果を格納するためのList
-        List<StageInfo> loadedPrefabs = new List<StageInfo>();
+        List<HomePanelsManager> loadedPrefabs = new List<HomePanelsManager>();
 
         // 1. 指定されたフォルダ内の全アセットのGUIDを取得
-        // string[] guids = AssetDatabase.FindAssets("t:StageInfo", new[] { path });
+        // string[] guids = AssetDatabase.FindAssets("t:HomePanelsManager", new[] { path });
         string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { path });
         
         // 2. GUIDをパスに変換し、プレハブとしてロード
@@ -80,7 +132,7 @@ public class HomeManager : MonoBehaviour
             string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
             // フォルダ内のアセットがプレハブであることを確認してロード
-            StageInfo prefab = AssetDatabase.LoadAssetAtPath<StageInfo>(assetPath);
+            HomePanelsManager prefab = AssetDatabase.LoadAssetAtPath<HomePanelsManager>(assetPath);
             
             // PrefabUtility.GetPrefabAssetType で通常のプレハブか確認
             if (prefab != null && PrefabUtility.GetPrefabAssetType(prefab) == PrefabAssetType.Regular)

@@ -12,7 +12,12 @@ public class HomePanel : MonoBehaviour
     public int cellNumber = 1; // 1スタート
     public List<GameObject> hideableObjs = default;
     public Text NumText = default;
+    public RectTransform rectTransform = default;
 
+
+    private void OnValidate() {
+        rectTransform = GetComponent<RectTransform>();
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     // void Start()
     // {
@@ -30,13 +35,15 @@ public class HomePanel : MonoBehaviour
     //     }
     // }
 
-    public void UpdateView(int currentTotalLevel)
+    public void UpdateView(int cellNum, int currentTotalLevel)
     {
-        int refNum = ( currentTotalLevel - 1 ) % 30 + 1;
-        if(cellNumber <= refNum)
+        if(cellNum < currentTotalLevel)
         {
-            if(cellNumber == refNum && GameDataManager.isPlayHomePieceAnimation)
+            if(cellNum == currentTotalLevel - 1 && GameDataManager.isPlayHomePieceAnimation)
+            {
                 PlayAnimation();
+                GameDataManager.isPlayHomePieceAnimation = false;
+            }
             else
                 Open();
         }

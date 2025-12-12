@@ -200,7 +200,7 @@ public class StageManager : MonoBehaviour
         }
 
         if(isHard)
-            _imageLevelBack.color = new Color32(126, 10, 16, 255);
+            _imageLevelBack.color = new Color32(187, 3, 3, 255);
         
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
