@@ -17,7 +17,6 @@ public class DailyMissionManager : MonoBehaviour
     public List<DailyButton> _dailyButtons;
     public CustomButton _playButton;
     public CustomButton _rewardPlayButton;
-    public CustomButton _homeButton;
     private DailyButton _selectedButton;
     private int _today = -1;
     private int _lastDay = -1;
@@ -78,13 +77,8 @@ public class DailyMissionManager : MonoBehaviour
                 // リワード視聴失敗時の処理（任意）
             });
         };
-        _homeButton.onClick += () =>
-        {
-            BackStage();
-        };
         int currentDailyStage = PlayerPrefs.GetInt("DailyStage", -1);
         // _showDailyMissionButton.gameObject.SetActive(!_isDailyStage);
-        _homeButton.gameObject.SetActive(currentDailyStage != -1 && _isDailyStage);
 
         _showDailyMissionButton.onClick += () =>
         {
@@ -163,6 +157,7 @@ public class DailyMissionManager : MonoBehaviour
         PlayerPrefs.SetInt("DailyStage", _selectedButton._day);
         PlayerPrefs.Save();
         // HomeManager.Instance.FedeGoStage();
+        GameDataManager.DailyInitMoveCount = -1;
         GameDataManager.IsHome = false;
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.25f);
     }

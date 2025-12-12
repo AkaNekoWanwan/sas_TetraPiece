@@ -10,4 +10,5 @@ public class SpritterParam : ScriptableObject
     public Color32 AnswerColor;
     public Color32 OutLineColor;
     public Vector2 OutLineSize;
+    public Font Font;
 }

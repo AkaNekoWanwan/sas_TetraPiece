@@ -11,13 +11,11 @@ public class SettingManager : MonoBehaviour
     public Transform _settingView = default;
     public CustomButton _closeButton = default;
     public CustomButton _openButton = default;
+    public CustomButton _backButton = default;
 
     public Transform _stageUI = default;
     public Transform _homeUI = default;
 
-    public OptionButton _buttonSound;
-    public OptionButton _buttonBgm;
-    public OptionButton _buttonVib;
     public AudioSource audioSource;
     public AudioSource bgmAudioSource;
 
@@ -28,10 +26,10 @@ public class SettingManager : MonoBehaviour
     private Tween _viewTween = null; 
 
 
-    private void OnValidate() {
-        _optionButtions = new List<OptionButton>();
-        _optionButtions = GetComponentsInChildren<OptionButton>().ToList();
-    }
+    // private void OnValidate() {
+    //     _optionButtions = new List<OptionButton>();
+    //     _optionButtions = GetComponentsInChildren<OptionButton>().ToList();
+    // }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,26 +39,42 @@ public class SettingManager : MonoBehaviour
         _closeButton.onClick += CloseView;
         _openButton.onClick += OpenView;
 
-        _buttonVib.onOptionChanged += (isOn) =>
-        {
-            if (isOn)
-            {
-                // バイブレーション
-                VibratorManager.Vibrate(70, 40);
-            }
-        };
-
         audioSource = AudioManager.Instance.audioSource;
         bgmAudioSource = AudioManager.Instance.bgmAudioSource;
+        
+        // オプションボタンが押された時のコールバック設定　余裕かあったらこのクラスをインスタンス化してここに処理をコールバックも描きたい
+        GameDataManager.onOptionVibChanged += ChangeVib;
+        GameDataManager.onOptionSeChanged += ChangeSe;
+        GameDataManager.onOptionBgmChanged += ChangeBgm;
 
-        _buttonSound.onOptionChanged += (isOn) =>
+        _backButton.onClick += () =>
         {
-            audioSource.mute = !isOn;
+            // ホームに戻る
+            GameDataManager.IsHome = true;
+            PlayerPrefs.SetInt("DailyStage", -1);
+            FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         };
-        _buttonBgm.onOptionChanged += (isOn) =>
+    }
+    private void OnDisable() {
+        GameDataManager.onOptionVibChanged -= ChangeVib;
+        GameDataManager.onOptionSeChanged -= ChangeSe;
+        GameDataManager.onOptionBgmChanged -= ChangeBgm;
+    }
+    private void ChangeVib(bool isOn)
+    {
+        if (isOn)
         {
-            bgmAudioSource.mute = !isOn;
-        };
+            // バイブレーション
+            VibratorManager.Vibrate(70, 40);
+        }
+    }
+    private void ChangeSe(bool isOn)
+    {
+        audioSource.mute = !isOn;
+    }
+    private void ChangeBgm(bool isOn)
+    {
+        bgmAudioSource.mute = !isOn;
     }
     void Update()
     {

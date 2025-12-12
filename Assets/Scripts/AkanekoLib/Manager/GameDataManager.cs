@@ -11,6 +11,7 @@ public static class GameDataManager
     public static void SetCurrentStage(StageManager stageManager) { _currentStage = stageManager; }
 
     public static int InitMoveCount = -1;
+    public static int DailyInitMoveCount = -1;
 
     public static bool IsClear = false;
     public static bool IsBlockTouch = false;
@@ -24,6 +25,10 @@ public static class GameDataManager
     public static bool IsHard = false;
 
     public static bool IsDebugView = false;
+
+    public static event UnityAction<bool> onOptionVibChanged;
+    public static event UnityAction<bool> onOptionSeChanged;
+    public static event UnityAction<bool> onOptionBgmChanged;
 
     public static void Initialize()
     {
@@ -79,4 +84,20 @@ public static class GameDataManager
     public static Vector2 CreativeLastCursorPos { get => _creativeLastCursorPos; set { _creativeLastCursorPos = value; } }
 
     public static bool isPlayHomePieceAnimation = false;
+
+    public static void OnChangeOption(string optionType, bool isOn)
+    {
+        switch(optionType)
+        {
+            case "IsVib":
+                onOptionVibChanged?.Invoke(isOn);
+                break;
+            case "IsSe":
+                onOptionSeChanged?.Invoke(isOn);
+                break;
+            case "IsMusic":
+                onOptionBgmChanged?.Invoke(isOn);
+                break;
+        }
+    }
 }

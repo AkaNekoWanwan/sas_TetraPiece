@@ -60,6 +60,7 @@ public class GridPieceListController : MonoBehaviour
 
 #if UNITY_EDITOR
     private void OnValidate() {
+        return;
         if(UnityEditor.EditorApplication.isPlaying)
             return;
         baseX = -8f;

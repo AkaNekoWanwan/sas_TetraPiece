@@ -32,6 +32,7 @@ public class GridCell : MonoBehaviour
     private bool _isActive = false;
 
     private void OnValidate() {
+        return;
         if(!_isActive)
             return;
         Debug.Log("ああああああああああ:1");

@@ -272,7 +272,7 @@ public class GridImageSplitterHome : AbstractGridImageSplitter
                 Text text = cellTextNum.GetComponent<Text>();
                 text.text = "" + number;
                 text.alignment = TextAnchor.MiddleCenter;
-                text.font = _font;
+                text.font = _param.Font;
                 text.fontSize = 80;
                 // text.color = new Color32(35, 65, 77, 255);
 

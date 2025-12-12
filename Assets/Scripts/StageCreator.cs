@@ -49,6 +49,7 @@ public class StageCreator : MonoBehaviour
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
     // ------------------------------------------------
     private void OnValidate() {
+        return;
         if(!IsLog)
             return;
         pieceListCounts = new List<int>();

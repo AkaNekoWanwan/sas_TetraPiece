@@ -30,6 +30,7 @@ public class HomePanelsManager : MonoBehaviour
     }
 
     private void OnValidate() {
+        return; 
         if(UnityEditor.EditorApplication.isPlaying)
             return;
         // GridImageSplitterHome spritter = this.gameObject.GetComponentInChildren<GridImageSplitterHome>();

@@ -70,6 +70,7 @@ public class StageManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        return;
         // ゲーム実行中は実行しない
         if (EditorApplication.isPlaying) 
             return;
@@ -137,6 +138,113 @@ public class StageManager : MonoBehaviour
     }
     void Start()
     {
+        StartCoroutine(InitlializeColoutine());
+        // isClear = false;
+        // firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
+        // isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+
+        // _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
+        // if(_dailyStage == -1)
+        //     levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
+        // else
+        // {
+        //     // 日付テキストを設定　例：June 5
+        //     levelText.text = System.DateTime.Now.ToString("MMM", new CultureInfo("en-US")) + " " + _dailyStage.ToString();
+        // }
+
+        // bool isHard = false;
+        
+        // if(!GameDataManager.IsInit)
+        // {
+        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
+        //     GameDataManager.Initialize();
+        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
+        // }
+        // else
+        // {
+        //     _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
+        // }
+        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
+        // _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+
+        // // 🔸ステージに応じてアクティブ設定
+        // if(_isStageLoadFromScene)
+        // {
+        //     if (!isTest)
+        //     {
+        //         for (int i = 0; i < stages.Length; i++)
+        //         {
+        //             bool isActive = (i == isNowStage && _dailyStage == -1);
+        //             stages[i].SetActive(isActive);
+        //             if(isActive)
+        //                 isHard = stages[i].GetComponent<StageInfo>().isHard;
+        //         }
+        //         for(int i = 0; i < dailyStages.Length; i++)
+        //         {
+        //             dailyStages[i].SetActive(i + 1 == _dailyStage);
+        //         }
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
+        //     StageInfo stage = null;
+        //     if(_dailyStage == -1)
+        //         stage = Instantiate(_stagePrefabs[isNowStage]);
+        //     else
+        //         stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
+        //     if( stageParent != null)
+        //         stage.transform.parent = stageParent;
+        //     stage.transform.localScale = Vector3.one;
+        //     stage.transform.localPosition = Vector3.zero;
+        //     stage.gameObject.SetActive(true);
+        //     isHard = stage.isHard;
+        // }
+
+        // if(isHard)
+        //     _imageLevelBack.color = new Color32(187, 3, 3, 255);
+        
+        // //answerPosGrindの数をpicCountに代入
+        // picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
+
+        // if(GameDataManager.InitMoveCount <= 0)
+        // {
+        //     _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+        //     if(13 <= _MoveCount)
+        //     {
+        //         _MoveCount += UnityEngine.Random.Range(-1, 2);
+        //     }
+        //     GameDataManager.InitMoveCount = _MoveCount;
+        //     Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+        // }
+        // else
+        //     _MoveCount = GameDataManager.InitMoveCount;
+
+        // // 🔸前回の経過時間を読み込み
+        // string key = GetElapsedTimeKey();
+        // pureElapsedTime = PlayerPrefs.GetFloat(key, 0f);
+
+        // firebaseManager.StageStart("");
+
+        // Debug.Log($"▶ ステージ {isNowStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
+
+        // // 🔸5秒ごとに経過時間を保存
+        // autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
+
+        // if(!GameDataManager.IsHome)
+        //     _hardEfffectManager.PlayHardAnimation(isHard);
+
+        // GameDataManager.IsHard = isHard;
+
+        // TryRequestReview();
+
+        // _clearNextButton.transform.localScale = Vector3.zero;
+        // _clearNextButton.onClick += OnClearNext;
+    }
+
+    private IEnumerator InitlializeColoutine()
+    {
+        yield return null;
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
@@ -164,6 +272,9 @@ public class StageManager : MonoBehaviour
         }
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+
+        if(GameDataManager.IsHome)
+        yield return new WaitForSeconds(0.5f);
 
         // 🔸ステージに応じてアクティブ設定
         if(_isStageLoadFromScene)
@@ -205,18 +316,37 @@ public class StageManager : MonoBehaviour
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
-        if(GameDataManager.InitMoveCount <= 0)
+
+        if(_dailyStage == -1)
         {
-            _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
-            if(13 <= _MoveCount)
+            if(GameDataManager.InitMoveCount <= 0)
             {
-                _MoveCount += UnityEngine.Random.Range(-1, 2);
+                _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+                if(13 <= _MoveCount)
+                {
+                    _MoveCount += UnityEngine.Random.Range(-1, 2);
+                }
+                GameDataManager.InitMoveCount = _MoveCount;
+                Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
             }
-            GameDataManager.InitMoveCount = _MoveCount;
-            Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+            else
+                _MoveCount = GameDataManager.InitMoveCount;
         }
         else
-            _MoveCount = GameDataManager.InitMoveCount;
+        {
+            if(GameDataManager.DailyInitMoveCount <= 0)
+            {
+                _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+                if(13 <= _MoveCount)
+                {
+                    _MoveCount += UnityEngine.Random.Range(-1, 2);
+                }
+                GameDataManager.DailyInitMoveCount = _MoveCount;
+                Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+            }
+            else
+                _MoveCount = GameDataManager.DailyInitMoveCount;
+        }
 
         // 🔸前回の経過時間を読み込み
         string key = GetElapsedTimeKey();
@@ -323,7 +453,7 @@ public class StageManager : MonoBehaviour
     }
     public void RestartGame()
     {
-        if (!isRestart)
+        if (!isRestart && !isClear)
         {
             if (autoSaveRoutine != null)
                 StopCoroutine(autoSaveRoutine);
@@ -398,6 +528,7 @@ public class StageManager : MonoBehaviour
         if (isClear == false)
         {
             GameDataManager.InitMoveCount = -1;
+            GameDataManager.DailyInitMoveCount = -1;
             firebaseManager.StageClear(stageName,pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
             AudioManager.Instance.PlayClearSound();
@@ -407,8 +538,21 @@ public class StageManager : MonoBehaviour
 
             if(_dailyStage == -1)
             {
+                int currentTotalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+
+                // 30ステージをクリアしたらレビュー促進ポップアップを表示
+                if(currentTotalLevel == 30)
+                {
+                    PlayerPrefs.SetInt("RequestReview", 1);
+                }
+                // 初回の30ステージ目以降は50ステージごとにレビュー促進ポップアップを表示
+                if( 30 < currentTotalLevel && (currentTotalLevel - 30) % 50 == 0)
+                {
+                    PlayerPrefs.SetInt("RequestReview", 1);
+                }
+
                 PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
-                PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
+                PlayerPrefs.SetInt("totalLevel", currentTotalLevel + 1); // 全ステージ数を保存
                 if (isNowStage + 1 >= GetStageLength())
                 {
                     // 25ステージ目からループさせる
@@ -428,6 +572,7 @@ public class StageManager : MonoBehaviour
             _clearViewManager.PosText();
          
             reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine);
+            reloadButtonImage.transform.DOScale(Vector3.zero, 0.5f);
             isClear = true;
             // ★ カメラ移動アニメーション
             Camera cam = Camera.main;
@@ -467,6 +612,7 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.Save();
             ReLoadScene(0.0f); 
             GameDataManager.InitMoveCount = -1;
+            GameDataManager.DailyInitMoveCount = -1;
             // SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
@@ -491,6 +637,7 @@ public class StageManager : MonoBehaviour
             PlayerPrefs.Save();
             ReLoadScene(0.0f); 
             GameDataManager.InitMoveCount = -1;
+            GameDataManager.DailyInitMoveCount = -1;
             // SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
@@ -524,8 +671,12 @@ public class StageManager : MonoBehaviour
     private void TryRequestReview()
     {
         if(this != null && this.gameObject.activeSelf)
-            if(30 <= PlayerPrefs.GetInt("Stage", 0))
+            // if(30 <= PlayerPrefs.GetInt("Stage", 0))
+            if(PlayerPrefs.GetInt("RequestReview", 0) == 1)
+            {
                 StartCoroutine(InAppReviewManager.RequestReview());
+                PlayerPrefs.SetInt("RequestReview", 0);
+            }
     }
 
 }

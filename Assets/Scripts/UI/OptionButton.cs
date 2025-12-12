@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using AkanekoLib;
 using UnityEngine.Events;
 
+[DefaultExecutionOrder(100)]
 public class OptionButton : MonoBehaviour
 {
     public Image buttonBack;
@@ -38,7 +39,8 @@ public class OptionButton : MonoBehaviour
             image.sprite = onSprite;
             image.color = new Color32(43, 43, 43, 255);
             PlayerPrefs.SetInt(optionKey, 1);
-            onOptionChanged?.Invoke(true);
+            // onOptionChanged?.Invoke(true);
+            GameDataManager.OnChangeOption(optionKey, true);
         }
         else
         {
@@ -46,7 +48,8 @@ public class OptionButton : MonoBehaviour
             image.sprite = offSprite;
             image.color = Color.black;
             PlayerPrefs.SetInt(optionKey, 0);
-            onOptionChanged?.Invoke(false);
+            // onOptionChanged?.Invoke(false);
+            GameDataManager.OnChangeOption(optionKey, false);
         }
     }
 }

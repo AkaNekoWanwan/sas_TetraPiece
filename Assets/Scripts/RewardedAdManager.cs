@@ -17,7 +17,7 @@ public class RewardedAdManager : MonoBehaviour
 #if UNITY_IOS
     string adUnitId = "11f7a8d72726e616";   // プロジェクトごとに異なるIOS用のリワードのAd Unit Id
 #else // UNITY_ANDROID
-    string adUnitId = "aef5bbcfc64dd179";   // プロジェクトごとに異なるANDROID用、エディタ用のリワードのAd Unit Id
+    string adUnitId = "b84d01fecdfa7f08";   // プロジェクトごとに異なるANDROID用、エディタ用のリワードのAd Unit Id
 #endif
 
     int retryAttempt;

@@ -965,7 +965,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         
         // ★ RenderQueueを変更
         SetRenderQueue(3004 + addQueue, 3003 + addQueue);
-        addQueue++;
+        addQueue += 2;
 
         VibratorManager.Vibrate(70, 40);
 
@@ -1134,15 +1134,15 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     // ★ RenderQueueを元に戻すメソッド
     void RestoreRenderQueue()
     {
-        // foreach (var kvp in originalRenderQueues)
-        // {
-        //     if (kvp.Key != null)
-        //     {
-        //         kvp.Key.renderQueue = kvp.Value;
-        //         Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
-        //     }
-        // }
-        // originalRenderQueues.Clear();
+        foreach (var kvp in originalRenderQueues)
+        {
+            if (kvp.Key != null)
+            {
+                kvp.Key.renderQueue = kvp.Value;
+                Debug.Log($"[RenderQueue] マテリアルを元の {kvp.Value} に復元");
+            }
+        }
+        originalRenderQueues.Clear();
     }
 
     // PieceDragController クラス内に追加

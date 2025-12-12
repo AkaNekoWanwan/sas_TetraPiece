@@ -114,7 +114,9 @@ public class Outline : MonoBehaviour {
 
   void OnValidate() {
     // Update material properties
-    needsUpdate = true;
+    needsUpdate = false;
+    if(!needsUpdate)
+      return;
 
     // Clear cache when baking is disabled or corrupted
     if (!precomputeOutline && bakeKeys.Count != 0 || bakeKeys.Count != bakeValues.Count) {

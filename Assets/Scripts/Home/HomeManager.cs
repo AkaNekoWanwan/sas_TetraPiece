@@ -16,7 +16,7 @@ public class HomeManager : MonoBehaviour
     public static HomeManager Instance;
     public CanvasGroup _canvanGroup = default;
     public CustomButton _playButton = default;
-    public CustomButton _backButton = default;
+    // public CustomButton _backButton = default;
     public GameObject _backGameObject = default;
     public HomePanelsManager[] _homePuzzlePrefabs;
     public Transform _homeParent;
@@ -40,16 +40,21 @@ public class HomeManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // PlayerPrefs.SetInt("totalLevel", 901);
-        // GameDataManager.isPlayHomePieceAnimation = true;
-
         if(!GameDataManager.IsHome)
         {
             this.gameObject.SetActive(false);
             return;
         }
+        StartCoroutine(InitlializeColoutine());
+        // PlayerPrefs.SetInt("totalLevel", 1);
+        // GameDataManager.isPlayHomePieceAnimation = true;
+    }
+
+    private IEnumerator InitlializeColoutine()
+    {
+        yield return null;
         _playButton.onClick += OnPlayButton;
-        _backButton.onClick += OnHomeButton;
+        // _backButton.onClick += OnHomeButton;
         
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
         int nowBoardIndex = (totalLevel - 1) / 30;
@@ -110,6 +115,7 @@ public class HomeManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
+        return;
         // ゲーム実行中は実行しない
         if (EditorApplication.isPlaying) 
             return;
@@ -194,6 +200,7 @@ public class HomeManager : MonoBehaviour
     }
     public void OnHomeButton()
     {
+        PlayerPrefs.SetInt("DailyStage", -1);
         GameDataManager.IsHome = true;
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
     }

@@ -15,9 +15,9 @@ public class HomePanel : MonoBehaviour
     public RectTransform rectTransform = default;
 
 
-    private void OnValidate() {
-        rectTransform = GetComponent<RectTransform>();
-    }
+    // private void OnValidate() {
+    //     rectTransform = GetComponent<RectTransform>();
+    // }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     // void Start()
     // {
