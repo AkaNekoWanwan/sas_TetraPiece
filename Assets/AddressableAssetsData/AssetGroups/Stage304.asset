@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage304
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage304
+  m_GUID: 897c0e7cde64049428ffc974d7561d59
+  m_SerializeEntries:
+  - m_GUID: 136d59ea431624f1b95b1559cf111438
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1458d515e8ed040eea71090a6a4e9810
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 17137d1c74d034f10988b5491b1446b7
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20588368caa11421eb5b8c153c8a574c
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c0363de2ca284c75abcf4878033d19f
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d82cb4e3246c4e4d9c5195f6e6592ac
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5bef26872c0494309bf056884c38623b
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c564b21e9b274101ac3ff902b21e569
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ede7d15274054591aa8ebb30dc4f3bf
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 709762a5e7f484209b183a6d2390bd54
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a8d8de6394da4236a43f1ee507bb9fd
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cf89e6a9563141dca07f43ef4a4fa5d
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89b6637b3f1064dcc808cb9dedde7c08
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a016d7f724fb948b7a00152f055d178a
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a24aa5e5c1c3747b68c36a2ca5fbb817
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c39b1aa4160e3494fb66c9912c9165e5
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf13af4b34f3947bca55af1aacd7ddf8
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: daf65a440f96a4f41bad34f03a443d48
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea669eb5cef804e65a6ceece63c4ba32
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f68603b7c93524d90acff81ebaee52ca
+    m_Address: Assets/Prefabs/Addressable/Stage304/grandmother-and-grandchildren-in-a-sunflower-field-2024-12-19-19-03-46-utc.JPG
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f75aba74b02df4e5489555386cdfbc2d
+    m_Address: Assets/Prefabs/Addressable/Stage304/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 454e134ecaa9049bc81f09b017382a6c, type: 2}
+    - {fileID: 11400000, guid: f1482f9d403e74306af078d5f0030b09, type: 2}
