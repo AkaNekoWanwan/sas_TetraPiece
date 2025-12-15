@@ -14,7 +14,112 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Stage190
   m_GUID: f2837ab4beeca4548a5d03d9f8eabde2
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 01283d0e6d9fc4571b6ea444bdfbe73a
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 143d394b5b752438693bf13b50f8531e
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1976ea87f62a0404a9cb2c2dbb161561
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1bf0488210d0c43e2b4fc99a62eb50f8
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c9be3187899641418bdf2c832402a21
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2638fa4d0996a44a7aaae37399fe452b
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2ba42eda8c54d4192a8f89f16cfa20d9
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f4912a90841f43cfbed5f69395728a2
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 372b0db0843994f3e9668bf55c235a1f
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b0b2860a947b46bb9e0d3329d83887f
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ddf36c8885164b7ba14810030bf2e07
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47ee4f211fbae4f08a15c01c7742418f
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 557839df3179441d99126d99b24d0e91
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70d052b5c75284fd0aaba7bc756ec851
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74808d06f2c8748da9dfce718347367a
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8083aaedb946a47a1ab0d7fad02fb681
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aed90dd3a818c435b9ddc08a501ede93
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb98fd8ea37874b36aa04a512958327d
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4c20b977d4c94f40baaa4f21263eaca
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d803b3817345942c3b59e6d7ed4a0f16
+    m_Address: Assets/Prefabs/Addressable/Stage190/children-playing-floorball-in-school-gym-2025-05-07-18-59-46-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eae100aecee984336a713d09115651bc
+    m_Address: Assets/Prefabs/Addressable/Stage190/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
