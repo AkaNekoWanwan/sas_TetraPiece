@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage032
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage032
+  m_GUID: 5a0d5ca2f37154825ac9b331c48750aa
+  m_SerializeEntries:
+  - m_GUID: 060e8e70b54234b13ab45c50ee602ac7
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19a4113f5619c466a8715b292bc375bf
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21892215bd9304e99a3c97b33537ea89
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27e08050b66ea4e5da88b0406e425605
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28f2b103ccaf243dfb77a5d320c0bd82
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31c3eea67ab91419c9e8aabc36773c50
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32f4eae7f54e04368a8154a6c5562706
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b2e4ad12278d466b9b9d9d90e6d61d3
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47c904b1eb7784459adbf44707dca28a
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4852b8e240ab842f6827bec2beac405a
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ae68a7cf086e4bf58b292a69b2e8ba1
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 530686ba3a7404ccf9fd14c3ccc59b1c
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5454ca762471543b09b463d85fdf568e
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 568e607dd59e941418e4e01401e4eca5
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 575ee2153c42c4f28becc5206fca5737
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ee19f7bef96648c6a71d22766bd9384
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80368efb570824bb3b87fa48cfb1690e
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8888411853ddd41de84aa7d41f0648b6
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8de7cd0ec2f474badb0680d0fadfe505
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 901a4a73eebd04f7d8fc9f06cae97094
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1133757901a04aaa86a599895f3b489
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4e516b81f2a7403d86368e855999272
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5eabe61f8b3947b789e7d0a2b745168
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b6affae4f72a74999bc7a686c99a2590
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b716e3d74c3524f7680b03b3513359c9
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b98be1947c7e741d1b6bf9323d2e34f4
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba4d8f6242b7a40819356e2ce94c271f
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c15a21c42c23b40f19389f4897cf5b36
+    m_Address: Assets/Prefabs/Addressable/Stage032/11-7-9_1080x1350.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d07a3b9b3e44b4b7599f7dcf1c2b24c4
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d32f5e079781247ae891b9021cc15ba9
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3a47c04076a84cfb821768d12f43fea
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df3e341cb26b14761870e9245f6affc9
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_5_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dffd07c2210894fa4aed7b016008ea6e
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3e3d4fd2e61142338747689f459e263
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9ad836481e2948b0a979bfc9432b783
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fad26edad54ca44939d02456260ae311
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fcbed11737b93462a80ce16cd0b9f2f2
+    m_Address: Assets/Prefabs/Addressable/Stage032/tri_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 49b860b085ee7488eb86cb0bf6cfc259, type: 2}
+    - {fileID: 11400000, guid: e0026bba661914f4da30e65301f2834e, type: 2}

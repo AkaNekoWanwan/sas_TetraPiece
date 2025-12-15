@@ -339,19 +339,19 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         if (group == null)
         {
             // プレハブ名と同じ名前のAssetGroupsを作成
-            Debug.Log($"Addressable Group '{groupName}' を新規作成しました。");
+            // Debug.Log($"Addressable Group '{groupName}' を新規作成しました。");
             var groupTemplate = settings.GetGroupTemplateObject(0) as AddressableAssetGroupTemplate;
             group = settings.CreateGroup(groupName, false, false, true, null, groupTemplate.GetTypes());
             groupTemplate.ApplyToAddressableAssetGroup(group);
         }
-        else
-        {
-            // 既存グループの場合、一旦全てのエントリを削除し、再登録する
-            Debug.Log($"既存の Addressable Group '{groupName}' をクリアしました。");
-        }
+        // else
+        // {
+        //     // 既存グループの場合、一旦全てのエントリを削除し、再登録する
+        //     // Debug.Log($"既存の Addressable Group '{groupName}' をクリアしました。");
+        // }
         
         // 4. Addressable化するアセットを収集
-        Debug.Log($"Addressable 1");
+        // Debug.Log($"Addressable 1");
         // A. プレハブアセット自体
         string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
         
@@ -420,38 +420,38 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             var guid = AssetDatabase.AssetPathToGUID(newAssetPath);
             AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
 
-            if(entry != null)
-            {
-                Debug.Log($"✅ SpriteのAddressable化成功: {newAssetPath}, {group}");
-            }
-            else
-            {
-                Debug.Log($"❌ SpriteのAddressable化失敗: {newAssetPath}, {group}");
-            }
+            // if(entry != null)
+            // {
+            //     Debug.Log($"✅ SpriteのAddressable化成功: {newAssetPath}, {group}");
+            // }
+            // else
+            // {
+            //     Debug.Log($"❌ SpriteのAddressable化失敗: {newAssetPath}, {group}");
+            // }
 
             if (string.IsNullOrEmpty(result))
             {
-                Debug.Log($"✅ Spriteアセットを移動しました: {assetPath} -> {newAssetPath}");
+                // Debug.Log($"✅ Spriteアセットを移動しました: {assetPath} -> {newAssetPath}");
 
                 // 移動後、AssetDatabaseに変更を保存
                 AssetDatabase.SaveAssets(); 
                 // EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<Object>(newAssetPath)); // 移動したアセットを強調表示（オプション）
             }
-            else
-            {
-                Debug.LogError($"❌ Spriteアセットの移動に失敗しました: {result}");
-                Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
-            }
+            // else
+            // {
+            //     Debug.LogError($"❌ Spriteアセットの移動に失敗しました: {result}");
+            //     Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
+            // }
         }
 
-        Debug.Log($"Addressable 1");
+        // Debug.Log($"Addressable 1");
 
         // 6. 設定の保存と更新
         EditorUtility.SetDirty(settings);
         AssetDatabase.SaveAssets();
         SaveAsPrefab.Save(this.transform.parent.parent.gameObject, PrefabSavePath);
 
-        Debug.Log($"🎉 ステージ'{groupName}'と関連アセットのAddressable設定が完了しました！\n登録されたアセット数: {group.entries.Count}件");
+        // Debug.Log($"🎉 ステージ'{groupName}'と関連アセットのAddressable設定が完了しました！\n登録されたアセット数: {group.entries.Count}件");
 
     #else
         // エディタ外ではAddressable設定は実行できない
