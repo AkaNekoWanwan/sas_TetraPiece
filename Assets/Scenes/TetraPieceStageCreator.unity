@@ -2075,7 +2075,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0bd31da37eab94fe1a1893624b1e6263, type: 3}
   - {fileID: 21300000, guid: 642154b1973c546819396361e40f3458, type: 3}
   - {fileID: 21300000, guid: 4a5a6871d44f7411c89753f210cd6a11, type: 3}
-  - {fileID: 21300000, guid: bbde6f657aee14770befee57f7609c7e, type: 3}
   - {fileID: 21300000, guid: 8535ed4f9b7044f788cede01fdc75656, type: 3}
   - {fileID: 21300000, guid: d5515dc024f044702a0e9c632dcb0d3e, type: 3}
   - {fileID: 21300000, guid: 7fca9f83663a94abea23ed3f934b6c4a, type: 3}
@@ -2140,9 +2139,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0b8ca522136ae45c7ba0101caf2ee2e9, type: 3}
   - {fileID: 21300000, guid: cfc629ed0e10b4a038114e6e261831dd, type: 3}
   - {fileID: 21300000, guid: 0af07245f23744cff84dece4d6b46589, type: 3}
-  - {fileID: 21300000, guid: f761970d2cc7e456abf25aed976948c0, type: 3}
   - {fileID: 21300000, guid: f970f8b20ae404388aa55a9ea2efde26, type: 3}
-  - {fileID: 21300000, guid: 2866e3eadbc904679be4e007f9eee945, type: 3}
   - {fileID: 21300000, guid: 15304d7ce60fc46ff875f784531504ba, type: 3}
   - {fileID: 21300000, guid: 89eaaf2621a2a4f85a3d33c3d50e3c6e, type: 3}
   - {fileID: 21300000, guid: 3a9cff271712541eeb98d93fb491da42, type: 3}
@@ -2153,20 +2150,16 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0796c3f55acba450197b1f4272e72682, type: 3}
   - {fileID: 21300000, guid: 4cf586b4185ff41ed81951d99dfcf301, type: 3}
   - {fileID: 21300000, guid: ec4c896fe6f324e459fb49115eb742f1, type: 3}
-  - {fileID: 21300000, guid: d6ca9440da97c481e97316c6952a00d3, type: 3}
   - {fileID: 21300000, guid: 53c0af474cefb44ec9348b767daabb71, type: 3}
   - {fileID: 21300000, guid: 5668671d7872d41f698f00399002da12, type: 3}
-  - {fileID: 21300000, guid: 6760acc156027477682ab04bf65bc3ad, type: 3}
-  - {fileID: 21300000, guid: a72d5163ec392457b912c8bfe3852762, type: 3}
   - {fileID: 21300000, guid: 04f6aec633dab42288d1b8d75ac14098, type: 3}
-  - {fileID: 21300000, guid: 111ec6e4f6f984ab98135c705df05148, type: 3}
   - {fileID: 21300000, guid: c3f3dd480c62d46059371d9b267dede2, type: 3}
   _setDailySplites: []
   IsNewLogic: 0
-  IsForce: 1
+  IsForce: 0
   IsPreSetUp: 1
   IsWaitBeforeSplit: 0
-  IsWaitAfterSplit: 0
+  IsWaitAfterSplit: 1
   IsDailyStage: 0
   IsLog: 1
   _stageData:
@@ -6685,6 +6678,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &98215659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13003,6 +12997,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &296349703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14477,17 +14472,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 4953611879375436199}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &329668531 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 4953611879375436199}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!1 &329859424
 GameObject:
   m_ObjectHideFlags: 0
@@ -17861,11 +17845,9 @@ MonoBehaviour:
   _settingView: {fileID: 1085000267}
   _closeButton: {fileID: 398983452}
   _openButton: {fileID: 165229334}
+  _backButton: {fileID: 0}
   _stageUI: {fileID: 0}
   _homeUI: {fileID: 0}
-  _buttonSound: {fileID: 1045478927}
-  _buttonBgm: {fileID: 329668531}
-  _buttonVib: {fileID: 2106921670}
   audioSource: {fileID: 8318642413602490988}
   bgmAudioSource: {fileID: 7010625889917869509}
   _optionButtions: []
@@ -20598,6 +20580,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &519283468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30090,7 +30073,6 @@ MonoBehaviour:
   - {fileID: 1601363469}
   _playButton: {fileID: 2049176570}
   _rewardPlayButton: {fileID: 1715323620}
-  _homeButton: {fileID: 1236071799}
   _isDailyStage: 0
 --- !u!1 &755302726
 GameObject:
@@ -39532,17 +39514,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 1045478925}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1045478927 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 1045478925}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!1 &1048078525
 GameObject:
   m_ObjectHideFlags: 0
@@ -39745,6 +39716,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1054802116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46109,6 +46081,7 @@ MonoBehaviour:
   uniqueId: 124
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1268168049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51951,6 +51924,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!213 &1430821552
 Sprite:
   m_ObjectHideFlags: 0
@@ -57190,6 +57164,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1587394297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57805,6 +57780,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1601487122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61677,6 +61653,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1708305304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70091,6 +70068,7 @@ MonoBehaviour:
   uniqueId: 0
   index: 0
   PrefabSavePath: Assets/Prefabs/Stages
+  _cellSprites: []
 --- !u!114 &1902449568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75870,17 +75848,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 2106921668}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2106921670 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 2106921668}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!1 &2108346107
 GameObject:
   m_ObjectHideFlags: 0
@@ -87052,6 +87019,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4670970825128438990, guid: 2fe40ad445f2d40d8bcdf42c1e91fb79, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1296.5065
+      objectReference: {fileID: 0}
+    - target: {fileID: 4670970825128438990, guid: 2fe40ad445f2d40d8bcdf42c1e91fb79, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1080
+      objectReference: {fileID: 0}
     - target: {fileID: 5456090552022157404, guid: 2fe40ad445f2d40d8bcdf42c1e91fb79, type: 3}
       propertyPath: m_Camera
       value: 
@@ -94468,6 +94443,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3153293099113115260, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
+      propertyPath: 'CellCopyHandlers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153293099113115260, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
+      propertyPath: 'CellCopyHandlers.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153293099113115260, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
+      propertyPath: 'CellCopyHandlers.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3153293099113115260, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
+      propertyPath: 'CellCopyHandlers.Array.data[3]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5318282591277226787, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6134809449741281955, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
       propertyPath: m_Camera
       value: 
@@ -94478,7 +94473,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8822888060995489428, guid: cf26658038ee34828b6d7388b9c89d5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -110580,7 +110575,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6921692587899435188, guid: 04e8884d266c941598a93ea6e6952407, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

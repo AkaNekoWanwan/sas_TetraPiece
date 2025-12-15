@@ -70,7 +70,7 @@ public class StageManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        return;
+        // return;
         // ゲーム実行中は実行しない
         if (EditorApplication.isPlaying) 
             return;

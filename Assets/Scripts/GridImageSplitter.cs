@@ -259,6 +259,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                     // 💡 ロードした永続的なSpriteアセットを紐付け
                     answerObj.GetComponent<Image>().sprite = sp;
                     cellObj.GetComponent<Image>().sprite = sp;
+                    _cellSprites.Add(sp);
                 }
                 
                 if(_param != null)

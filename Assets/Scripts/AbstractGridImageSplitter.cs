@@ -50,6 +50,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
     
+    public List<Sprite> _cellSprites = default;
 
 #if UNITY_EDITOR
     private void OnValidate() {
@@ -100,6 +101,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         
         // Unityエディタが新しいフォルダを認識できるようにアセットデータベースを更新
         AssetDatabase.Refresh();
+        
+        // _cellSprites.Add(sp);
 
         return folderPath;
     }
