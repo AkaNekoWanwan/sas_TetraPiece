@@ -25,8 +25,6 @@ public class StageManager : MonoBehaviour
     public bool _isStageLoadFromScene = true;
     public StageInfo[] _stagePrefabs;
     public StageInfo[] _dailyStagePrefabs;
-
-    public StageInfo _loadStage = null;
     public Transform stageParent;
     public int isNowStage;
     public bool isRestart;
@@ -81,7 +79,7 @@ public class StageManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        return;
+        // return;
         // ゲーム実行中は実行しない
         if (EditorApplication.isPlaying) 
             return;
@@ -157,35 +155,12 @@ public class StageManager : MonoBehaviour
         try
         {
             await AddressableUtil.InitAsync();
-            await LoadAssetAsync(_cts.Token);
+            await InitlializeColoutine2();
         }
         catch (Exception ex)
         {
             Debug.LogError($"Addressablesの処理に失敗: {ex}");
         }
-    }
-
-    private async UniTask LoadAssetAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var loadStage = await AddressableUtil.LoadAssetAsync<GameObject>(
-                "Assets/Prefabs/Addressable/Srages/Stage001/Stage001.prefab",
-                cancellationToken
-            );
-            loadStage.SetActive(true);
-            _loadStage = loadStage.GetComponent<StageInfo>();
-        }
-        catch (OperationCanceledException)
-        {
-            Debug.Log("アセットのロードがキャンセルされました");
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"アセットのロードに失敗: {ex}");
-        }
-
-        StartCoroutine(InitlializeColoutine2());
     }
 
     private void OnDestroy()
@@ -194,9 +169,8 @@ public class StageManager : MonoBehaviour
         _cts?.Dispose();
     }
 
-    private IEnumerator InitlializeColoutine2()
+    private async UniTask InitlializeColoutine2()
     {
-        yield return null;
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
@@ -225,9 +199,6 @@ public class StageManager : MonoBehaviour
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
-        if(GameDataManager.IsHome)
-        yield return new WaitForSeconds(0.5f);
-
         // 🔸ステージに応じてアクティブ設定
         if(_isStageLoadFromScene)
         {
@@ -250,12 +221,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
             StageInfo stage = null;
-            if(_loadStage != null)
-            {
-                Debug.Log($"ステージロードわわわ:ねこ");
-                stage = Instantiate(_loadStage);
-            }
-            else if(_dailyStage == -1)
+            if(_dailyStage == -1)
             {
                 Debug.Log($"ステージロードわわわ:いいう");
                 stage = Instantiate(_stagePrefabs[isNowStage]);
@@ -273,7 +239,6 @@ public class StageManager : MonoBehaviour
         if(isHard)
             _imageLevelBack.color = new Color32(187, 3, 3, 255);
         
-        yield return null;
         //answerPosGrindの数をpicCountに代入
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 

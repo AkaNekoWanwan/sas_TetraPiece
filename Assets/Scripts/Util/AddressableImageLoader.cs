@@ -55,7 +55,7 @@ public class AddressableImageLoader : MonoBehaviour
         var img = _imageComponent;
         
         // Alpha=1 で初期化 (あなたの安定版ロジック)
-        img.color = new Color(1, 1, 1, 1); 
+        // img.color = new Color(1, 1, 1, 1); 
 
         var loadOp = Addressables.LoadAssetAsync<Texture2D>(addressName);
         
@@ -84,7 +84,7 @@ tex.wrapMode   = TextureWrapMode.Clamp;
                     
                     // Alphaを維持しつつRGBを白に更新
                     var currentAlpha = img.color.a; 
-                    img.color = new Color(1f, 1f, 1f, currentAlpha); 
+                    // img.color = new Color(1f, 1f, 1f, currentAlpha); 
                 }
             }
             else
