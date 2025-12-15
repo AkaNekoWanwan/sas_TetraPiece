@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5d17a21594effb4e9591490b009e7aa, type: 3}
-  m_Name: Default Local Group_BundledAssetGroupSchema
+  m_Name: Stage001_BundledAssetGroupSchema
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema
-  m_Group: {fileID: 11400000, guid: 3b17e34df5a4c4232bceacd641e62280, type: 2}
+  m_Group: {fileID: 11400000, guid: f49ae4ebb54e4415fa4ab4d8dbdb0d02, type: 2}
   m_InternalBundleIdMode: 1
   m_Compression: 2
   m_IncludeAddressInCatalog: 1
-  m_IncludeGUIDInCatalog: 1
-  m_IncludeLabelsInCatalog: 1
+  m_IncludeGUIDInCatalog: 0
+  m_IncludeLabelsInCatalog: 0
   m_InternalIdNamingMode: 3
   m_CacheClearBehavior: 0
   m_IncludeInBuild: 1
@@ -38,7 +38,7 @@ MonoBehaviour:
     m_Id: bf4492515f2de4422930133815e59fa8
   m_LoadPath:
     m_Id: 6bbd5fff1ba424e25995e0bcffe316d7
-  m_BundleMode: 0
+  m_BundleMode: 1
   m_AssetBundleProviderType:
     m_AssemblyName: Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     m_ClassName: UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider

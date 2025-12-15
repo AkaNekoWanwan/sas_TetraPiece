@@ -8,6 +8,10 @@ using System.Globalization;
 using UnityEditor;
 using System.Linq;
 using AkanekoLib;
+using UnityEngine;
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 public class StageManager : MonoBehaviour
 {
@@ -21,6 +25,8 @@ public class StageManager : MonoBehaviour
     public bool _isStageLoadFromScene = true;
     public StageInfo[] _stagePrefabs;
     public StageInfo[] _dailyStagePrefabs;
+
+    public StageInfo _loadStage = null;
     public Transform stageParent;
     public int isNowStage;
     public bool isRestart;
@@ -48,8 +54,13 @@ public class StageManager : MonoBehaviour
     public DebugUIManager _debugUIManager = default;
     public GameObject _creativeCanvas = default;
     public CustomButton _clearNextButton = default;
+
+    
+    private const string ADDRESABLE_STAGE_PATH = "Assets/Prefabs/Addressable/Srages/Stage001/Stage001.prefab";
     private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
     private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
+    private CancellationTokenSource _cts;
+
 
     private int _dailyStage = -1;
     private int _MoveCount {get=>_moveCount;
@@ -70,7 +81,7 @@ public class StageManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        // return;
+        return;
         // ゲーム実行中は実行しない
         if (EditorApplication.isPlaying) 
             return;
@@ -136,110 +147,188 @@ public class StageManager : MonoBehaviour
             isTest = true;
         }
     }
-    void Start()
+
+    // Stage001
+    private async void Start()
     {
-        StartCoroutine(InitlializeColoutine());
-        // isClear = false;
-        // firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
-        // isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+        // StartCoroutine(InitlializeColoutine());
+        _cts = new CancellationTokenSource();
 
-        // _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
-        // if(_dailyStage == -1)
-        //     levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
-        // else
-        // {
-        //     // 日付テキストを設定　例：June 5
-        //     levelText.text = System.DateTime.Now.ToString("MMM", new CultureInfo("en-US")) + " " + _dailyStage.ToString();
-        // }
+        try
+        {
+            await AddressableUtil.InitAsync();
+            await LoadAssetAsync(_cts.Token);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Addressablesの処理に失敗: {ex}");
+        }
+    }
 
-        // bool isHard = false;
+    private async UniTask LoadAssetAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var loadStage = await AddressableUtil.LoadAssetAsync<GameObject>(
+                "Assets/Prefabs/Addressable/Srages/Stage001/Stage001.prefab",
+                cancellationToken
+            );
+            loadStage.SetActive(true);
+            _loadStage = loadStage.GetComponent<StageInfo>();
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.Log("アセットのロードがキャンセルされました");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"アセットのロードに失敗: {ex}");
+        }
+
+        StartCoroutine(InitlializeColoutine2());
+    }
+
+    private void OnDestroy()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+
+    private IEnumerator InitlializeColoutine2()
+    {
+        yield return null;
+        isClear = false;
+        firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
+        isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+
+        _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
+        if(_dailyStage == -1)
+            levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
+        else
+        {
+            // 日付テキストを設定　例：June 5
+            levelText.text = System.DateTime.Now.ToString("MMM", new CultureInfo("en-US")) + " " + _dailyStage.ToString();
+        }
+
+        bool isHard = false;
         
-        // if(!GameDataManager.IsInit)
-        // {
-        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
-        //     GameDataManager.Initialize();
-        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
-        // }
-        // else
-        // {
-        //     _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
-        // }
-        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
-        // _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+        if(!GameDataManager.IsInit)
+        {
+            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
+            GameDataManager.Initialize();
+            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
+        }
+        else
+        {
+            _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
+        }
+        _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
+        _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
-        // // 🔸ステージに応じてアクティブ設定
-        // if(_isStageLoadFromScene)
-        // {
-        //     if (!isTest)
-        //     {
-        //         for (int i = 0; i < stages.Length; i++)
-        //         {
-        //             bool isActive = (i == isNowStage && _dailyStage == -1);
-        //             stages[i].SetActive(isActive);
-        //             if(isActive)
-        //                 isHard = stages[i].GetComponent<StageInfo>().isHard;
-        //         }
-        //         for(int i = 0; i < dailyStages.Length; i++)
-        //         {
-        //             dailyStages[i].SetActive(i + 1 == _dailyStage);
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
-        //     StageInfo stage = null;
-        //     if(_dailyStage == -1)
-        //         stage = Instantiate(_stagePrefabs[isNowStage]);
-        //     else
-        //         stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
-        //     if( stageParent != null)
-        //         stage.transform.parent = stageParent;
-        //     stage.transform.localScale = Vector3.one;
-        //     stage.transform.localPosition = Vector3.zero;
-        //     stage.gameObject.SetActive(true);
-        //     isHard = stage.isHard;
-        // }
+        if(GameDataManager.IsHome)
+        yield return new WaitForSeconds(0.5f);
 
-        // if(isHard)
-        //     _imageLevelBack.color = new Color32(187, 3, 3, 255);
+        // 🔸ステージに応じてアクティブ設定
+        if(_isStageLoadFromScene)
+        {
+            if (!isTest)
+            {
+                for (int i = 0; i < stages.Length; i++)
+                {
+                    bool isActive = (i == isNowStage && _dailyStage == -1);
+                    stages[i].SetActive(isActive);
+                    if(isActive)
+                        isHard = stages[i].GetComponent<StageInfo>().isHard;
+                }
+                for(int i = 0; i < dailyStages.Length; i++)
+                {
+                    dailyStages[i].SetActive(i + 1 == _dailyStage);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
+            StageInfo stage = null;
+            if(_loadStage != null)
+            {
+                Debug.Log($"ステージロードわわわ:ねこ");
+                stage = Instantiate(_loadStage);
+            }
+            else if(_dailyStage == -1)
+            {
+                Debug.Log($"ステージロードわわわ:いいう");
+                stage = Instantiate(_stagePrefabs[isNowStage]);
+            }
+            else
+                stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
+            if( stageParent != null)
+                stage.transform.parent = stageParent;
+            stage.transform.localScale = Vector3.one;
+            stage.transform.localPosition = Vector3.zero;
+            stage.gameObject.SetActive(true);
+            isHard = stage.isHard;
+        }
+
+        if(isHard)
+            _imageLevelBack.color = new Color32(187, 3, 3, 255);
         
-        // //answerPosGrindの数をpicCountに代入
-        // picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
+        yield return null;
+        //answerPosGrindの数をpicCountに代入
+        picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
-        // if(GameDataManager.InitMoveCount <= 0)
-        // {
-        //     _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
-        //     if(13 <= _MoveCount)
-        //     {
-        //         _MoveCount += UnityEngine.Random.Range(-1, 2);
-        //     }
-        //     GameDataManager.InitMoveCount = _MoveCount;
-        //     Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
-        // }
-        // else
-        //     _MoveCount = GameDataManager.InitMoveCount;
 
-        // // 🔸前回の経過時間を読み込み
-        // string key = GetElapsedTimeKey();
-        // pureElapsedTime = PlayerPrefs.GetFloat(key, 0f);
+        if(_dailyStage == -1)
+        {
+            if(GameDataManager.InitMoveCount <= 0)
+            {
+                _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+                if(13 <= _MoveCount)
+                {
+                    _MoveCount += UnityEngine.Random.Range(-1, 2);
+                }
+                GameDataManager.InitMoveCount = _MoveCount;
+                Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+            }
+            else
+                _MoveCount = GameDataManager.InitMoveCount;
+        }
+        else
+        {
+            if(GameDataManager.DailyInitMoveCount <= 0)
+            {
+                _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
+                if(13 <= _MoveCount)
+                {
+                    _MoveCount += UnityEngine.Random.Range(-1, 2);
+                }
+                GameDataManager.DailyInitMoveCount = _MoveCount;
+                Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
+            }
+            else
+                _MoveCount = GameDataManager.DailyInitMoveCount;
+        }
 
-        // firebaseManager.StageStart("");
+        // 🔸前回の経過時間を読み込み
+        string key = GetElapsedTimeKey();
+        pureElapsedTime = PlayerPrefs.GetFloat(key, 0f);
 
-        // Debug.Log($"▶ ステージ {isNowStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
+        firebaseManager.StageStart("");
 
-        // // 🔸5秒ごとに経過時間を保存
-        // autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
+        Debug.Log($"▶ ステージ {isNowStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
 
-        // if(!GameDataManager.IsHome)
-        //     _hardEfffectManager.PlayHardAnimation(isHard);
+        // 🔸5秒ごとに経過時間を保存
+        autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
 
-        // GameDataManager.IsHard = isHard;
+        if(!GameDataManager.IsHome)
+            _hardEfffectManager.PlayHardAnimation(isHard);
 
-        // TryRequestReview();
+        GameDataManager.IsHard = isHard;
 
-        // _clearNextButton.transform.localScale = Vector3.zero;
-        // _clearNextButton.onClick += OnClearNext;
+        TryRequestReview();
+
+        _clearNextButton.transform.localScale = Vector3.zero;
+        _clearNextButton.onClick += OnClearNext;
     }
 
     private IEnumerator InitlializeColoutine()
