@@ -29,13 +29,15 @@ public class StageInfo : MonoBehaviour
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(StageInfo))]
+    [CanEditMultipleObjects]
     public class StageInfoEditor : Editor
     {
-        public void OnEnable()
-        {
-            // OnEnableで設定することでエラーが解消されます
-            // base.canEditMultipleObjects = true; 
-        }
+        // public bool canEditMultipleObjects => true;
+        // public void OnEnable()
+        // {
+        //     // ベースの canEditMultipleObjects に値を設定します。
+        //     base.canEditMultipleObjects = true;
+        // }
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
