@@ -17,6 +17,8 @@ public class StageInfo : MonoBehaviour
     public bool isHard = false;
 
 #if UNITY_EDITOR
+    public bool isAddressabble = false;
+
     public void SetUpStage()
     {
         AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
@@ -103,6 +105,8 @@ public class StageInfo : MonoBehaviour
                 for (int i = 0; i < totalCount; i++)
                 {
                     StageInfo script = scripts[i];
+                    if(script.isAddressabble)
+                        return;
                     string title = $"Addressable設定中 ({i + 1}/{totalCount})";
                     string info = $"ステージ: {script.gameObject.name} をAddressableに登録中...";
                     float progress = (float)i / totalCount;
@@ -117,6 +121,7 @@ public class StageInfo : MonoBehaviour
 
                     try{
                         script.Addressable(); 
+                        script.isAddressabble = true;
                     }
                     catch(Exception)
                     {
