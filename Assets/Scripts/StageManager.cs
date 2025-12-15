@@ -12,6 +12,8 @@ using UnityEngine;
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine.AddressableAssets; // ★★★ この行を追加 ★★★
+using UnityEngine.ResourceManagement.AsyncOperations; // 必要に応じて追
 
 public class StageManager : MonoBehaviour
 {
@@ -55,10 +57,11 @@ public class StageManager : MonoBehaviour
     public GameObject _creativeCanvas = default;
     public CustomButton _clearNextButton = default;
 
-    
-    private const string ADDRESABLE_STAGE_PATH = "Assets/Prefabs/Addressable/Srages/Stage001/Stage001.prefab";
     private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
     private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
+    private const string NORMAL_STAGE_LABEL = "STAGE_NORMAL";
+    private const string DAILY_STAGE_LABEL = "STAGE_DAILY"; // 必要に応じてデイリーステージ用のラベルも定義
+    private int _maxNormalStageCount = -1; // 通常ステージの総数をキャッシュする変数
     private CancellationTokenSource _cts;
 
 
@@ -149,14 +152,21 @@ public class StageManager : MonoBehaviour
     }
 
     // Stage001
+    // Stage001
     private async void Start()
     {
         // StartCoroutine(InitlializeColoutine());
         _cts = new CancellationTokenSource();
-
+        Initlialize();
         try
         {
+            _maxNormalStageCount = await GetStageLengthAsync();
             await AddressableUtil.InitAsync();
+            
+            // ★★★ 修正: 最大ステージ数をキャッシュ ★★★
+            Debug.Log($"Addressablesから取得した最大通常ステージ数: {_maxNormalStageCount}");
+            // ★★★ ここまで ★★★
+
             await LoadAssetAsync(_cts.Token);
         }
         catch (Exception ex)
@@ -167,14 +177,48 @@ public class StageManager : MonoBehaviour
 
     private async UniTask LoadAssetAsync(CancellationToken cancellationToken = default)
     {
+        string address = "";
+        
+        // 1. ロードするリソースのアドレスを決定
+        if (_dailyStage > -1)
+        {
+            string stageNumber = (_dailyStage).ToString("D3");
+            address = DAILY_STAGE_PREFABS_PATH + "Stage" + stageNumber + ".prefab";
+        }
+        else
+        {
+            int nextStageNum = isNowStage + 1;
+            string stageNumber = nextStageNum.ToString("D3");
+            address = STAGE_PREFABS_PATH + "Stage" + stageNumber + ".prefab";
+        }
+        
+        if (string.IsNullOrEmpty(address))
+        {
+            Debug.LogError("ロードするAddressableアドレスが決定できませんでした。");
+            StartCoroutine(InitlializeColoutine2());
+            return;
+        }
+
         try
         {
+            Debug.Log($"Addressableロード開始: {address}");
+            
             var loadStage = await AddressableUtil.LoadAssetAsync<GameObject>(
-                "Assets/Prefabs/Addressable/Srages/Stage001/Stage001.prefab",
+                address, // 決定した動的なアドレスを使用
                 cancellationToken
             );
-            loadStage.SetActive(true);
-            _loadStage = loadStage.GetComponent<StageInfo>();
+            
+            // 念のため、Addressableロード直後のオブジェクトをアクティブにする
+            if (loadStage != null)
+            {
+                loadStage.SetActive(true);
+                _loadStage = loadStage.GetComponent<StageInfo>();
+            }
+            else
+            {
+                // ロードに失敗した場合（アセットが存在しない、またはアドレスが誤っている）
+                Debug.LogError($"Addressableロード失敗: {address}");
+            }
         }
         catch (OperationCanceledException)
         {
@@ -194,9 +238,8 @@ public class StageManager : MonoBehaviour
         _cts?.Dispose();
     }
 
-    private IEnumerator InitlializeColoutine2()
+    private void Initlialize()
     {
-        yield return null;
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
@@ -224,6 +267,12 @@ public class StageManager : MonoBehaviour
         }
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+    }
+
+    private IEnumerator InitlializeColoutine2()
+    { 
+        bool isHard = false;
+        yield return null;
 
         if(GameDataManager.IsHome)
         yield return new WaitForSeconds(0.5f);
@@ -237,8 +286,8 @@ public class StageManager : MonoBehaviour
                 {
                     bool isActive = (i == isNowStage && _dailyStage == -1);
                     stages[i].SetActive(isActive);
-                    if(isActive)
-                        isHard = stages[i].GetComponent<StageInfo>().isHard;
+                    // if(isActive)
+                    //     isHard = stages[i].GetComponent<StageInfo>().isHard;
                 }
                 for(int i = 0; i < dailyStages.Length; i++)
                 {
@@ -735,7 +784,17 @@ public class StageManager : MonoBehaviour
     {
         if(_isStageLoadFromScene)
             return stages.Length;
-        return _stagePrefabs.Length;
+        
+        // ★★★ 修正: キャッシュされた値を返す ★★★
+        if (_maxNormalStageCount > 0)
+        {
+            return _maxNormalStageCount;
+        }
+
+        // 初期化前に呼ばれた場合のフォールバック（問題の可能性あり）
+        Debug.LogWarning("Addressableステージ総数がまだキャッシュされていません。初期化処理の完了を待ってください。");
+        return 0; // または安全な固定値を返す
+        // ★★★ ここまで ★★★
     }
 
 
@@ -766,6 +825,43 @@ public class StageManager : MonoBehaviour
                 StartCoroutine(InAppReviewManager.RequestReview());
                 PlayerPrefs.SetInt("RequestReview", 0);
             }
+    }
+
+    // StageManager.cs に追加
+    private async UniTask<int> GetAddressableCountByLabelAsync(string label)
+    {
+        try
+        {
+            // 指定されたラベルを持つアセットのロケーションを非同期で検索
+            var locationsHandle = Addressables.LoadResourceLocationsAsync(label);
+            
+            // UniTaskで待機
+            var locations = await locationsHandle.ToUniTask();
+            
+            int count = locations.Count;
+
+            // ハンドルを解放（必須）
+            Addressables.Release(locationsHandle);
+            
+            return count;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Addressable総数の取得に失敗しました (Label: {label})。ラベルがAddressables設定に存在するか確認してください: {ex}");
+            return 0;
+        }
+    }
+
+    // StageManager.cs に追加
+    private async UniTask<int> GetStageLengthAsync()
+    {
+        if (_isStageLoadFromScene)
+        {
+            return stages.Length;
+        }
+        
+        // Addressableロードモードの場合、通常ステージの総数を取得
+        return await GetAddressableCountByLabelAsync(NORMAL_STAGE_LABEL);
     }
 
 }

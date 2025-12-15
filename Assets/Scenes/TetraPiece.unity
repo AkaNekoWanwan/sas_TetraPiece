@@ -3478,7 +3478,38 @@ MonoBehaviour:
   isDoClearGame: 0
   isGameOver: 0
   isPause: 0
-  stages: []
+  stages:
+  - {fileID: 1110828727420940002, guid: 8c7fb88f64ab24d2b907c7ab8bc624bd, type: 3}
+  - {fileID: 1090990764131489011, guid: d5f26661740d84f21b4518a3af6e238c, type: 3}
+  - {fileID: 4294346356140162974, guid: f3cb5952e75024931b5a341d4983aa3f, type: 3}
+  - {fileID: 1398294792773233853, guid: 948e18e1226bf4bbfa64f5fb0131b0c5, type: 3}
+  - {fileID: 1588349176914748314, guid: 187a62dae4fd041f185c3a6b2c79bbee, type: 3}
+  - {fileID: 3363576815610491088, guid: 418941468647140aa958aa8afb8a065e, type: 3}
+  - {fileID: 3030770208761358029, guid: 2ae66914771774090bdc1f6a214b4061, type: 3}
+  - {fileID: 6394591644769595658, guid: bff290cdf2bce450d8bff45852fa32f0, type: 3}
+  - {fileID: 5239070259944106475, guid: 302d78c29e9d040f29dab4d5ce2d203e, type: 3}
+  - {fileID: 1988684568739027771, guid: 2ce4b1628c4704de7ad13b7ec03136af, type: 3}
+  - {fileID: 8291916494654689723, guid: e68c057c0e4f64371aad2f73ac9ec6eb, type: 3}
+  - {fileID: 1521612659954071811, guid: fef668d37ff7c4a818e49411fa0a41cf, type: 3}
+  - {fileID: 4975818883135809637, guid: cd29c96b728174d4c9fae348118f1e4b, type: 3}
+  - {fileID: 1927828171528903306, guid: ae56e51dff02245df8e4428c212aac3c, type: 3}
+  - {fileID: 1042378444643582881, guid: ed3dad59038b34b76b448a019e0cdc5c, type: 3}
+  - {fileID: 7259006736508740706, guid: 0c498f36d91474cb192d46c181223542, type: 3}
+  - {fileID: 6492160435315428174, guid: 59f97dd4eabfb454abfc153314b5b93b, type: 3}
+  - {fileID: 8473855451329552059, guid: 8224aace0ff794eee8bd466b0b407535, type: 3}
+  - {fileID: 7950191674094107406, guid: decb86a1da6254c3480df22ef9611869, type: 3}
+  - {fileID: 2422752160756732758, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
+  - {fileID: 3417040917611521205, guid: 1e830d261583044c090efdfd64a81482, type: 3}
+  - {fileID: 5296798677984542257, guid: ffa37e6c3d5b7404f90816bb523bd8c8, type: 3}
+  - {fileID: 1532476538417786300, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
+  - {fileID: 4597315471230949682, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
+  - {fileID: 1636358335514422381, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
+  - {fileID: 4722942331536282798, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
+  - {fileID: 3033276545407369794, guid: 0cbdf284e512a4fffa005d181fc84738, type: 3}
+  - {fileID: 4839532429254407986, guid: 1f1d6dd65f9b44ec58ca8452a91315d9, type: 3}
+  - {fileID: 3201168509147225615, guid: ad16c7a5d1fa244709a64bb9760ec011, type: 3}
+  - {fileID: 4901579308728986265, guid: dfc23e5943a9e4c4dad5f9c24a31c7f0, type: 3}
+  - {fileID: 2433849982361048595, guid: d809ccfd4f9b64ecba5b123ba6cc9709, type: 3}
   dailyStages: []
   _isStageLoadFromScene: 0
   _stagePrefabs:
@@ -3986,38 +4017,7 @@ MonoBehaviour:
   - {fileID: 5276193266691892424, guid: 282cf631c70a7400582c6f6f6452391e, type: 3}
   - {fileID: 4892348527578206185, guid: 631942e01ea0b4247b4a849edd23dcda, type: 3}
   - {fileID: 1728897533021896507, guid: e566e0ac98a8f4f8883129cd59035ba3, type: 3}
-  _dailyStagePrefabs:
-  - {fileID: 7314599571116495266, guid: 8c7fb88f64ab24d2b907c7ab8bc624bd, type: 3}
-  - {fileID: 8649376724584279091, guid: d5f26661740d84f21b4518a3af6e238c, type: 3}
-  - {fileID: 8923019495731095775, guid: f3cb5952e75024931b5a341d4983aa3f, type: 3}
-  - {fileID: 8091744376004370195, guid: 948e18e1226bf4bbfa64f5fb0131b0c5, type: 3}
-  - {fileID: 6213964676105061341, guid: 187a62dae4fd041f185c3a6b2c79bbee, type: 3}
-  - {fileID: 7710113404012202933, guid: 418941468647140aa958aa8afb8a065e, type: 3}
-  - {fileID: 8721019293647745524, guid: 2ae66914771774090bdc1f6a214b4061, type: 3}
-  - {fileID: 5990357159813699862, guid: bff290cdf2bce450d8bff45852fa32f0, type: 3}
-  - {fileID: 2074069244136126462, guid: 302d78c29e9d040f29dab4d5ce2d203e, type: 3}
-  - {fileID: 2028345025548994033, guid: 2ce4b1628c4704de7ad13b7ec03136af, type: 3}
-  - {fileID: 6519578407825450360, guid: e68c057c0e4f64371aad2f73ac9ec6eb, type: 3}
-  - {fileID: 1021294906381924905, guid: fef668d37ff7c4a818e49411fa0a41cf, type: 3}
-  - {fileID: 483161964393309964, guid: cd29c96b728174d4c9fae348118f1e4b, type: 3}
-  - {fileID: 1456396065490721863, guid: ae56e51dff02245df8e4428c212aac3c, type: 3}
-  - {fileID: 2916671065753049604, guid: ed3dad59038b34b76b448a019e0cdc5c, type: 3}
-  - {fileID: 3021249439942522224, guid: 0c498f36d91474cb192d46c181223542, type: 3}
-  - {fileID: 4343758914581005643, guid: 59f97dd4eabfb454abfc153314b5b93b, type: 3}
-  - {fileID: 5110039870854818000, guid: 8224aace0ff794eee8bd466b0b407535, type: 3}
-  - {fileID: 6787135084693951077, guid: decb86a1da6254c3480df22ef9611869, type: 3}
-  - {fileID: 5066701964063349928, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
-  - {fileID: 5461179501126485010, guid: 1e830d261583044c090efdfd64a81482, type: 3}
-  - {fileID: 9191255307723831479, guid: ffa37e6c3d5b7404f90816bb523bd8c8, type: 3}
-  - {fileID: 320056581206422076, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
-  - {fileID: 6898956134777794433, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
-  - {fileID: 9196614426292473541, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
-  - {fileID: 7509790294972309169, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
-  - {fileID: 8094881885644101045, guid: 0cbdf284e512a4fffa005d181fc84738, type: 3}
-  - {fileID: 2863716383538044290, guid: 1f1d6dd65f9b44ec58ca8452a91315d9, type: 3}
-  - {fileID: 1108512940677680672, guid: ad16c7a5d1fa244709a64bb9760ec011, type: 3}
-  - {fileID: 8228241015322451878, guid: dfc23e5943a9e4c4dad5f9c24a31c7f0, type: 3}
-  - {fileID: 7636687656164097492, guid: d809ccfd4f9b64ecba5b123ba6cc9709, type: 3}
+  _dailyStagePrefabs: []
   _loadStage: {fileID: 0}
   stageParent: {fileID: 1914749127}
   isNowStage: 0

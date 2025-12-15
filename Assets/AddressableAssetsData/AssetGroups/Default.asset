@@ -14,7 +14,107 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: 613d7b189f0664dfbb294637e8d82020
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 4cccfefe032394c9fa03571a9154b596
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels010.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51ee6367aed224e1fa0b6e4b7d544537
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels017.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 677fdd49c849240df82c3479d51135a5
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels015.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 735dc0fb86d6a414595bcdcb623a570b
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels016.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cfb9061fb886452c989ba43a6d40836
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels004.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 991b715cc2e924622b96d9b51e02268d
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels013.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa79e1a14823548ec9badd1aa3f0101a
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels005.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae3685fb6d5104dda95483ea5d0f337d
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels014.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5dca24f4597344bcbf574113c96d658
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels019.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b721dcc0589864ea0ad8e8479c263ef4
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels011.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3266abaef4424fad9a60e3dcc50f7cb
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels003.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9e95a5350e014fe696663b78c3f3194
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels006.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d89d1b141287647caa0d24b5e7b4c6b7
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels018.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3722a5f0a38a4e618210483ffd3119f
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels001.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5e5af92c50c34bc1a77936fa2573ae1
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels008.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e84c1bdb8f1db4d419ea1999eccf3c09
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels007.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e87ec6f3c6b624acdb7e75e962c9e8b8
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels009.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e958c6bea090342b9b4695a3964c5a9b
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels020.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f02b503bfea5f4b98bb98785e9f5ea01
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels012.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1da0da1ab8d34a1a99b07d969205b34
+    m_Address: Assets/Prefabs/HomePuzzles/HomePanels002.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:

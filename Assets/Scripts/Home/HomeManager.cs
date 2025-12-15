@@ -10,6 +10,11 @@ using UnityEngine.SceneManagement;
 using System.Globalization;
 using UnityEditor;
 using System.Linq;
+using Cysharp.Threading.Tasks; // UniTaskを利用するために必要
+using UnityEngine.AddressableAssets; // Addressables APIを利用するために必要
+using System;
+using System.Threading;
+using UnityEngine.ResourceManagement.AsyncOperations; // 必要に応じて追
 
 public class HomeManager : MonoBehaviour
 {
@@ -22,8 +27,11 @@ public class HomeManager : MonoBehaviour
     public Transform _homeParent;
     public HardEfffectManager _hardEfffectManager;
     public ParticleSystem _particle;
+    private CancellationTokenSource _cts;
 
-    private const string HOME_STAGE_PREFABS_PATH = "Assets/Prefabs/HomePuzzles/";
+    // private const string HOME_STAGE_PREFABS_PATH = "Assets/Prefabs/HomePuzzles/";//HomePanels
+    private const string HOME_STAGE_PREFABS_PATH = "Assets/Prefabs/HomePuzzles/HomePanels{0}.prefab";
+    private const string ASSET_PATH_FORMAT = "Assets/Prefabs/HomePuzzles/HomePanels{0:D3}.prefab"; // ★★★ パスのフォーマットを修正 ★★★
 
     private void Awake()
     {
@@ -38,23 +46,50 @@ public class HomeManager : MonoBehaviour
         }
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private async void Start() // ★★★ Coroutineからasync voidに変更 ★★★
     {
+        _cts = new CancellationTokenSource();
         if(!GameDataManager.IsHome)
         {
             this.gameObject.SetActive(false);
             return;
         }
-        StartCoroutine(InitlializeColoutine());
-        // PlayerPrefs.SetInt("totalLevel", 1);
-        // GameDataManager.isPlayHomePieceAnimation = true;
+        
+        // 処理を非同期で実行
+        await InitlializeAsync();
     }
 
-    private IEnumerator InitlializeColoutine()
+    private void OnDestroy()
     {
-        yield return null;
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+
+    // StageManager.cs に追加
+    /// <summary>
+    /// ステージインデックス（0始まり）からAddressableのアドレス文字列を生成する
+    /// </summary>
+    /// <param name="index">ホームパズルのプレハブ配列のインデックス（0, 1, 2...）</param>
+    /// <param name="prefabLength">ホームパズルの種類（配列の長さ）</param>
+    /// <returns>Addressableのアドレス文字列</returns>
+    private string GetHomePanelAddress(int index, int prefabLength)
+    {
+        // X = (index % prefabLength) + 1
+        int panelNumber = (index % prefabLength) + 1;
+        
+        // Assets/Prefabs/HomePuzzles/HomePanels{0埋め3桁のX}.prefab
+        return string.Format(ASSET_PATH_FORMAT, panelNumber);
+    }
+
+    // ★★★ InitlializeColoutine() を置き換え ★★★
+    private async UniTask InitlializeAsync()
+    {
+        await UniTask.Yield(); // Coroutineの yield return null に相当
+
+        // Addressablesの初期化が済んでいない場合はここで待機
+        await AddressableUtil.InitAsync(); 
+        
         _playButton.onClick += OnPlayButton;
-        // _backButton.onClick += OnHomeButton;
         
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
         int nowBoardIndex = (totalLevel - 1) / 30;
@@ -73,33 +108,78 @@ public class HomeManager : MonoBehaviour
         Debug.Log($"アニメーションチェック: isAnim:{GameDataManager.isPlayHomePieceAnimation}, totalLevel:{totalLevel}, nowBoardIndex:{nowBoardIndex}, beforeBoardIndex:{beforeBoardIndex}, isBoardChangeAnimation:{isBoardChangeAnimation}");
 
         HomePanelsManager homePanelsManager = null;
+        int prefabLength = 5; // ★★★ HomePanelsの総数を暫定的に定義。Addressable移行後は手動またはAPIで取得する必要があります。 ★★★
+                              // ※ 既存コードでは _homePuzzlePrefabs.Length を使っていたため、手動で最大数を把握するか、
+                              //    AddressableUtil.GetResourceCountByLabelAsync のようなメソッドで取得する必要があります。
+                              //    ここでは便宜上 5 とします。
+        
         // ボード切り替え演出なし
         if(!isBoardChangeAnimation)
         {
-            homePanelsManager = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
-            homePanelsManager.transform.parent = _homeParent;
-            homePanelsManager.transform.localScale = Vector3.one;
-            homePanelsManager.transform.localPosition = Vector3.zero;
-            homePanelsManager.StartIndex = nowBoardIndex * 30;
-            homePanelsManager.Initialize();
+            string address = GetHomePanelAddress(nowBoardIndex, prefabLength);
+            
+            // 🔽 Addressable 非同期読み込み 🔽
+            GameObject loadedPrefab = await AddressableUtil.LoadAssetAsync<GameObject>(address, _cts.Token);
+            
+            if (loadedPrefab != null)
+            {
+                // インスタンス化
+                homePanelsManager = Instantiate(loadedPrefab).GetComponent<HomePanelsManager>();
+            }
+            
+            if (homePanelsManager != null)
+            {
+                homePanelsManager.transform.parent = _homeParent;
+                homePanelsManager.transform.localScale = Vector3.one;
+                homePanelsManager.transform.localPosition = Vector3.zero;
+                homePanelsManager.StartIndex = nowBoardIndex * 30;
+                homePanelsManager.Initialize();
+            }
         }
         else
         {
             // 前のボードを出す
-            homePanelsManager = Instantiate(_homePuzzlePrefabs[beforeBoardIndex % _homePuzzlePrefabs.Length]);
-            homePanelsManager.transform.parent = _homeParent;
-            homePanelsManager.transform.localScale = Vector3.one;
-            homePanelsManager.transform.localPosition = Vector3.zero;
-            homePanelsManager.StartIndex = beforeBoardIndex * 30;
-            homePanelsManager.Initialize();
-            // 次のボードも用意しておく
-            HomePanelsManager homePanelsManager2 = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
-            homePanelsManager2.transform.parent = _homeParent;
-            homePanelsManager2.transform.localScale = Vector3.one * 0.5f;
-            homePanelsManager2.transform.localPosition = new Vector3(0f, -2000f, 0f);
-            homePanelsManager2.StartIndex = nowBoardIndex * 30;
-            homePanelsManager2.Initialize();
+            string address1 = GetHomePanelAddress(beforeBoardIndex, prefabLength);
+            
+            // 🔽 Addressable 非同期読み込み 1 🔽
+            GameObject loadedPrefab1 = await AddressableUtil.LoadAssetAsync<GameObject>(address1, _cts.Token);
+            
+            if (loadedPrefab1 != null)
+            {
+                homePanelsManager = Instantiate(loadedPrefab1).GetComponent<HomePanelsManager>();
+            }
+            
+            if (homePanelsManager != null)
+            {
+                homePanelsManager.transform.parent = _homeParent;
+                homePanelsManager.transform.localScale = Vector3.one;
+                homePanelsManager.transform.localPosition = Vector3.zero;
+                homePanelsManager.StartIndex = beforeBoardIndex * 30;
+                homePanelsManager.Initialize();
+            }
 
+            // 次のボードも用意しておく
+            string address2 = GetHomePanelAddress(nowBoardIndex, prefabLength);
+            
+            // 🔽 Addressable 非同期読み込み 2 🔽
+            GameObject loadedPrefab2 = await AddressableUtil.LoadAssetAsync<GameObject>(address2, _cts.Token);
+            
+            HomePanelsManager homePanelsManager2 = null;
+            if (loadedPrefab2 != null)
+            {
+                homePanelsManager2 = Instantiate(loadedPrefab2).GetComponent<HomePanelsManager>();
+            }
+            
+            if (homePanelsManager2 != null)
+            {
+                homePanelsManager2.transform.parent = _homeParent;
+                homePanelsManager2.transform.localScale = Vector3.one * 0.5f;
+                homePanelsManager2.transform.localPosition = new Vector3(0f, -2000f, 0f);
+                homePanelsManager2.StartIndex = nowBoardIndex * 30;
+                homePanelsManager2.Initialize();
+            }
+
+            // DOTween アニメーション (非同期読み込み後に実行)
             Sequence seq = DOTween.Sequence();
             seq.AppendInterval(1.3f);
             seq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayClearSound(); homePanelsManager.PlayClearAnimation();});
@@ -115,48 +195,20 @@ public class HomeManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        // return;
-        // ゲーム実行中は実行しない
-        if (EditorApplication.isPlaying) 
-            return;
+        // Addressablesに移行するため、Editorでの自動読み込みは基本的に不要になります
+        // return; 
+        // // ゲーム実行中は実行しない
+        // if (EditorApplication.isPlaying) 
+        //     return;
 
-        SetPrefabs(HOME_STAGE_PREFABS_PATH, ref _homePuzzlePrefabs);
+        // SetPrefabs(HOME_STAGE_PREFABS_PATH, ref _homePuzzlePrefabs);
     }
-
-    private void SetPrefabs(string path, ref HomePanelsManager[] prefabArray)
-    {
-        // 一時的に結果を格納するためのList
-        List<HomePanelsManager> loadedPrefabs = new List<HomePanelsManager>();
-
-        // 1. 指定されたフォルダ内の全アセットのGUIDを取得
-        // string[] guids = AssetDatabase.FindAssets("t:HomePanelsManager", new[] { path });
-        string[] guids = AssetDatabase.FindAssets("t:GameObject", new[] { path });
-        
-        // 2. GUIDをパスに変換し、プレハブとしてロード
-        foreach (string guid in guids)
-        {
-            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
-
-            // フォルダ内のアセットがプレハブであることを確認してロード
-            HomePanelsManager prefab = AssetDatabase.LoadAssetAtPath<HomePanelsManager>(assetPath);
-            
-            // PrefabUtility.GetPrefabAssetType で通常のプレハブか確認
-            if (prefab != null && PrefabUtility.GetPrefabAssetType(prefab) == PrefabAssetType.Regular)
-            {
-                loadedPrefabs.Add(prefab);
-            }
-        }
-        
-        // （オプション）リストを名前順などでソート
-        // OrderByを使用しない場合はこの行は不要
-        loadedPrefabs = loadedPrefabs.OrderBy(p => p.name).ToList();
-
-        // 🟨 変更点2: Listを配列に変換してpublic変数に格納
-        prefabArray = loadedPrefabs.ToArray();
-
-        // リストに更新があったことをエディターに通知し、Inspectorを再描画
-        EditorUtility.SetDirty(this);
-    }
+    
+    // SetPrefabsメソッド全体も不要になります
+    // private void SetPrefabs(string path, ref HomePanelsManager[] prefabArray)
+    // {
+    //     ...
+    // }
 #endif
 
     public void FedeGoHome()

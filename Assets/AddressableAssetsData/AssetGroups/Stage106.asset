@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage106
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage106
+  m_GUID: 4e86195fa79d44da0a79d06a1ba3fe7b
+  m_SerializeEntries:
+  - m_GUID: 0cb19a1ae73224e9db19bc521d41829b
+    m_Address: Assets/Textures/PieceCells/106/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 101b433237af542cc9aebc557a2e292f
+    m_Address: Assets/Textures/PieceCells/106/hex_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a6f0508a44e34bb4aaf6ffc8d820a7a
+    m_Address: Assets/Textures/PieceCells/106/hex_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2bc82ad92b4ac43ac8f97c0370d66fd0
+    m_Address: Assets/Textures/PieceCells/106/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31c60790e869040278bc3eda060396a6
+    m_Address: Assets/Textures/PieceCells/106/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 362cdd89ccebf48bca1441806766f66a
+    m_Address: Assets/Textures/PieceCells/106/hex_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6d1fdbf3096864f2fb3fffc9734e24ca
+    m_Address: Assets/Textures/PieceCells/106/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dc8c93fe288f4a74b7a7d9c71cd39e3
+    m_Address: Assets/Textures/PieceCells/106/hex_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8fc97cc7e94e547e889528771f10f85c
+    m_Address: Assets/Textures/PieceCells/106/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f8a00f9529dc4e48991f759ce7ac95b
+    m_Address: Assets/Textures/PieceCells/106/hex_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba3a95a2390de4e9f861165236990174
+    m_Address: Assets/Prefabs/Stages/Stage106.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba998c06ab50b453a84002c36d893818
+    m_Address: Assets/Textures/PieceCells/106/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd2836f7b493f46f9ae8825d58166026
+    m_Address: Assets/Textures/PieceCells/106/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c80b31f35b2944b6c822dcf04d1b6464
+    m_Address: Assets/Textures/PieceCells/106/hex_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dbfe8e16d98f949119dc1894e689760d
+    m_Address: Assets/Textures/PieceCells/106/hex_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e23e497afbd3c4edaabcfa566c712d72
+    m_Address: Assets/Textures/Originals/ResizedImages2/aerial-drone-landscape-of-famous-tuscany-hills-it-2024-09-15-22-40-14-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6f96bc8ad3fd4e6d9e3f46b57542fca
+    m_Address: Assets/Textures/PieceCells/106/hex_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e9a604b5e770f4a4eadae14c311fd1fa
+    m_Address: Assets/Textures/PieceCells/106/hex_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb1b0f9dcc8944514995aa56c6ef9a46
+    m_Address: Assets/Textures/PieceCells/106/hex_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef036efe736a04b54ac9bec392e3a712
+    m_Address: Assets/Textures/PieceCells/106/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f70c78b6023a3441791688ea504e2ca4
+    m_Address: Assets/Textures/PieceCells/106/hex_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc532272df98e47979cb5bd83c68bd91
+    m_Address: Assets/Textures/PieceCells/106/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: bf229588630dc4fbcaa80bd43bc294f1, type: 2}
+    - {fileID: 11400000, guid: e6d3a9c3ce0c7415b913698c24d10a0e, type: 2}

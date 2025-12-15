@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage271
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage271
+  m_GUID: 1381cc8b818594b20ba0f61e8d31c188
+  m_SerializeEntries:
+  - m_GUID: 027d7899cface48eebf5b6051588a06a
+    m_Address: Assets/Textures/PieceCells/302/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 20814fd6f345d45bbb4763a44e37f92d
+    m_Address: Assets/Textures/PieceCells/302/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f679d6df15bf46a4ae7d6f12aae08e9
+    m_Address: Assets/Textures/PieceCells/302/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32729d5741d6049d5944bd39ca9c6d0b
+    m_Address: Assets/Textures/PieceCells/302/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 466c37b3c33fa4e5da497f6bfeaf5a73
+    m_Address: Assets/Textures/PieceCells/302/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 554f99181c0324f99b03d90f93726e5f
+    m_Address: Assets/Textures/PieceCells/302/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5cf19b28b535f4013a1de2556afcacd6
+    m_Address: Assets/Textures/PieceCells/302/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78169482effd44e41b605a86b53a71ef
+    m_Address: Assets/Textures/PieceCells/302/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f3e4c054623f4e54963330e87521872
+    m_Address: Assets/Textures/PieceCells/302/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93d36956083034f3f9bc4f509b3e65dd
+    m_Address: Assets/Textures/PieceCells/302/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b40a47d395354630b15c8ce24d44e2b
+    m_Address: Assets/Textures/PieceCells/302/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bca14e3ac3f644d47a0355639baf9a90
+    m_Address: Assets/Textures/PieceCells/302/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4ab57eaa825d422fa483087d5184f1d
+    m_Address: Assets/Textures/PieceCells/302/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca82de8fe6ea546c9b446da482fb4231
+    m_Address: Assets/Textures/Originals/ResizedImages2/fatmaninsavannah.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc6994ec55db8454bb8cc8ecd1f2ffde
+    m_Address: Assets/Textures/PieceCells/302/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d6bf2cf34ab8844ff831c5453dc6cbc3
+    m_Address: Assets/Textures/PieceCells/302/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7406d3dbfbe54e24a3362da26d4aebc
+    m_Address: Assets/Prefabs/Stages/Stage271.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d7c8a926c27424d86b1d4f72156f9ffc
+    m_Address: Assets/Textures/PieceCells/302/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dcf97701f33f74016bd03adf8eba3f67
+    m_Address: Assets/Textures/PieceCells/302/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4a7643282d8a446eb1993cabac68afe
+    m_Address: Assets/Textures/PieceCells/302/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: faef51fdcc5224a70bed8a69105ac894
+    m_Address: Assets/Textures/PieceCells/302/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe3237cde4d594dabb05fbf775b00972
+    m_Address: Assets/Textures/PieceCells/302/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7bbe7db340e5441c881122e8c806822c, type: 2}
+    - {fileID: 11400000, guid: 0f4c4e1089c6241f99e7b10ef7959690, type: 2}

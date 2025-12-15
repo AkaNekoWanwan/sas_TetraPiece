@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage469
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage469
+  m_GUID: 7cca8994831414ae58c019c3e64ccc4b
+  m_SerializeEntries:
+  - m_GUID: 06b658db223164c66adf1b65a60efda0
+    m_Address: Assets/Textures/PieceCells/500/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d270165279014668930f6e7778a57f2
+    m_Address: Assets/Textures/PieceCells/500/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0e266d253820649a7862efab134a195f
+    m_Address: Assets/Textures/PieceCells/500/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 13bd61b2eb4734dafbfb3b51f070e564
+    m_Address: Assets/Textures/PieceCells/500/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24967ca52a27944db9aeb943e0ca3f18
+    m_Address: Assets/Textures/PieceCells/500/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c3ad8eb9069b44b29417d79ecc0d02d
+    m_Address: Assets/Textures/PieceCells/500/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3aa0cf2bb5ecb43fd95c4e550d60955f
+    m_Address: Assets/Textures/PieceCells/500/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f480f062f3454a95beb0fb219a91c56
+    m_Address: Assets/Textures/PieceCells/500/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52081e6993b6244d092c5b10258a7760
+    m_Address: Assets/Textures/PieceCells/500/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59a055892bb944b44af170b37d02886d
+    m_Address: Assets/Textures/PieceCells/500/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e0e0f40c9fd741d2ad8a03f866d39ec
+    m_Address: Assets/Textures/PieceCells/500/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 712e93e8aac704a09b2797e3c7c338d8
+    m_Address: Assets/Textures/PieceCells/500/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 85d71c0dc92f44079ba61a19f54432b8
+    m_Address: Assets/Textures/PieceCells/500/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96accf0c210ab48fc9582e158878ca91
+    m_Address: Assets/Textures/PieceCells/500/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e55bd1a5f433485384a8571cc7650e3
+    m_Address: Assets/Textures/PieceCells/500/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a06718955d2c947bb84eaecd6859ae5a
+    m_Address: Assets/Textures/PieceCells/500/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a40bed86d4f7d46eeaaa3e4ea6068b9a
+    m_Address: Assets/Prefabs/Stages/Stage469.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aab73319e202045d8a0e4d786006ba44
+    m_Address: Assets/Textures/PieceCells/500/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bea80746d53204811896ee74c9e8e57e
+    m_Address: Assets/Textures/PieceCells/500/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0f4d1ff5857e4bdfb48833933867d97
+    m_Address: Assets/Textures/Originals/ResizedImages2/stylish-friends-posing-on-street-2025-04-04-22-02-49-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e50d992cec947407daae0daae3f50d31
+    m_Address: Assets/Textures/PieceCells/500/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe7c52747775e4f60bd25d00eb5d175e
+    m_Address: Assets/Textures/PieceCells/500/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6dcdb0ea9e8c847bebc6dfd4b60ecc3a, type: 2}
+    - {fileID: 11400000, guid: 6133689ec5ea94ecebe9882a96197826, type: 2}

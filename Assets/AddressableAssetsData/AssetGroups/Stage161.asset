@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage161
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage161
+  m_GUID: 97d31a697c8a5473d8911e975126bd62
+  m_SerializeEntries:
+  - m_GUID: 089fcc2ec6d1c476d9307dde61fd130e
+    m_Address: Assets/Textures/PieceCells/161/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0bee01912979b4ddfabecaefdc80a65d
+    m_Address: Assets/Textures/PieceCells/161/hex_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c5789ff955c54838a95f4eb8342d786
+    m_Address: Assets/Textures/PieceCells/161/hex_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0ed7697d137ff4c9aa3bd38cc5b36254
+    m_Address: Assets/Textures/PieceCells/161/hex_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 141bfd347f08b423482af4d8490cdd5f
+    m_Address: Assets/Textures/Originals/ResizedImages2/candy-1961538_1920.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 165f42c619e984837a54b8a4b26dc237
+    m_Address: Assets/Textures/PieceCells/161/hex_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1cc7162bb80e547fba168a597c06ff67
+    m_Address: Assets/Textures/PieceCells/161/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 260b8668dba814e49a1d0a01db70cdfa
+    m_Address: Assets/Textures/PieceCells/161/hex_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34a7ec6617b5046a4af72ce412c9fad7
+    m_Address: Assets/Textures/PieceCells/161/hex_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b8b3b8a7801f4b88806148742a7ce05
+    m_Address: Assets/Textures/PieceCells/161/hex_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 425f15022e3694eaa800ca70d339b0a1
+    m_Address: Assets/Textures/PieceCells/161/hex_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 445483b51ddf344fcaaa8a320b44b14b
+    m_Address: Assets/Textures/PieceCells/161/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4603385cdc5f04bf2a11a051072aa699
+    m_Address: Assets/Textures/PieceCells/161/hex_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 499af2d6820c44dd1972fa00f7363e2a
+    m_Address: Assets/Textures/PieceCells/161/hex_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ed8c33f887494323ac26f201cc628f9
+    m_Address: Assets/Textures/PieceCells/161/hex_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56bb74a1175ff49789beb620b536b36f
+    m_Address: Assets/Textures/PieceCells/161/hex_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 56c7eef36044e447ba7b83531f1d5ef7
+    m_Address: Assets/Prefabs/Stages/Stage161.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62c44ef27e98b4b3c894832bcb6facf2
+    m_Address: Assets/Textures/PieceCells/161/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ce4dbb16218f435f8d0c289448597f3
+    m_Address: Assets/Textures/PieceCells/161/hex_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 720c7b23d4c15459c8b7c2fb5551aed7
+    m_Address: Assets/Textures/PieceCells/161/hex_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 801672f011183452b9744116330319fc
+    m_Address: Assets/Textures/PieceCells/161/hex_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83d030de1787549088244b8cbe915fb2
+    m_Address: Assets/Textures/PieceCells/161/hex_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89f64c8b412cc4dbda1ccf6ba3c96141
+    m_Address: Assets/Textures/PieceCells/161/hex_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8bc37503bb3b84ce0b0013abbfac0e12
+    m_Address: Assets/Textures/PieceCells/161/hex_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9093a6ce832584dc9bf4684d573949c1
+    m_Address: Assets/Textures/PieceCells/161/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 941d1b59274b4432ba7362686727b3bc
+    m_Address: Assets/Textures/PieceCells/161/hex_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 992d683085f4d4d0c89859362809d1d6
+    m_Address: Assets/Textures/PieceCells/161/hex_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9ba54472846c41e0ab0b93589001ea8
+    m_Address: Assets/Textures/PieceCells/161/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c41baf9fca54142a6a7f7487a781e7fc
+    m_Address: Assets/Textures/PieceCells/161/hex_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5918e456ed974e729546aa771f1b4c2
+    m_Address: Assets/Textures/PieceCells/161/hex_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c68d17d83181a4964a0d1538a2e7bf2e
+    m_Address: Assets/Textures/PieceCells/161/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db5da4e771db44334aa73e82807b82f3
+    m_Address: Assets/Textures/PieceCells/161/hex_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dcbe92b4150014897aee26eae7296504
+    m_Address: Assets/Textures/PieceCells/161/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e873f1dd51a5d4858b5ffa66e0cb00fd
+    m_Address: Assets/Textures/PieceCells/161/hex_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f587218792b2c4e6b9c06e8e22e8de55
+    m_Address: Assets/Textures/PieceCells/161/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f93d2811c3195497980976351141eb85
+    m_Address: Assets/Textures/PieceCells/161/hex_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fae8cad0ea7d0474d8ae6d1d2a2eea96
+    m_Address: Assets/Textures/PieceCells/161/hex_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4711fa717ab9c49ad8c940cbe07c931e, type: 2}
+    - {fileID: 11400000, guid: 13420eb4112d3402495203cca78e5055, type: 2}

@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage199
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage199
+  m_GUID: c4f8ec54cfb75434f814035f89f5cb7d
+  m_SerializeEntries:
+  - m_GUID: 01cf0ec6d2d4b4fd399ed2cb28217a9e
+    m_Address: Assets/Textures/PieceCells/199/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f57aeacbc53c415ea75674c7e0f04cb
+    m_Address: Assets/Textures/PieceCells/199/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32136b4d85e254741ac760f14c5b94b5
+    m_Address: Assets/Textures/PieceCells/199/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4124edde344154b38b364fd5c90b292b
+    m_Address: Assets/Textures/PieceCells/199/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4732a5ee15e104dcbbd7d287d9a6d90c
+    m_Address: Assets/Textures/PieceCells/199/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47d53f09c9b1c41d6abfedf49697cf31
+    m_Address: Assets/Textures/PieceCells/199/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a6c398fb2c75498aac025fba6825cba
+    m_Address: Assets/Textures/PieceCells/199/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 512b46e7b1d6744d887559d3aa47cc0a
+    m_Address: Assets/Textures/PieceCells/199/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5dd73d5082f4247cabfb1a0c92e5a9ee
+    m_Address: Assets/Textures/PieceCells/199/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6537c3fec73254799b8bcfa3090b1bd2
+    m_Address: Assets/Textures/PieceCells/199/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 69c790ff98e16458e9b347a8a0171cff
+    m_Address: Assets/Textures/PieceCells/199/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f7878d939bc045bb866b86f03cbd6c4
+    m_Address: Assets/Textures/PieceCells/199/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8beeca81601e6472d8dc33ce9ba15769
+    m_Address: Assets/Textures/Originals/ResizedImages2/christmas-homemade-gingerbread-cookies-gingerbrea-2025-03-25-13-44-32-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92211f79136864d838956c32b67c77ba
+    m_Address: Assets/Prefabs/Stages/Stage199.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ec801fc02969491d96819a8c0ede309
+    m_Address: Assets/Textures/PieceCells/199/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a108f073561b94f0fafe1f06dbfc4d9f
+    m_Address: Assets/Textures/PieceCells/199/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a301d006c08b54ee2b9724f6440a6987
+    m_Address: Assets/Textures/PieceCells/199/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b852b699157174602bb29d17b0b4f0fa
+    m_Address: Assets/Textures/PieceCells/199/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd0fb8c96072f4286a884751ecbf8e7e
+    m_Address: Assets/Textures/PieceCells/199/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7b686f2cedfc4a949379c4d2af0a7ba
+    m_Address: Assets/Textures/PieceCells/199/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df40192d13fe14f14bebd2c0a15ee824
+    m_Address: Assets/Textures/PieceCells/199/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1e6ce7b0232848edbb7ba68d26a22c2
+    m_Address: Assets/Textures/PieceCells/199/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: d8afc089e6a1e444da0dbb2660785590, type: 2}
+    - {fileID: 11400000, guid: 4749d52b3a94d4176952e37631d3e211, type: 2}

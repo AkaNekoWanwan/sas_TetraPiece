@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage187
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage187
+  m_GUID: a20cdc5e2c0f44b6f9592972845628fe
+  m_SerializeEntries:
+  - m_GUID: 045caa8052d5945fa9515db0a5a2cc3e
+    m_Address: Assets/Textures/PieceCells/187/hex_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0861b985d469d4aec8f553ff0984b7c0
+    m_Address: Assets/Textures/PieceCells/187/hex_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c65281cac5ea480f8ad518b4e6dbc84
+    m_Address: Assets/Textures/PieceCells/187/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 165b9cd2a8e644b9d80610f15afd4173
+    m_Address: Assets/Textures/PieceCells/187/hex_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 16db48d418ae54a2facf91445a14a1d2
+    m_Address: Assets/Textures/PieceCells/187/hex_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1bd026d8f7ccc4980ae7f696e27a5390
+    m_Address: Assets/Textures/PieceCells/187/hex_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c0812b3b44d445e7a3ebb334ed0b9c1
+    m_Address: Assets/Textures/PieceCells/187/hex_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c0968447135c46fa863c394f1830950
+    m_Address: Assets/Textures/PieceCells/187/hex_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1c87bf1229036413d909f2f140736827
+    m_Address: Assets/Textures/PieceCells/187/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e014e9d86fa84f948c6aaffb4d9ecfb
+    m_Address: Assets/Textures/PieceCells/187/hex_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1f9036f57d3dd4a9f9eff24558a57301
+    m_Address: Assets/Textures/PieceCells/187/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26eb2eb5c483a4d87ba650408b2db7fb
+    m_Address: Assets/Textures/PieceCells/187/hex_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40d686c638ad94ba5a0e1e719a2dd667
+    m_Address: Assets/Textures/PieceCells/187/hex_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45fe8ec4a1f46479d80a197ba27da95d
+    m_Address: Assets/Textures/PieceCells/187/hex_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46ef0dbe5695f4c61872f6c9b6c64f74
+    m_Address: Assets/Textures/PieceCells/187/hex_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 48dbddaf6d4df4aafa85c23591c50eac
+    m_Address: Assets/Textures/PieceCells/187/hex_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c12cc55f328c48eabf739ad4695146c
+    m_Address: Assets/Textures/Originals/ResizedImages2/child-s-face-in-the-plenty-of-toys-2025-01-09-01-59-21-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5fc685b2afdc6496ab6de90ef8343152
+    m_Address: Assets/Textures/PieceCells/187/hex_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7038a591e7fb04529a0d9d0ca812680e
+    m_Address: Assets/Textures/PieceCells/187/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cf35068b346e4dd186b16985346a5a2
+    m_Address: Assets/Prefabs/Stages/Stage187.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d8aa003df1554471bb379ffd9a8d35a
+    m_Address: Assets/Textures/PieceCells/187/hex_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c55def43b158492cb9228acd22cfe6a
+    m_Address: Assets/Textures/PieceCells/187/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90aa4f303c71d4aa4a95db258900a56b
+    m_Address: Assets/Textures/PieceCells/187/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93cca20bdc78f4da6840344ceb4579b0
+    m_Address: Assets/Textures/PieceCells/187/hex_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c7a85ca0bc03445fa14e184c0a7170d
+    m_Address: Assets/Textures/PieceCells/187/hex_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5e55ea972b8e436cb6f3a67c4c7d439
+    m_Address: Assets/Textures/PieceCells/187/hex_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a79765169919d4a60b3f6728acd3476d
+    m_Address: Assets/Textures/PieceCells/187/hex_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0a16dc85ebc64459aea2b632965cfda
+    m_Address: Assets/Textures/PieceCells/187/hex_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4e733901f58d45c1b1f4c382c6c5ee6
+    m_Address: Assets/Textures/PieceCells/187/hex_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c55ce16e1900f402a92e297009942131
+    m_Address: Assets/Textures/PieceCells/187/hex_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca707ba3fef2547f1b9555245c361202
+    m_Address: Assets/Textures/PieceCells/187/hex_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc2a9f518de7c4fa4bd19309c84d35df
+    m_Address: Assets/Textures/PieceCells/187/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf9dbc5af93694c4bbda802558e75257
+    m_Address: Assets/Textures/PieceCells/187/hex_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d179d06ac610d49ecaa95891c8520ce7
+    m_Address: Assets/Textures/PieceCells/187/hex_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d784658fe086f4a608792613d7796679
+    m_Address: Assets/Textures/PieceCells/187/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da56508d4c17f42c49dcf6d4614f939d
+    m_Address: Assets/Textures/PieceCells/187/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e5064c1cc530c4ecdb48cb3dc2434734
+    m_Address: Assets/Textures/PieceCells/187/hex_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1ebcdb79b8a264665a031250ae609647, type: 2}
+    - {fileID: 11400000, guid: 5a374cd2b2e984f09a32853439746df0, type: 2}

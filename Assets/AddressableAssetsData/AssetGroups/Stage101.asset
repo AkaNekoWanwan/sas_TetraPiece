@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage101
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage101
+  m_GUID: 8e6f99067fbda48a7b3c909e3b7aa988
+  m_SerializeEntries:
+  - m_GUID: 0095dbf397db44b5bb4859705f978467
+    m_Address: Assets/Textures/PieceCells/101/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c81a1739e0cb41efa0999506f20aeaa
+    m_Address: Assets/Textures/PieceCells/101/grid_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d571f0319818491c829f37d944aea25
+    m_Address: Assets/Textures/PieceCells/101/grid_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27fbbdc3c3fa94dd784b2b6e18308a15
+    m_Address: Assets/Textures/PieceCells/101/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c7eaa9352766402aa08f1b7be4516b4
+    m_Address: Assets/Textures/PieceCells/101/grid_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35af3ffb2cafd44c593e070a02479e68
+    m_Address: Assets/Textures/PieceCells/101/grid_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 387582f15267e4491af9e29764d4b018
+    m_Address: Assets/Textures/PieceCells/101/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3bcf9c6005ff74d4bbdcdbd03e638793
+    m_Address: Assets/Textures/PieceCells/101/grid_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c2d3fcddd1e9401295d3f09302990da
+    m_Address: Assets/Textures/PieceCells/101/grid_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42186ab34bf6e4da999fc7c222643047
+    m_Address: Assets/Textures/PieceCells/101/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5aff813d82ab440ba9a90fcfb833133d
+    m_Address: Assets/Textures/PieceCells/101/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e3129d806c884151b4dd58d0d1a5b02
+    m_Address: Assets/Textures/PieceCells/101/grid_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 609c30d940ee746f2ae4e8aa68f633fc
+    m_Address: Assets/Textures/PieceCells/101/grid_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ff09f5927215426d82bf311ca828e99
+    m_Address: Assets/Textures/PieceCells/101/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c57fb4ecdfac42d0b08d69ca605a539
+    m_Address: Assets/Textures/PieceCells/101/grid_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d7769e3326e346398738630d513c2a1
+    m_Address: Assets/Textures/PieceCells/101/grid_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ab2d9c781864424695f8ba1866e47d3
+    m_Address: Assets/Textures/PieceCells/101/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c77d5ec6218c4754a5f9ded0bafce31
+    m_Address: Assets/Textures/PieceCells/101/grid_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0df11c6bcab046ccad7d810d81891ae
+    m_Address: Assets/Textures/PieceCells/101/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5e61a057ef9e4818b830e6af9afe64b
+    m_Address: Assets/Textures/PieceCells/101/grid_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a6475230da9ab441c82a960b13f3fe90
+    m_Address: Assets/Textures/PieceCells/101/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3c17e0c0db4b43ac868124bf6a4e455
+    m_Address: Assets/Textures/PieceCells/101/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b41d5bda07e3249b4bee664e417f5080
+    m_Address: Assets/Textures/PieceCells/101/grid_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4ff6bff2b3284ea1a0a71a1863d69cc
+    m_Address: Assets/Textures/PieceCells/101/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1a31e4628f784e07a6a8799d932207b
+    m_Address: Assets/Textures/PieceCells/101/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3ba2127bf2284ab291b9f3a4dd9d59e
+    m_Address: Assets/Textures/PieceCells/101/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca317a886f51d4424abfedd164cea665
+    m_Address: Assets/Textures/PieceCells/101/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da30823f6ea6c46ba9b837127e23b6e0
+    m_Address: Assets/Textures/PieceCells/101/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dab8e0f77479040ee98213427b9c6626
+    m_Address: Assets/Textures/PieceCells/101/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e39312a201a0642a8bf9beedd538f808
+    m_Address: Assets/Textures/PieceCells/101/grid_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4a399e5026bf4a209f95fdffe548315
+    m_Address: Assets/Textures/PieceCells/101/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8fba7f9db2f94adea0fb57a275ace49
+    m_Address: Assets/Textures/PieceCells/101/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eedce8fd91cc0448795719f4bbd70364
+    m_Address: Assets/Textures/PieceCells/101/grid_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2bf920f5e41e48b7b0841da9c8f517e
+    m_Address: Assets/Prefabs/Stages/Stage101.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f33a4905472a9420694be0b7fd6791f2
+    m_Address: Assets/Textures/PieceCells/101/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f66d2b9fb9ccf40d5a5c8c74297b9898
+    m_Address: Assets/Textures/PieceCells/101/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: faafb591e2f2140d7bb7880b03f9abe4
+    m_Address: Assets/Textures/Originals/ResizedImages2/a-man-takes-pictures-of-food-on-his-phone-shrimp-2025-01-08-19-11-57-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b3ef96ae4fa854b63b51a399a0d2230f, type: 2}
+    - {fileID: 11400000, guid: 4714a21fab20e439eba7fb97cccf18b2, type: 2}

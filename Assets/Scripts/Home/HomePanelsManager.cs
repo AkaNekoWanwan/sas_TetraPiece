@@ -33,8 +33,6 @@ public class HomePanelsManager : MonoBehaviour
         return; 
         if(UnityEditor.EditorApplication.isPlaying)
             return;
-        // GridImageSplitterHome spritter = this.gameObject.GetComponentInChildren<GridImageSplitterHome>();
-        // HomePanels = spritter.HomePanels;
         RectTransform rect = this.transform.GetChild(0).GetComponent<RectTransform>();
         rect.anchoredPosition = new Vector2(0f, 50f);
     }
@@ -84,7 +82,7 @@ public class HomePanelsManager : MonoBehaviour
 
             foreach (GameObject obj in rootObjects)
             {
-                Debug.Log("オブジェクト名: " + obj.name);
+                // Debug.Log("オブジェクト名: " + obj.name);
                 HomePanelsManager wordGenerator = obj.GetComponent<HomePanelsManager>();
                 // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
                 if (wordGenerator != null && wordGenerator != generator)
@@ -92,7 +90,7 @@ public class HomePanelsManager : MonoBehaviour
                     wordGenerator.gameObject.SetActive(false);
                 }
             }
-            Debug.Log("オブジェクトが選択されました。");
+            // Debug.Log("オブジェクトが選択されました。");
             generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得

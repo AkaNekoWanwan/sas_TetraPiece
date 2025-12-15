@@ -1,0 +1,26 @@
+{
+    "addressRuleErrors": [
+        {
+            "addressRuleId": "f37b075a-1faa-4f50-984c-813bb8b24914",
+            "addressableAssetGroupGuid": "0214742c05d0a45a6947bb9ecb1abca7",
+            "addressableAssetGroupName": "Stage002",
+            "assetGroupErrors": [
+                {
+                    "assetGroupId": "a0deb7e5-be11-4fc1-afa0-036f2ba0dcbd",
+                    "assetGroupName": "Default Asset Group",
+                    "assetFilterErrors": [
+                        {
+                            "assetFilterId": "35fcb4c8-af9d-4244-9c55-e76498dde363",
+                            "assetFilterTypeName": "DependentObjectBasedAssetFilter",
+                            "errorMessages": [
+                                "There are null reference objects."
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "labelRuleErrors": [],
+    "versionRuleErrors": []
+}

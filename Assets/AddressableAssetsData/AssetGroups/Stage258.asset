@@ -1,0 +1,278 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage258
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage258
+  m_GUID: aba4b8a9402fa487f84e004fae895b59
+  m_SerializeEntries:
+  - m_GUID: 0ee1d4d30b0694f33a780fcb63cc141f
+    m_Address: Assets/Textures/PieceCells/289/tri_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 113856c4b6e6745faa894ff33dfcf9ba
+    m_Address: Assets/Textures/PieceCells/289/tri_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14593760cee1b4749aca8455ed5120c8
+    m_Address: Assets/Textures/PieceCells/289/tri_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1bb0605b12fc44ba29705099c308c9c9
+    m_Address: Assets/Textures/PieceCells/289/tri_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2092b7712deca4c439db80116f0fb2f7
+    m_Address: Assets/Textures/Originals/ResizedImages2/enjoying-his-favorite-music-cheerful-young-man-in-2025-10-13-09-28-29-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 29972117e6067489b82fd9d1d73845a0
+    m_Address: Assets/Textures/PieceCells/289/tri_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c1fd028cfb1f490bb6dc6b2b869a470
+    m_Address: Assets/Textures/PieceCells/289/tri_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e113361a15304e35b97365b64ffadd3
+    m_Address: Assets/Textures/PieceCells/289/tri_6_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32b12238323074afc9802d1f48420f6b
+    m_Address: Assets/Textures/PieceCells/289/tri_0_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35885873e44e24371a9f7ed106793e26
+    m_Address: Assets/Textures/PieceCells/289/tri_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 399ae2531af3d4fba8841750a2e12140
+    m_Address: Assets/Textures/PieceCells/289/tri_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a2bb3e404a544f28868802af7b3692c
+    m_Address: Assets/Textures/PieceCells/289/tri_2_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44ffe466a99d64bcf87c14501035e8e8
+    m_Address: Assets/Textures/PieceCells/289/tri_5_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f4ebf4b70edf4e0aa123128168beaae
+    m_Address: Assets/Prefabs/Stages/Stage258.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4f6afc685a4534cddbd56ad1e495fb98
+    m_Address: Assets/Textures/PieceCells/289/tri_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 504418f4d98d546fea30f65b5498eb1e
+    m_Address: Assets/Textures/PieceCells/289/tri_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62c62384a624f4e7c84c9c7dfc45c2f7
+    m_Address: Assets/Textures/PieceCells/289/tri_4_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6baf41bdae0604e62b5f981deec5c922
+    m_Address: Assets/Textures/PieceCells/289/tri_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ce20f01e29de4b0c9471953c03f8764
+    m_Address: Assets/Textures/PieceCells/289/tri_6_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 808d376974fa148e4bc6a55682cd9a77
+    m_Address: Assets/Textures/PieceCells/289/tri_2_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8193802874bd6473c980f66f52f6ac97
+    m_Address: Assets/Textures/PieceCells/289/tri_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 833089873e6d34bb4b1d485c8259c78c
+    m_Address: Assets/Textures/PieceCells/289/tri_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9628973ab037b4b299b7ff84485c3775
+    m_Address: Assets/Textures/PieceCells/289/tri_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9667dca6c9b564acb9cd51c9762143f6
+    m_Address: Assets/Textures/PieceCells/289/tri_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a8bac009ead9492eb9b5517711c9680
+    m_Address: Assets/Textures/PieceCells/289/tri_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e83b68fd7c554d8aafb3127d5a587e1
+    m_Address: Assets/Textures/PieceCells/289/tri_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0499fabf59ff44cbbe0f83e49193b13
+    m_Address: Assets/Textures/PieceCells/289/tri_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3278c872b50b4935aca13a627f8613a
+    m_Address: Assets/Textures/PieceCells/289/tri_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a34b9fbb0966a4dc39fab22236fccf4b
+    m_Address: Assets/Textures/PieceCells/289/tri_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a536bfce45c2b4675b881fbce3dbd75b
+    m_Address: Assets/Textures/PieceCells/289/tri_3_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a81ea840194034c54be0c3a61ad3be48
+    m_Address: Assets/Textures/PieceCells/289/tri_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8f64b623aef3499eb34a9e1772d4e1a
+    m_Address: Assets/Textures/PieceCells/289/tri_1_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab43b73ae20c4438fb4a821264613b0b
+    m_Address: Assets/Textures/PieceCells/289/tri_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac9a81565d5a04588bee1d0d6c8176dc
+    m_Address: Assets/Textures/PieceCells/289/tri_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad54d3818d4144a9dad6815008d88c29
+    m_Address: Assets/Textures/PieceCells/289/tri_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af17622967fdf468e9166ed5ca6e5be6
+    m_Address: Assets/Textures/PieceCells/289/tri_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b62dd0757c3d541c3a62cdb85d7cfb5a
+    m_Address: Assets/Textures/PieceCells/289/tri_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7f63c9646d284cec9a8a95f7dee1fa3
+    m_Address: Assets/Textures/PieceCells/289/tri_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba5071223302149b78db3c8f1fb8c6a9
+    m_Address: Assets/Textures/PieceCells/289/tri_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd3498cb2300f448384a10f893e5a6a0
+    m_Address: Assets/Textures/PieceCells/289/tri_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c89f842b1cef24bdab092ef57e52bbdb
+    m_Address: Assets/Textures/PieceCells/289/tri_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cd9077a3d7dfa44c586610744f992472
+    m_Address: Assets/Textures/PieceCells/289/tri_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0a1e64b99c55427a85ad5155c9fbae4
+    m_Address: Assets/Textures/PieceCells/289/tri_4_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4a9f11bf70424cfba04fa2632bf7948
+    m_Address: Assets/Textures/PieceCells/289/tri_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4ac8161f76f444098ee995e3ea117c0
+    m_Address: Assets/Textures/PieceCells/289/tri_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dcce570b7280444b399c76f0fcbdc8fb
+    m_Address: Assets/Textures/PieceCells/289/tri_3_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3888f950d84c46b5a451e0e5cdbe226
+    m_Address: Assets/Textures/PieceCells/289/tri_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3df8af7711c440e2ad538fe3d270909
+    m_Address: Assets/Textures/PieceCells/289/tri_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e828e8c754ff94bccad8377fafefc567
+    m_Address: Assets/Textures/PieceCells/289/tri_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f21827fd0c6b0406e909d87701b953a8
+    m_Address: Assets/Textures/PieceCells/289/tri_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8716479d2727489d89cedde8a4c46df
+    m_Address: Assets/Textures/PieceCells/289/tri_5_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 81f8b03d4332947c784298ecb2d04f6f, type: 2}
+    - {fileID: 11400000, guid: 7049378f8f05445369ed277f45e482af, type: 2}
