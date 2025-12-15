@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage083
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage083
+  m_GUID: 09bc57ef4193746e897abf6d74c760c0
+  m_SerializeEntries:
+  - m_GUID: 1404a3969272340b382731a97e6ae2d5
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 141bd55b495f840bf8dd003d3fd71269
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 167a2d8b5600f4f158be06fed0592973
+    m_Address: Assets/Prefabs/Addressable/Stage083/shutterstock_2640309377.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 241eb94c19add41b08ac241e60a4e026
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25cc50bd6c3c94c9d92ab86c5ca3239f
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b5fa2721820d4903a924300a28e5dc2
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5023c8ba665694c0e9abb0b9fe4f0528
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 517d35db0a5394c579ad93b88b508438
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53a276adf4b584cbf898c8bcd41cd844
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c5fd7e58548e42cab260a4345228b4b
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6495ba59d09e44fdda056a3dd6e90e1e
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bea2696946214a6889dc3ca27788c77
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8059bb80b95e849db848a3b089424f35
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d17a582cca104d78ba2bc406e9f36ee
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 948e8f05a0d744b1e8dfc634ac26265a
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99155a0a290d64f7190f36c82446b015
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b7222d5f226f46dba223d3b12b03bea
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a64c7c587d7c04c6eaa50d3a2d98f8d3
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8f43bdd18ed54a948ca703a9ccccbbd
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ac0fff6a0050142d7b41b278d60adce4
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b257bb5c87ff0454baec0ff62bc1cbbb
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b5245527d63ec43f8a26af9805f5251d
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b860779b9b1b1428691ac1fc564d395f
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be7841741638a404292e98efa089519d
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c23e36a8e8f504d758a2a48725d5c8d1
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c29381f889123444a90d0270c6686908
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c30a4e453414048f4ac91a86f55cbf7c
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c47c8182391724d1cb2a065c53a3d6fe
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5a9fb277611e4b75b7a61c4a1647777
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c673f35bdb2584fcd9271781f1359fc4
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cfa421bfddb55471f923a6a57fb58e5e
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9d032489b1e44c0a83f58123dd87515
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecb3ec1765aef4dc1a6b7e6b59ef75fe
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eff4589fcc3d148e29cf0da00d1f2a96
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5319b458c1ff47c5bae41796ec9f2c9
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f55e6f84d3087462abff03166d6894eb
+    m_Address: Assets/Prefabs/Addressable/Stage083/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 80c747b590c4c44bc8cb27f48bd46634, type: 2}
+    - {fileID: 11400000, guid: 44e47b64bb4a74b03ac926abb51e8275, type: 2}
