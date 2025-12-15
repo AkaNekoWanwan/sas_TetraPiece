@@ -60,8 +60,18 @@ MonoBehaviour:
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
+  - {fileID: 11400000, guid: c9758ab3b6b484022bc4535f67f4f5c3, type: 2}
+  - {fileID: 11400000, guid: 0cc82346be08e4a1f810592bd6c18461, type: 2}
+  - {fileID: 11400000, guid: f1273a614884f45f5a84fa41258f96ba, type: 2}
+  - {fileID: 11400000, guid: 9cfa1349ab0184e4e8f9fbc0f3f6db48, type: 2}
+  - {fileID: 11400000, guid: c7c28ee444f5249deac1207754a68f37, type: 2}
+  - {fileID: 11400000, guid: 3f91edf7ea86148e1822d6d458d1a11a, type: 2}
+  - {fileID: 11400000, guid: 8501a64b063a24ddc979ccc99e6414f6, type: 2}
   - {fileID: 11400000, guid: 3b17e34df5a4c4232bceacd641e62280, type: 2}
+  - {fileID: 11400000, guid: 752bc1fc062b546458f1bbbcd089c5ca, type: 2}
   - {fileID: 11400000, guid: f49ae4ebb54e4415fa4ab4d8dbdb0d02, type: 2}
+  - {fileID: 11400000, guid: b24b138ab799246c3afca0e775d63d01, type: 2}
+  - {fileID: 11400000, guid: b7e2f45647be74c7592f315cb483af65, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles

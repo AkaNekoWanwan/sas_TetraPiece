@@ -20,6 +20,136 @@ MonoBehaviour:
         _value: 
     _addressRules:
       _internalList:
+      - _id: 9764fa53-de62-4edf-b038-a8adeeb1fa98
+        _addressableGroup: {fileID: 11400000, guid: f1273a614884f45f5a84fa41258f96ba, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: eb2137ce-4084-451a-b5a7-fa24039b90d8
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697900
+      - _id: 3f8f199c-7ff5-4fcf-94ed-efce0b38f218
+        _addressableGroup: {fileID: 11400000, guid: 9cfa1349ab0184e4e8f9fbc0f3f6db48, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: 34286165-bce7-4489-947e-7bac9df55b3d
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697903
+      - _id: f7a697d1-4e58-458c-978d-23459be2d3c7
+        _addressableGroup: {fileID: 11400000, guid: 3f91edf7ea86148e1822d6d458d1a11a, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: b52ec2ff-dbb4-43ba-9909-64bee609ef9d
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697909
+      - _id: d98798d9-d4fe-4da7-8d9b-de3095dc99e9
+        _addressableGroup: {fileID: 11400000, guid: c7c28ee444f5249deac1207754a68f37, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: ca5d195b-c6d1-4685-9100-6563d3a82ac3
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697902
+      - _id: c67cf163-ba91-4584-b3bf-414701569415
+        _addressableGroup: {fileID: 11400000, guid: 0cc82346be08e4a1f810592bd6c18461, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: 3209916d-86f8-4093-91ef-9c839d4692cb
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697907
+      - _id: 43b1680d-9e03-48dd-8d3c-d90756cbb2f5
+        _addressableGroup: {fileID: 11400000, guid: c9758ab3b6b484022bc4535f67f4f5c3, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: 5b07f6ae-67e5-4c67-b6d5-9bebb7e5253b
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697908
+      - _id: 23583911-d5b2-43c4-b4e5-cd129618af4b
+        _addressableGroup: {fileID: 11400000, guid: b24b138ab799246c3afca0e775d63d01, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: bc96e089-7f0e-40d6-80fc-a663d934c2f4
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697904
+      - _id: 88db1110-e575-433c-87dc-d721c9596fb7
+        _addressableGroup: {fileID: 11400000, guid: b7e2f45647be74c7592f315cb483af65, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: a7177a1a-65bf-4df8-a8b0-4f158db93f88
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697906
+      - _id: 38b243e1-c8d1-427b-8132-8bca750e37f3
+        _addressableGroup: {fileID: 11400000, guid: 8501a64b063a24ddc979ccc99e6414f6, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: b0f88e20-06f1-49f5-8377-ca1b6f54580d
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697901
+      - _id: 97069b75-7cbf-48f5-b2d2-e308df59425f
+        _addressableGroup: {fileID: 11400000, guid: 752bc1fc062b546458f1bbbcd089c5ca, type: 2}
+        _control:
+          _value: 0
+        _assetGroups:
+          _internalList:
+          - _id: 631f8fde-25e8-4d75-90d5-226d48786f47
+            _name:
+              _value: Default Asset Group
+            _filters:
+              _internalList: []
+        _addressProviderInternal:
+          rid: 7705774761763697905
       - _id: 69a569e5-1904-4db7-9ba2-25ec37da20ca
         _addressableGroup: {fileID: 11400000, guid: f49ae4ebb54e4415fa4ab4d8dbdb0d02, type: 2}
         _control:
@@ -77,3 +207,73 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 102900000, guid: e6b5216569e9745fd82226707e082d4e, type: 3}
+    - rid: 7705774761763697900
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697901
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697902
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697903
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697904
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697905
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697906
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697907
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697908
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
+    - rid: 7705774761763697909
+      type: {class: AssetPathBasedAddressProvider, ns: SmartAddresser.Editor.Core.Models.LayoutRules.AddressRules, asm: SmartAddresser.Editor}
+      data:
+        _source: 2
+        _replaceWithRegex: 0
+        _pattern: 
+        _replacement: 
