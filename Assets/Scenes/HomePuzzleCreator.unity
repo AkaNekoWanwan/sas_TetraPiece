@@ -2171,17 +2171,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 4953611879375436199}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &329668531 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 4953611879375436199}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!1 &329859424
 GameObject:
   m_ObjectHideFlags: 0
@@ -2927,11 +2916,9 @@ MonoBehaviour:
   _settingView: {fileID: 1085000267}
   _closeButton: {fileID: 398983452}
   _openButton: {fileID: 165229334}
+  _backButton: {fileID: 0}
   _stageUI: {fileID: 0}
   _homeUI: {fileID: 0}
-  _buttonSound: {fileID: 1045478927}
-  _buttonBgm: {fileID: 329668531}
-  _buttonVib: {fileID: 2106921670}
   audioSource: {fileID: 8318642413602490988}
   bgmAudioSource: {fileID: 7010625889917869509}
   _optionButtions: []
@@ -5396,7 +5383,6 @@ MonoBehaviour:
   - {fileID: 1601363469}
   _playButton: {fileID: 2049176570}
   _rewardPlayButton: {fileID: 1715323620}
-  _homeButton: {fileID: 1236071799}
   _isDailyStage: 0
 --- !u!114 &800372027 stripped
 MonoBehaviour:
@@ -6779,17 +6765,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 1045478925}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1045478927 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 1045478925}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!114 &1052794524 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5753268410522918319, guid: c7310435b8f45421ca84a5c8edaf1ecb, type: 3}
@@ -11720,17 +11695,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5057214828278874548, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
   m_PrefabInstance: {fileID: 2106921668}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2106921670 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8183914115505401129, guid: 159b1609a7cf44e6fa5db7fb5570df44, type: 3}
-  m_PrefabInstance: {fileID: 2106921668}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bddb9ee1a8a94e52b1efb4680b84a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OptionButton
 --- !u!1 &2115223016
 GameObject:
   m_ObjectHideFlags: 0
