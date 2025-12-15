@@ -65,11 +65,11 @@ public class StageInfo : MonoBehaviour
                 // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
                 if (wordGenerator != null && wordGenerator != generator)
                 {
-                    // wordGenerator.gameObject.SetActive(false);
+                    wordGenerator.gameObject.SetActive(false);
                 }
             }
             // Debug.Log("オブジェクトが選択されました。");
-            // generator.gameObject.SetActive(true);
+            generator.gameObject.SetActive(true);
 
 // 選択されているすべてのStageInfoコンポーネントを取得
             StageInfo[] scripts = targets.Cast<StageInfo>().ToArray();

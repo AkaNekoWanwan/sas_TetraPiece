@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
+using System.Runtime.InteropServices;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -364,6 +366,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         Dictionary<Sprite, List<Image>> imageDic = new Dictionary<Sprite, List<Image>>();
         foreach (var image in images)
         {
+            if(image.sprite == null)
+                continue;
             if(_shadowSprite == image.sprite)
                 continue;
             if(image.name == "shadow")
@@ -378,10 +382,14 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 imageDic.Add(image.sprite, new List<Image>());
 
             imageDic[image.sprite].Add(image);
+
+            Debug.Log("猫:1");
         }
 
+        int i = 0; int j = 0;
         foreach (var sprite in imageDic.Keys)
         {
+            Debug.Log($"猫:2:{i}");
             string assetPath = AssetDatabase.GetAssetPath(sprite);
             if (string.IsNullOrEmpty(assetPath)) continue;
             // 画像の保存場所を変更
@@ -390,9 +398,12 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             // 元のアセットのファイル名と拡張子を保持します。
             string fileName = Path.GetFileName(assetPath);
             string newAssetPath = newDirectory + "/" + fileName;
-
+            
+            j = 0;
             foreach (var image in imageDic[sprite])
-            {
+            {          
+                Debug.Log($"猫:3:{i},{j}, {fileName}, {image.gameObject.name}");
+                
                 // 画像をAddressable化した各オブジェクトに代わりにAddressableImageLoaderをつける(パスを記憶してawake時にロードする機能)
                 AddressableImageLoader addressableImageLoader = image.gameObject.GetComponent<AddressableImageLoader>();
                 if(addressableImageLoader == null)
@@ -401,8 +412,11 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 }
                 addressableImageLoader.addressName = newAssetPath;
                 image.sprite = null;
+                Debug.Log($"猫:4:{i},{j}");
+                j++;
             }
 
+            Debug.Log($"猫:5:{i}, {fileName}");
             // ここでセーブ
             // 3. 新しいディレクトリが存在しない場合、作成
             if (!AssetDatabase.IsValidFolder(newDirectory))
@@ -412,13 +426,28 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             }
             AssetDatabase.Refresh(); 
 
+            Debug.Log($"猫:6:{i}, {fileName}");
+
             // 5. AssetDatabase.MoveAssetを使用してアセットを移動
             string result = AssetDatabase.MoveAsset(assetPath, newAssetPath);
 
             AssetDatabase.Refresh(); 
 
+            Debug.Log($"猫:7:{i}, {fileName}, {newAssetPath}");
+
             var guid = AssetDatabase.AssetPathToGUID(newAssetPath);
-            AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
+            Debug.Log($"猫:7_5:{i}, {fileName}, {newAssetPath}");
+            AssetDatabase.Refresh(); 
+            try
+            {
+                AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
+            }
+            catch(Exception)
+            {
+
+            }
+
+            Debug.Log($"猫:8:{i}, {fileName}");
 
             // if(entry != null)
             // {
@@ -442,6 +471,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             //     Debug.LogError($"❌ Spriteアセットの移動に失敗しました: {result}");
             //     Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
             // }
+            i++;
         }
 
         // Debug.Log($"Addressable 1");
@@ -455,7 +485,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     #else
         // エディタ外ではAddressable設定は実行できない
-        Debug.LogWarning("Addressable設定はUnity Editor上でのみ実行可能です。");
+        // Debug.LogWarning("Addressable設定はUnity Editor上でのみ実行可能です。");
     #endif
     }
 }
