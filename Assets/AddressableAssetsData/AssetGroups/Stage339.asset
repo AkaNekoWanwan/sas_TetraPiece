@@ -14,7 +14,107 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Stage339
   m_GUID: 88c011c4f787744fabb55a51c4a8119f
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 000d50e113e6a428cb9b65675d746975
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1daa5c68512174558885a3167dc4f171
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 417e68e7ed0254e66882b52b56df2160
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 533c952b9680e4d68bbefff861620074
+    m_Address: Assets/Prefabs/Addressable/Stage339/image-gen (7).png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5937e29a7cf1045a0a44ddc75e989aac
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 66a50f78b066a40d7a959fc9c8864ed4
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ad6056ea50e346df8ec93a5a7926a59
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7294fe2bc8de24a9c93210d2dc8171c9
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 80ab9315d7e694596a04dd24ca8969c0
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90b3f918fbd3e4777ac12713cf5b1689
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94bc08d2230234d93b64ce9d4428091a
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99c24fa620e4b4322b3ca88aa5f25763
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9aa6f4ac96e91497d869b6344275845a
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_6.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5931cd6125b7457ab0ef75f291434e5
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a70aa122c4ce543e1b605fa1c3ca8e85
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab96e6288266e4d78b35c4972089f44c
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce0e7cc49118a45cface1a63f3ed018d
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dcfb2d97a2ee94b9fa06a1a09534fa86
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfc9154e9f4154729930b1c3d33915ad
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e4dd65caad57c4a7a8d1881b95619b71
+    m_Address: Assets/Prefabs/Addressable/Stage339/tri_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
