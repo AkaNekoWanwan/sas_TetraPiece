@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: DailyStage003
   m_GUID: e445c0b6a46dc420dbdfa634b551af8d
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 1fc5d7282937e4874a2a44ea8691eb96
+    m_Address: Assets/Prefabs/Addressable/DailyStage003/shutterstock_2038661906.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
