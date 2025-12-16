@@ -14,7 +14,252 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Stage345
   m_GUID: c68d6db2639c54e70b2dc8f7f0f79047
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 03b583668a7404900afb84e4849c8681
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0f9624bd5814f4923b2a0408036e8263
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1142e04a898d341c481dc2fd1f23383a
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1666d7394477841c4ac7c4fd4c007f37
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21cf4e2c394e64e3288e63f5cf2dd65e
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31876ea70ac67495681334d943e16694
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3cb1c2c2fdbe94991b99bff639d2dcbb
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f638c889cd97423eb374a2fbfacf43d
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4104ed29ebd43467eb3e21062959a0b9
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 450951ee8aba24db6905c1bd97cb29f2
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4681c9f8db9b44832bd41e7195dec7a5
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46bf5f066850240d881bb263445a123e
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46cc5c22811354401811299d79b9ad45
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46ebab8c467f744edbd5696b19268487
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4da04a4aba60841bfa8af5731969f41a
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 511b722117020401389b49d2956872e3
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a97cebe7cb1c45c789fc88810a4cdb3
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 649727869531e4c1baf2d58224eaf489
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68058b65e2aa04eb7967005dd051a74c
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6dbd9ab973a2745d29ee547c3c901453
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 794ef5e8279464db8926feba6256162e
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 797f68061bd424b2b8a7ff0360a40564
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7a8998bddf1644b50acc1de894e87319
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cf24857d9b374a478e2d27bb2c8b90f
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e3306b7f9b6046a3acb4615abe3febc
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ee04ce8e0232432186119a2fd647bde
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9319cb9d6a5df4372b64a44ffaa83a95
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94f3ae85701854c52aab7e57c3e2ac7e
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96e66d918784a41afaef618a22618a9a
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 989b36444434a455ab4c2613db4065fa
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9977f58aca0104d65b49f789f9fa5d29
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9dd5742d181f64ffd8377f7b0c15272f
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a52be8f931e7b4650a02eb494bfe8460
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9fe84848f685443da23fc07c52cec35
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad9f019eb58ed42398e64f9cac4ee1f0
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bada05934c7554f6baf20e80e9ef43fc
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bcf3bfafa283347a6b373c2d55096845
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd44a1f8461ee49fcb824aeedc168518
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_6_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c135a22baefd04fc9b38e30d61d6acb1
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5fe751e1d8b84cfa89682e5e5f7f1b5
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9ce2cdc89d33464c8b8093c3f3a65ae
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3962e20e92fa478fa16027b9bed23a8
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: efd66a0513e434ecf9e00717c76a6c70
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f23124c2944b4497d89f95bf24d64def
+    m_Address: Assets/Prefabs/Addressable/Stage345/interior-of-duomo-noto-cathedral-cattedrale-di-n-2024-09-12-04-20-25-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f82bc6ed61ca1446faa4d1bc3b0f5ef0
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_7_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9c2a7af431094cf5b492d6dc3c5efee
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa8521ea3fd2c45918581fa0500bba20
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc26a5bfc248b4296ae7a56b2af11c87
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe0c4f824b6824f0cbc86604b6f25fd3
+    m_Address: Assets/Prefabs/Addressable/Stage345/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:

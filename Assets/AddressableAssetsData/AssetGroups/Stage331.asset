@@ -14,7 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Stage331
   m_GUID: 45511f93dc28f4669bec22e8f82167dd
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 06adbaf8632c2488ba51244a76e8e4fd
+    m_Address: Assets/Prefabs/Addressable/Stage331/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce3a0597683ec4b5686736f624cdf92f
+    m_Address: Assets/Prefabs/Addressable/Stage331/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
