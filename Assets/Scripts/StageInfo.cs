@@ -102,6 +102,30 @@ public class StageInfo : MonoBehaviour
                 // 処理をUndo可能にするための記述（推奨）
                 Undo.RecordObjects(scripts, "Addressable Stages"); 
 
+                // -----------------------------------------------------
+                // 【★変更点 1: フィルタリングとソート】
+                // -----------------------------------------------------
+                
+                // 1. isAddressabbleがfalseのもののみにフィルタリング
+                var scriptsToProcess = scripts
+                    .Where(script => !script.isAddressabble) // falseのものだけを選択
+                    .ToList();
+
+                // 2. 名前（GameObject名）でソート
+                scriptsToProcess = scriptsToProcess
+                    .OrderBy(script => script.gameObject.name)
+                    .ToList();
+
+                // 処理対象の総数を取得
+                int totalCount = scriptsToProcess.Count;
+                // -----------------------------------------------------
+
+                if (totalCount == 0)
+                {
+                    Debug.Log("Addressable設定の必要のあるステージはありませんでした。");
+                    return; // 処理対象がなければここで終了
+                }
+
                 for (int i = 0; i < totalCount; i++)
                 {
                     StageInfo script = scripts[i];
