@@ -14,7 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: DailyStage012
   m_GUID: c30dfce09675140949da501e9ef18a1c
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 15a004ef3ef81462fa21289487612bd2
+    m_Address: Assets/Prefabs/Addressable/DailyStage012/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 26ab39bea2fcf49f3b86712df1f7240c
+    m_Address: Assets/Prefabs/Addressable/DailyStage012/hex_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28c837d26a7b245d38b32897d2a3a666
+    m_Address: Assets/Prefabs/Addressable/DailyStage012/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d60ef6adf07f42e5ad928b7026bc0a8
+    m_Address: Assets/Prefabs/Addressable/DailyStage012/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da3c3a04755c548e68ed090758103bfb
+    m_Address: Assets/Prefabs/Addressable/DailyStage012/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
