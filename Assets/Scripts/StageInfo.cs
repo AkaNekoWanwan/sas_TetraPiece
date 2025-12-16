@@ -106,7 +106,7 @@ public class StageInfo : MonoBehaviour
                 {
                     StageInfo script = scripts[i];
                     if(script.isAddressabble)
-                        return;
+                        continue;
                     string title = $"Addressable設定中 ({i + 1}/{totalCount})";
                     string info = $"ステージ: {script.gameObject.name} をAddressableに登録中...";
                     float progress = (float)i / totalCount;
