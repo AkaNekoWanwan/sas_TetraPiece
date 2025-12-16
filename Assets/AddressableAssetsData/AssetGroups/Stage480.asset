@@ -1,0 +1,268 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage480
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage480
+  m_GUID: c278d779e7bc14f8195bb5796198c378
+  m_SerializeEntries:
+  - m_GUID: 02d740eda40474aacbb4c1f5ec0beca5
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 059cea62acabd4eefb8b89282720ad77
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d054f86f0d814ec385e73076218809e
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0dab820c1de5444cf85e69872fee4a4d
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 10a669766aacb4a2aa46e50a055d570c
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1292941c05ca74a629f9020da57b5aaf
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1860ec01c485b4b33aa01a9067f42a84
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a6bd0fc643b745c2a39ec8480938767
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1bb8a8c87fe0945fdba4d3e89e8bd980
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 382ea2569e05d437185fc80f6fb6f21b
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3af47942155ae4536a8d97fba607621f
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40034c2cef2594325b094a2f47de5765
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4073e9f79dd914c02a98d41e28c07c74
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40dd3ce73bcc244d099b5fa36f79ae57
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 467c6814abde14ebba46d1ee6c22d688
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 510e3e2d2152c441a9a6df0a67673071
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55e48378013dd43f085e42f3ee5d0ebb
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 562bfbd09d3eb4c10b4f9b77911a0515
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 596dac19245114f4c8b76d65a54d6a33
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a24c5db55c114a7fa9e455d27ed6a96
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5aa23438a0c5f42aa8835eb695f4154f
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 693edfa3114d241d9ab40292543adb3d
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74239e337a19b43de8e32df17f48adb1
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7f1f277823fb8408b81c8b408e09d621
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7fb0f5f678b5d4fb9b47f7de5c2ae624
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ddb1d87bd4ea40cca4900c46340a281
+    m_Address: Assets/Prefabs/Addressable/Stage480/teenage-boy-using-mobile-phone-while-sitting-on-ba-2025-04-04-11-04-56-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 907279181514d4ed6904a7f4705a4bce
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92160db8921144b82908eda0e0c8a6c1
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 948b74dac36f348fcb6f2ba924ccdc77
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a33d3ed9f9b9f446ba590d1d9a9e64a7
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: addd72884828a4634a2342e51e47a9bd
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b08b32882f9a94a5ba4efc1fb832f2a0
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b4de5b91f002c4491a52f5ac04b78a21
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b6fe5afa419534daa8701c35b723ab8c
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b942d1c0294eb4ebc86294cb84b6447a
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b97b5ee5b64d04f2398e1140c564e70f
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_7_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb96bae4c7b5444c3bacf53d5b9d3b39
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bde2c685d384d4fe485f6251fe5b4275
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c338763a25f16476b99a464238812b65
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c50a54d930d8a492ca210fe8a36923de
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca3cf26a2cea5403fb48552da6be3906
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e0047db3eef6c4f1baa4d6718bd8916a
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e53388b6ea33648ccaf37130025054b8
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6e2744629f4c4720a133438a7ac0d5d
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8c90ce5d76e346048eff9dac88477c1
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb74004d6dea24cd997de0181de6b053
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1eab44acac5748a0839497ac5966f6d
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8f9b8155dd7349c9a07147c4431b607
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fb53eaa6b00cd454fb1c1e5ab015eb88
+    m_Address: Assets/Prefabs/Addressable/Stage480/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 17b6e0d1fd74948f0b74ead055102dbe, type: 2}
+    - {fileID: 11400000, guid: a04d309ee7119491e9ac426ba5c6824e, type: 2}
