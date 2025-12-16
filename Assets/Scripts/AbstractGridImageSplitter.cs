@@ -433,13 +433,13 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             // 5. AssetDatabase.MoveAssetを使用してアセットを移動
             string result = AssetDatabase.MoveAsset(assetPath, newAssetPath);
 
-            AssetDatabase.Refresh(); 
+            // AssetDatabase.Refresh(); 
 
             // Debug.Log($"猫:7:{i}, {fileName}, {newAssetPath}");
 
             var guid = AssetDatabase.AssetPathToGUID(newAssetPath);
             // Debug.Log($"猫:7_5:{i}, {fileName}, {newAssetPath}");
-            AssetDatabase.Refresh(); 
+            // AssetDatabase.Refresh(); 
             try
             {
                 AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
