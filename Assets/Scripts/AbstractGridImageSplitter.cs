@@ -242,6 +242,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         // ピースのセットアップ
         _gridPieceListController.SetUpChildrenPieceDragController();
         SaveAsPrefab.Save(this.transform.parent.parent.gameObject, PrefabSavePath);
+
+        Addressable();
     }
 
     public void Deletepiece()
