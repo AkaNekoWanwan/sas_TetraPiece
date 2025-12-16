@@ -117,7 +117,7 @@ public class StageInfo : MonoBehaviour
                     .ToList();
 
                 // 処理対象の総数を取得
-                int totalCount = scriptsToProcess.Count;
+                totalCount = scriptsToProcess.Count;
                 // -----------------------------------------------------
 
                 if (totalCount == 0)
