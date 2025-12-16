@@ -86895,10 +86895,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stage001
       objectReference: {fileID: 0}
-    - target: {fileID: 6921692587899435188, guid: 04e8884d266c941598a93ea6e6952407, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -108184,7 +108180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6394591644769595658, guid: bff290cdf2bce450d8bff45852fa32f0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
