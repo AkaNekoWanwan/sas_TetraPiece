@@ -77,6 +77,7 @@ public class HomeManager : MonoBehaviour
         if(!isBoardChangeAnimation)
         {
             homePanelsManager = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager.gameObject.SetActive(true);
             homePanelsManager.transform.parent = _homeParent;
             homePanelsManager.transform.localScale = Vector3.one;
             homePanelsManager.transform.localPosition = Vector3.zero;
@@ -87,6 +88,7 @@ public class HomeManager : MonoBehaviour
         {
             // 前のボードを出す
             homePanelsManager = Instantiate(_homePuzzlePrefabs[beforeBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager.gameObject.SetActive(true);
             homePanelsManager.transform.parent = _homeParent;
             homePanelsManager.transform.localScale = Vector3.one;
             homePanelsManager.transform.localPosition = Vector3.zero;
@@ -94,6 +96,7 @@ public class HomeManager : MonoBehaviour
             homePanelsManager.Initialize();
             // 次のボードも用意しておく
             HomePanelsManager homePanelsManager2 = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager2.gameObject.SetActive(true);
             homePanelsManager2.transform.parent = _homeParent;
             homePanelsManager2.transform.localScale = Vector3.one * 0.5f;
             homePanelsManager2.transform.localPosition = new Vector3(0f, -2000f, 0f);

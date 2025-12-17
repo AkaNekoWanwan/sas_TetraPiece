@@ -82,18 +82,18 @@ public class HomePanelsManager : MonoBehaviour
             // シーンのルートにあるオブジェクトを取得する
             GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
-            foreach (GameObject obj in rootObjects)
-            {
-                Debug.Log("オブジェクト名: " + obj.name);
-                HomePanelsManager wordGenerator = obj.GetComponent<HomePanelsManager>();
-                // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
-                if (wordGenerator != null && wordGenerator != generator)
-                {
-                    wordGenerator.gameObject.SetActive(false);
-                }
-            }
-            Debug.Log("オブジェクトが選択されました。");
-            generator.gameObject.SetActive(true);
+            // foreach (GameObject obj in rootObjects)
+            // {
+            //     Debug.Log("オブジェクト名: " + obj.name);
+            //     HomePanelsManager wordGenerator = obj.GetComponent<HomePanelsManager>();
+            //     // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
+            //     if (wordGenerator != null && wordGenerator != generator)
+            //     {
+            //         wordGenerator.gameObject.SetActive(false);
+            //     }
+            // }
+            // Debug.Log("オブジェクトが選択されました。");
+            // generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得
             HomePanelsManager[] scripts = targets.Cast<HomePanelsManager>().ToArray();
