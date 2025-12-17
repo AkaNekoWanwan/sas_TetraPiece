@@ -175,8 +175,8 @@ public class StageManager : MonoBehaviour
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
 
-        _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
-        if(_dailyStage == -1)
+        _dailyStage = PlayerPrefs.GetInt("DailyStage", -1) - 1;
+        if(_dailyStage < 0)
             levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
         else
         {
@@ -206,7 +206,7 @@ public class StageManager : MonoBehaviour
             {
                 for (int i = 0; i < stages.Length; i++)
                 {
-                    bool isActive = (i == isNowStage && _dailyStage == -1);
+                    bool isActive = (i == isNowStage && _dailyStage < 0);
                     stages[i].SetActive(isActive);
                     if(isActive)
                         isHard = stages[i].GetComponent<StageInfo>().isHard;
@@ -221,7 +221,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
             StageInfo stage = null;
-            if(_dailyStage == -1)
+            if(_dailyStage < 0)
             {
                 Debug.Log($"ステージロードわわわ:いいう");
                 stage = Instantiate(_stagePrefabs[isNowStage]);
@@ -243,7 +243,7 @@ public class StageManager : MonoBehaviour
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
 
-        if(_dailyStage == -1)
+        if(_dailyStage < 0)
         {
             if(GameDataManager.InitMoveCount <= 0)
             {
@@ -304,7 +304,7 @@ public class StageManager : MonoBehaviour
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
 
         _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
-        if(_dailyStage == -1)
+        if(_dailyStage < 0)
             levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
         else
         {
@@ -337,7 +337,7 @@ public class StageManager : MonoBehaviour
             {
                 for (int i = 0; i < stages.Length; i++)
                 {
-                    bool isActive = (i == isNowStage && _dailyStage == -1);
+                    bool isActive = (i == isNowStage && _dailyStage < 0);
                     stages[i].SetActive(isActive);
                     if(isActive)
                         isHard = stages[i].GetComponent<StageInfo>().isHard;
@@ -352,7 +352,7 @@ public class StageManager : MonoBehaviour
         {
             Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
             StageInfo stage = null;
-            if(_dailyStage == -1)
+            if(_dailyStage < 0)
                 stage = Instantiate(_stagePrefabs[isNowStage]);
             else
                 stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
@@ -371,7 +371,7 @@ public class StageManager : MonoBehaviour
         picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
 
 
-        if(_dailyStage == -1)
+        if(_dailyStage < 0)
         {
             if(GameDataManager.InitMoveCount <= 0)
             {
@@ -427,7 +427,7 @@ public class StageManager : MonoBehaviour
     private string GetElapsedTimeKey()
     {
         string ret = $"{ELAPSED_TIME_KEY}_{isNowStage}";
-        if(_dailyStage != -1)
+        if(0 <= _dailyStage )
         {
             ret = $"{ELAPSED_TIME_KEY}_Daily_{_dailyStage}";
         }

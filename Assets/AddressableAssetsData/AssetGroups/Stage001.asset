@@ -15,16 +15,6 @@ MonoBehaviour:
   m_GroupName: Stage001
   m_GUID: 8e3e74e645030413c9ea5bc6fb1f20ce
   m_SerializeEntries:
-  - m_GUID: 025aad08c7e5b4afc84207eabaa65b98
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_0_2.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
-  - m_GUID: 0c59d648644864e9c90b05d1dc1128e0
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_3_2.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: 0d8677c629a754258b63b6dc34873e92
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_0_0.png
     m_ReadOnly: 0
@@ -35,26 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4a6ddfd1873bd4f7981463d99f3fe3aa
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_2_2.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
-  - m_GUID: 53a8afdea6523422fb71b9a85262bf07
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_2_1.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: 58b934d1f040d4a28bed03c39d8814e1
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_3_1.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5e7d4edc556424265a2562c1540e419e
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_3_1.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: 6539fa321b12e438cb15a56821675b4c
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_1_1.png
     m_ReadOnly: 0
@@ -70,11 +45,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8944b5157d6364b9da9ce3eecc81f450
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_3_0.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: 8b97dc23c45e44b35b3c955cddd9484c
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_2_0.png
     m_ReadOnly: 0
@@ -85,21 +55,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ac0eb9190d2854ec5b1fe8a8ce59a903
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_1_0.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: afe1365e3a7f74b15bffe59178a23c10
     m_Address: Assets/Prefabs/Addressable/Stage001/001baseLiberty.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: b5993908c714c40139f0757902f38f1b
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_1_2.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: bd0d72934a7c34956bf35185d8fa62c6
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_0_1.png
     m_ReadOnly: 0
@@ -110,16 +70,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d1bb1d7b1bda14ef2a83d9de3fa78ac5
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_0_0.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
-  - m_GUID: da609823f905c446ab6a2721816e3845
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_1_1.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   - m_GUID: fa09928c9928a4f87a61a0d20b439ab4
     m_Address: Assets/Prefabs/Addressable/Stage001/grid_1_2.png
     m_ReadOnly: 0
@@ -130,11 +80,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fd826a621be4f4861b34a44027945db5
-    m_Address: Assets/Prefabs/Addressable/Stage001/1/grid_2_0.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 1
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a9a783522f40f486f962d9c754005eb3, type: 2}
   m_SchemaSet:
