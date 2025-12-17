@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class AudioManager : MonoBehaviour
 {
@@ -27,17 +28,16 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private async void Start()
     {
+        audioSource.mute = IsMute("IsSe");
+        bgmAudioSource.mute = IsMute("IsMusic"); 
         if (bgmAudioSource != null && bgmAudioClip != null )
         {
             bgmAudioSource.clip = bgmAudioClip;
             bgmAudioSource.loop = true;
             bgmAudioSource.Play();
         }
-
-        audioSource.mute = IsMute("IsSe");
-        bgmAudioSource.mute = IsMute("IsMusic");
     }
 
     public void PlayMergeSound()

@@ -139,107 +139,6 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(InitlializeColoutine());
-        // isClear = false;
-        // firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
-        // isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
-
-        // _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
-        // if(_dailyStage == -1)
-        //     levelText.text = "Level " + (PlayerPrefs.GetInt("totalLevel", 1)).ToString();
-        // else
-        // {
-        //     // 日付テキストを設定　例：June 5
-        //     levelText.text = System.DateTime.Now.ToString("MMM", new CultureInfo("en-US")) + " " + _dailyStage.ToString();
-        // }
-
-        // bool isHard = false;
-        
-        // if(!GameDataManager.IsInit)
-        // {
-        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
-        //     GameDataManager.Initialize();
-        //     GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
-        // }
-        // else
-        // {
-        //     _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
-        // }
-        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
-        // _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
-
-        // // 🔸ステージに応じてアクティブ設定
-        // if(_isStageLoadFromScene)
-        // {
-        //     if (!isTest)
-        //     {
-        //         for (int i = 0; i < stages.Length; i++)
-        //         {
-        //             bool isActive = (i == isNowStage && _dailyStage == -1);
-        //             stages[i].SetActive(isActive);
-        //             if(isActive)
-        //                 isHard = stages[i].GetComponent<StageInfo>().isHard;
-        //         }
-        //         for(int i = 0; i < dailyStages.Length; i++)
-        //         {
-        //             dailyStages[i].SetActive(i + 1 == _dailyStage);
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
-        //     StageInfo stage = null;
-        //     if(_dailyStage == -1)
-        //         stage = Instantiate(_stagePrefabs[isNowStage]);
-        //     else
-        //         stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
-        //     if( stageParent != null)
-        //         stage.transform.parent = stageParent;
-        //     stage.transform.localScale = Vector3.one;
-        //     stage.transform.localPosition = Vector3.zero;
-        //     stage.gameObject.SetActive(true);
-        //     isHard = stage.isHard;
-        // }
-
-        // if(isHard)
-        //     _imageLevelBack.color = new Color32(187, 3, 3, 255);
-        
-        // //answerPosGrindの数をpicCountに代入
-        // picCount = FindAnyObjectByType<GridPieceListController>().gameObject.transform.childCount;
-
-        // if(GameDataManager.InitMoveCount <= 0)
-        // {
-        //     _MoveCount = Mathf.Min( picCount * 2, picCount + 12 );
-        //     if(13 <= _MoveCount)
-        //     {
-        //         _MoveCount += UnityEngine.Random.Range(-1, 2);
-        //     }
-        //     GameDataManager.InitMoveCount = _MoveCount;
-        //     Debug.Log($"_MoveCountセット：{picCount}->{_MoveCount}");
-        // }
-        // else
-        //     _MoveCount = GameDataManager.InitMoveCount;
-
-        // // 🔸前回の経過時間を読み込み
-        // string key = GetElapsedTimeKey();
-        // pureElapsedTime = PlayerPrefs.GetFloat(key, 0f);
-
-        // firebaseManager.StageStart("");
-
-        // Debug.Log($"▶ ステージ {isNowStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
-
-        // // 🔸5秒ごとに経過時間を保存
-        // autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
-
-        // if(!GameDataManager.IsHome)
-        //     _hardEfffectManager.PlayHardAnimation(isHard);
-
-        // GameDataManager.IsHard = isHard;
-
-        // TryRequestReview();
-
-        // _clearNextButton.transform.localScale = Vector3.zero;
-        // _clearNextButton.onClick += OnClearNext;
     }
 
     private IEnumerator InitlializeColoutine()
@@ -301,7 +200,7 @@ public class StageManager : MonoBehaviour
             if(_dailyStage == -1)
                 stage = Instantiate(_stagePrefabs[isNowStage]);
             else
-                stage = Instantiate(_dailyStagePrefabs[_dailyStage]);
+                stage = Instantiate(_dailyStagePrefabs[_dailyStage - 1]);
             if( stageParent != null)
                 stage.transform.parent = stageParent;
             stage.transform.localScale = Vector3.one;

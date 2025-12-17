@@ -70,7 +70,7 @@ public class HomeManager : MonoBehaviour
                 isBoardChangeAnimation = true;
         }
 
-        Debug.Log($"アニメーションチェック: isAnim:{GameDataManager.isPlayHomePieceAnimation}, totalLevel:{totalLevel}, nowBoardIndex:{nowBoardIndex}, beforeBoardIndex:{beforeBoardIndex}, isBoardChangeAnimation:{isBoardChangeAnimation}");
+        // Debug.Log($"アニメーションチェック: isAnim:{GameDataManager.isPlayHomePieceAnimation}, totalLevel:{totalLevel}, nowBoardIndex:{nowBoardIndex}, beforeBoardIndex:{beforeBoardIndex}, isBoardChangeAnimation:{isBoardChangeAnimation}");
 
         HomePanelsManager homePanelsManager = null;
         // ボード切り替え演出なし
