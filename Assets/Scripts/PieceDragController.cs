@@ -188,7 +188,7 @@ public class PieceDragController : MonoBehaviour,
 
             float addY = targetPosition.y - originalPos.y;
             addY *= 1.0f;
-            if( 0f <= addY && !GameConst.IsCreativeMode())
+            if( 0f <= addY)
                 targetPosition.y += addY;
             
             // 指の細かい動きを無視するためにスムージング

@@ -133,7 +133,7 @@ public class StageManager : MonoBehaviour
         }
         else if(GameConst.IsCreativeMode())
         {
-            isTest = true;
+            // isTest = true;
         }
     }
     void Start()
@@ -171,6 +171,14 @@ public class StageManager : MonoBehaviour
         }
         _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+
+        if(GameConst.IsCreativeMode())
+        {
+            _debugUIManager.onDebugViewToggled += (bool isActive)=>{
+                _defaultCanvas.SetActive(isActive);
+            };
+            _defaultCanvas.SetActive(GameDataManager.IsDebugView);
+        }
 
         if(GameDataManager.IsHome)
         yield return new WaitForSeconds(0.5f);

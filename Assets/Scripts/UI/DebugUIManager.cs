@@ -12,6 +12,8 @@ public class DebugUIManager : MonoBehaviour
 
     public List<int> _currentCommand = default;
 
+    public event System.Action<bool> onDebugViewToggled;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -47,9 +49,11 @@ public class DebugUIManager : MonoBehaviour
             _currentCommand.Add(chkButtonIndex);
             if(_currentCommand.Count == _switchViewCommand.Count)
             {
+                bool isActive = !_view.activeSelf;
                 _currentCommand.Clear();
-                _view.SetActive(!_view.activeSelf);
-                GameDataManager.IsDebugView = _view.activeSelf;
+                _view.SetActive(isActive);
+                onDebugViewToggled?.Invoke(isActive);
+                GameDataManager.IsDebugView = isActive;
             }
             return true;
         }

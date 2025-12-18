@@ -192,11 +192,12 @@ public class GridPieceListController : MonoBehaviour
         // GridPieceListController gridPieceListController = GetGridPieceListController();
         // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
 
-        if(GameConst.IsCreativeMode())
-        {
-            _PieceDragControllersScale = 0.9f;
-            return;
-        }
+        
+        // if(GameConst.IsCreativeMode())
+        // {
+        //     _PieceDragControllersScale = 0.9f;
+        //     return;
+        // }
 
         _PieceDragControllersScale = 0.67f * 185f / size;
         if(shapeType == ShapeType.Square)

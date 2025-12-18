@@ -9,6 +9,7 @@ using DG.Tweening;
 /// - 近距離ロックで縮小＋grab画像に切替、離すと復元＋normal画像
 /// - タップしていない間: 指数スムーズ追従（遅め）＋小揺れ無視
 /// - DOTween 必須
+/// TODO PieceDragControllerをつまんでいる間はPieceDragControllerに追従するようにする
 /// </summary>
 [DisallowMultipleComponent]
 public class HandCursorController : MonoBehaviour
