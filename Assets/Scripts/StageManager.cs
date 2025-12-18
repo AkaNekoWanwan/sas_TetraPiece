@@ -439,13 +439,8 @@ public class StageManager : MonoBehaviour
             {
                 int currentTotalLevel = PlayerPrefs.GetInt("totalLevel", 1);
 
-                // 30ステージをクリアしたらレビュー促進ポップアップを表示
-                if(currentTotalLevel == 30)
-                {
-                    PlayerPrefs.SetInt("RequestReview", 1);
-                }
-                // 初回の30ステージ目以降は50ステージごとにレビュー促進ポップアップを表示
-                if( 30 < currentTotalLevel && (currentTotalLevel - 30) % 50 == 0)
+                // 31ステージをクリアしたらレビュー促進ポップアップを表示
+                if(currentTotalLevel == 31)
                 {
                     PlayerPrefs.SetInt("RequestReview", 1);
                 }

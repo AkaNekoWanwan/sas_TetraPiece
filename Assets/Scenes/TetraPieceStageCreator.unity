@@ -78371,6 +78371,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage031
       objectReference: {fileID: 0}
+    - target: {fileID: 2433849982361048595, guid: d809ccfd4f9b64ecba5b123ba6cc9709, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6854023520531799328, guid: d809ccfd4f9b64ecba5b123ba6cc9709, type: 3}
       propertyPath: m_Camera
       value: 
@@ -79466,6 +79470,10 @@ PrefabInstance:
     - target: {fileID: 4901579308728986265, guid: dfc23e5943a9e4c4dad5f9c24a31c7f0, type: 3}
       propertyPath: m_Name
       value: DailyStage030
+      objectReference: {fileID: 0}
+    - target: {fileID: 4901579308728986265, guid: dfc23e5943a9e4c4dad5f9c24a31c7f0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -81144,6 +81152,10 @@ PrefabInstance:
     - target: {fileID: 3201168509147225615, guid: ad16c7a5d1fa244709a64bb9760ec011, type: 3}
       propertyPath: m_Name
       value: DailyStage029
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201168509147225615, guid: ad16c7a5d1fa244709a64bb9760ec011, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3399697444679337313, guid: ad16c7a5d1fa244709a64bb9760ec011, type: 3}
       propertyPath: m_LocalPosition.x
@@ -85883,6 +85895,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage022
       objectReference: {fileID: 0}
+    - target: {fileID: 5296798677984542257, guid: ffa37e6c3d5b7404f90816bb523bd8c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -89662,10 +89678,6 @@ PrefabInstance:
     - target: {fileID: 3273483946429525721, guid: 3c820cf69f019450c99e73a1b25710aa, type: 3}
       propertyPath: m_Name
       value: Stage484
-      objectReference: {fileID: 0}
-    - target: {fileID: 3273483946429525721, guid: 3c820cf69f019450c99e73a1b25710aa, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6306349641902663427, guid: 3c820cf69f019450c99e73a1b25710aa, type: 3}
       propertyPath: m_Camera
@@ -102564,6 +102576,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage025
       objectReference: {fileID: 0}
+    - target: {fileID: 1636358335514422381, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4009135396112181233, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -105394,6 +105410,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage021
       objectReference: {fileID: 0}
+    - target: {fileID: 3417040917611521205, guid: 1e830d261583044c090efdfd64a81482, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7485162405517098292, guid: 1e830d261583044c090efdfd64a81482, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -106594,6 +106614,10 @@ PrefabInstance:
     - target: {fileID: 4597315471230949682, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
       propertyPath: m_Name
       value: DailyStage024
+      objectReference: {fileID: 0}
+    - target: {fileID: 4597315471230949682, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4735381491137788552, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -107893,7 +107917,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 2167835874757143322}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
@@ -110048,6 +110072,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage026
       objectReference: {fileID: 0}
+    - target: {fileID: 4722942331536282798, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6579553465783234994, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
       propertyPath: m_Camera
       value: 
@@ -110849,6 +110877,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage020
       objectReference: {fileID: 0}
+    - target: {fileID: 2422752160756732758, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2424889476482164367, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
       propertyPath: m_Camera
       value: 
@@ -111227,6 +111259,10 @@ PrefabInstance:
     - target: {fileID: 1532476538417786300, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
       propertyPath: m_Name
       value: DailyStage023
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532476538417786300, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6254200410846391033, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -112386,6 +112422,10 @@ PrefabInstance:
     - target: {fileID: 4839532429254407986, guid: 1f1d6dd65f9b44ec58ca8452a91315d9, type: 3}
       propertyPath: m_Name
       value: DailyStage028
+      objectReference: {fileID: 0}
+    - target: {fileID: 4839532429254407986, guid: 1f1d6dd65f9b44ec58ca8452a91315d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -116030,7 +116070,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7950191674094107406, guid: decb86a1da6254c3480df22ef9611869, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -118516,6 +118556,10 @@ PrefabInstance:
     - target: {fileID: 3033276545407369794, guid: 0cbdf284e512a4fffa005d181fc84738, type: 3}
       propertyPath: m_Name
       value: DailyStage027
+      objectReference: {fileID: 0}
+    - target: {fileID: 3033276545407369794, guid: 0cbdf284e512a4fffa005d181fc84738, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8853310263953145743, guid: 0cbdf284e512a4fffa005d181fc84738, type: 3}
       propertyPath: m_Camera
