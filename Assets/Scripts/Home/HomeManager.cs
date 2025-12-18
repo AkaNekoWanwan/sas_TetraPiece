@@ -47,8 +47,8 @@ public class HomeManager : MonoBehaviour
             return;
         }
         StartCoroutine(InitlializeColoutine());
-        PlayerPrefs.SetInt("totalLevel", 31);
-        GameDataManager.isPlayHomePieceAnimation = true;
+        // PlayerPrefs.SetInt("totalLevel", 31);
+        // GameDataManager.isPlayHomePieceAnimation = true;
     }
 
     private IEnumerator InitlializeColoutine()
@@ -57,8 +57,8 @@ public class HomeManager : MonoBehaviour
         _playButton.onClick += OnPlayButton;
         // _backButton.onClick += OnHomeButton;
         
-        // int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-        // int nowBoardIndex = (totalLevel - 1) / 30;
+        int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+        int nowBoardIndex = (totalLevel - 1) / 30;
 
         // ボード完成→次のボードへ移動アニメーションを流すか
         bool isBoardChangeAnimation = false;
