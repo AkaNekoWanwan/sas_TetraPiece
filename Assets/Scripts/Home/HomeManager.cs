@@ -22,6 +22,7 @@ public class HomeManager : MonoBehaviour
     public Transform _homeParent;
     public HardEfffectManager _hardEfffectManager;
     public ParticleSystem _particle;
+    private Sequence clearAnimSeq = null;
 
     private const string HOME_STAGE_PREFABS_PATH = "Assets/Prefabs/HomePuzzles/";
 
@@ -46,8 +47,8 @@ public class HomeManager : MonoBehaviour
             return;
         }
         StartCoroutine(InitlializeColoutine());
-        // PlayerPrefs.SetInt("totalLevel", 1);
-        // GameDataManager.isPlayHomePieceAnimation = true;
+        PlayerPrefs.SetInt("totalLevel", 31);
+        GameDataManager.isPlayHomePieceAnimation = true;
     }
 
     private IEnumerator InitlializeColoutine()
@@ -56,8 +57,8 @@ public class HomeManager : MonoBehaviour
         _playButton.onClick += OnPlayButton;
         // _backButton.onClick += OnHomeButton;
         
-        int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-        int nowBoardIndex = (totalLevel - 1) / 30;
+        // int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+        // int nowBoardIndex = (totalLevel - 1) / 30;
 
         // ボード完成→次のボードへ移動アニメーションを流すか
         bool isBoardChangeAnimation = false;
@@ -103,15 +104,15 @@ public class HomeManager : MonoBehaviour
             homePanelsManager2.StartIndex = nowBoardIndex * 30;
             homePanelsManager2.Initialize();
 
-            Sequence seq = DOTween.Sequence();
-            seq.AppendInterval(1.3f);
-            seq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayClearSound(); homePanelsManager.PlayClearAnimation();});
-            seq.Append(homePanelsManager.transform.DOScale(Vector3.one * 1.05f, 1f).SetEase(Ease.Linear).SetLink(homePanelsManager.gameObject));
-            seq.AppendInterval(2f);
-            seq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayCardFlipSound();});
-            seq.Append(homePanelsManager.transform.DOLocalMoveY(1500f, 1.2f).SetEase(Ease.InBack).SetLink(homePanelsManager.gameObject));
-            seq.Join(homePanelsManager2.transform.DOLocalMoveY(0f, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
-            seq.Join(homePanelsManager2.transform.DOScale(Vector3.one, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
+            clearAnimSeq = DOTween.Sequence();
+            clearAnimSeq.AppendInterval(1.3f);
+            clearAnimSeq.AppendCallback(()=>{ _particle.Play(); AudioManager.Instance.PlayClearSound(); homePanelsManager.PlayClearAnimation();});
+            clearAnimSeq.Append(homePanelsManager.transform.DOScale(Vector3.one * 1.05f, 1f).SetEase(Ease.Linear).SetLink(homePanelsManager.gameObject));
+            clearAnimSeq.AppendInterval(2f);
+            clearAnimSeq.AppendCallback(()=>{ _particle.Stop(); AudioManager.Instance.PlayCardFlipSound();});
+            clearAnimSeq.Append(homePanelsManager.transform.DOLocalMoveY(1500f, 1.2f).SetEase(Ease.InBack).SetLink(homePanelsManager.gameObject));
+            clearAnimSeq.Join(homePanelsManager2.transform.DOLocalMoveY(0f, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
+            clearAnimSeq.Join(homePanelsManager2.transform.DOScale(Vector3.one, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
         }
     }
 
@@ -192,6 +193,13 @@ public class HomeManager : MonoBehaviour
                 ShowView();
             else
                 HideView();
+            _particle.Stop();
+            _particle.Clear();
+            if(clearAnimSeq != null)
+            {
+                clearAnimSeq.Kill();
+                clearAnimSeq = null;
+            }
             FadeManager.Instance.FadeOut(0.25f); 
         }, 0.5f, false);
     }
