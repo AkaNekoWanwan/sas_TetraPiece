@@ -93,15 +93,7 @@ public class StageCreator : MonoBehaviour
 
     public void PreSetUp()
     {
-        // 1. 順序を保持しつつ、重複を削除
-        List<Sprite> distinctSplites = _setSplites
-            .Where(sprite => sprite != null) // ★ null ではない要素のみをフィルタリング
-            .Distinct()                      // ★ 重複を削除
-            .ToList();                       // ★ リストに変換
-        // 2. _setSplitesを更新
-        _setSplites = distinctSplites;
-        // 3. _splitesHashも、_setSplitesの内容で初期化し直す
-        _splitesHash = new HashSet<Sprite>(_setSplites);
+        UpdateSetSprites();
 
         // 2. 初期化処理の抽象化
         // 全ステージ取得 (AbstractGridImageSplitterを継承した全てを取得)
@@ -468,6 +460,17 @@ public class StageCreator : MonoBehaviour
         Debug.Log($"StageCreator:ステージ生成Async:全てのステージの生成が完了しました！");
     }
 
+    // 使用している画像の名前を更新する
+    // ファイル名の先頭に00X_を付与する。すでに付与されている場合はそれを更新する
+    // ( 例: 001_Hoge.png -> 001_Hoge.png, 001Hoge_1080x1350.png -> 001_Hoge_1080x1350.png, Hoge.png -> 001_Hoge.png, Hoge_1080x1350.png -> 001_Hoge_1080x1350.png )
+    public void UpdateSetSpriteFileName()
+    {
+        UpdateSetSprites(); // スプライトリストを更新
+        
+        string prefix = IsDailyStage ? "Daily" : "";
+        SpriteFileNameUtil.UpdateSpriteFileNames(_setSplites, prefix, startNumber: 1, enableLog: true);
+    }
+
     // --- 【追加 3】プレハブ保存処理メソッド ---
     /// <summary>
     /// 指定されたゲームオブジェクトを、PrefabSavePathに、その名前でプレハブとして保存（または上書き）します。
@@ -816,6 +819,19 @@ public class StageCreator : MonoBehaviour
         }
         return ret;
     }
+
+    private void UpdateSetSprites()
+    {
+        // 1. 順序を保持しつつ、重複を削除
+        List<Sprite> distinctSplites = _setSplites
+            .Where(sprite => sprite != null) // ★ null ではない要素のみをフィルタリング
+            .Distinct()                      // ★ 重複を削除
+            .ToList();                       // ★ リストに変換
+        // 2. _setSplitesを更新
+        _setSplites = distinctSplites;
+        // 3. _splitesHashも、_setSplitesの内容で初期化し直す
+        _splitesHash = new HashSet<Sprite>(_setSplites);
+    }
     
 
     /// <summary>
@@ -904,6 +920,11 @@ public class StageCreatorEditor : Editor
         {
             script.SetSkipFlg(false);
         }
+        if (GUILayout.Button("Update Set Sprite FileName"))
+        {
+            script.UpdateSetSpriteFileName();
+        }
+
         DrawDefaultInspector();
     }
 }

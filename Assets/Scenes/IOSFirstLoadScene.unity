@@ -866,10 +866,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: AudioManager
       objectReference: {fileID: 0}
-    - target: {fileID: 7400158203252103033, guid: d687b6063b47a47dab99fab207de31bf, type: 3}
-      propertyPath: cardFlipSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 2f3c1868f85444b8cacde35b0c0f6e1f, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

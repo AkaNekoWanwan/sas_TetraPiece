@@ -19,9 +19,31 @@ public class HomePuzzleCreator : MonoBehaviour
     public string PrefabSavePath = "Assets/Prefabs/HomePuzzles"; // プレハブ保存先ディレクトリ
     public List<HomePanelsManager> _panelManagers = default;
     public List<Sprite> _sprites = default;
+    
+    // スプライトリストの重複を削除
+    private void RemoveDuplicateSprites()
+    {
+        List<Sprite> distinctSprites = _sprites
+            .Where(sprite => sprite != null)
+            .Distinct()
+            .ToList();
+        _sprites = distinctSprites;
+    }
+    
+    // 使用している画像の名前を更新する
+    public void UpdateSpriteFileName()
+    {
+        RemoveDuplicateSprites();
+        
+        // ファイル名を更新
+        SpriteFileNameUtil.UpdateSpriteFileNames(_sprites, prefix: "Collection", startNumber: 1, enableLog: true);
+    }
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void CreatePiece()
     {
+        RemoveDuplicateSprites();
+        
         for(int i = 0; i < _panelManagers.Count; i++)
         {
             HomePanelsManager panelManager = _panelManagers[i];
@@ -57,6 +79,11 @@ public class HomePuzzleCreatorEditor : Editor
         if (GUILayout.Button("Auto Create piece"))
         {
             script.CreatePiece();
+        }
+        
+        if (GUILayout.Button("Update Sprite FileName"))
+        {
+            script.UpdateSpriteFileName();
         }
     }
 }
