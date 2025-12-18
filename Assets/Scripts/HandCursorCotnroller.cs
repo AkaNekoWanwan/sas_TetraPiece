@@ -19,6 +19,12 @@ public class HandCursorController : MonoBehaviour
     public RectTransform handCursor;     // カーソル画像（RectTransform）
     public Canvas canvas;                // Overlay / Camera / World
 
+    [Header("Piece Follow Settings")]
+    [Tooltip("PieceDragController追従モードを有効にする")]
+    public bool followDraggedPiece = true;
+    [Tooltip("ピース追従時のオフセット")]
+    public Vector2 pieceFollowOffset = Vector2.zero;
+
     // ===== Touch Follow Modes =====
     public enum FollowMode { Exact, Smoothed, TweenThenExact }
 
@@ -111,6 +117,26 @@ public class HandCursorController : MonoBehaviour
 
     void Update()
     {
+        // ===== ピース追従モード：ドラッグ中のピースに追従 =====
+        if (followDraggedPiece && DragStateManager.IsDragging)
+        {
+            // 異なるキャンバス間での座標変換を正しく処理
+            if (ScreenToParentLocal(Camera.main.WorldToScreenPoint(DragStateManager.CurrentDraggingPiece.transform.position), out var localPos))
+            {
+                handCursor.anchoredPosition = localPos + pieceFollowOffset;
+                
+                // ピース追従中はロック状態を維持
+                if (!lockedNear)
+                {
+                    lockedNear = true;
+                    scaleTween?.Kill();
+                    scaleTween = handCursor.DOScale(iniScale * nearScale, scaleTweenTime).SetEase(scaleEase);
+                    SetHandVisual(true); // grab
+                }
+            }
+            return; // ピース追従中は通常の処理をスキップ
+        }
+
         // ===== Press start =====
         if (Input.GetMouseButtonDown(0))
         {
@@ -244,7 +270,19 @@ public class HandCursorController : MonoBehaviour
         // ===== Release =====
         if (Input.GetMouseButtonUp(0))
         {
-            if (!isTouching) return;
+            if (!isTouching) 
+            {
+                // ピース追従中にリリースされた場合の処理
+                if (followDraggedPiece && lockedNear)
+                {
+                    // スケール復元
+                    scaleTween?.Kill();
+                    handCursor.DOScale(iniScale, scaleTweenTime).SetEase(scaleEase);
+                    SetHandVisual(false);
+                    lockedNear = false;
+                }
+                return;
+            }
             isTouching = false;
 
             // スケール復元

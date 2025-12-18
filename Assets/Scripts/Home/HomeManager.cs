@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using System.Globalization;
 using UnityEditor;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class HomeManager : MonoBehaviour
 {
@@ -39,21 +40,20 @@ public class HomeManager : MonoBehaviour
         }
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private async Task Start()
     {
         if(!GameDataManager.IsHome)
         {
             this.gameObject.SetActive(false);
             return;
         }
-        StartCoroutine(InitlializeColoutine());
+        InitlializeColoutine();
         // PlayerPrefs.SetInt("totalLevel", 31);
         // GameDataManager.isPlayHomePieceAnimation = true;
     }
 
-    private IEnumerator InitlializeColoutine()
+    private async Task InitlializeColoutine()
     {
-        yield return null;
         _playButton.onClick += OnPlayButton;
         // _backButton.onClick += OnHomeButton;
         
@@ -87,8 +87,10 @@ public class HomeManager : MonoBehaviour
         }
         else
         {
+            HomePanelsManager homePanelsManager2 = null;
             // 前のボードを出す
             homePanelsManager = Instantiate(_homePuzzlePrefabs[beforeBoardIndex % _homePuzzlePrefabs.Length]);
+            homePanelsManager2 = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
             homePanelsManager.gameObject.SetActive(true);
             homePanelsManager.transform.parent = _homeParent;
             homePanelsManager.transform.localScale = Vector3.one;
@@ -96,7 +98,6 @@ public class HomeManager : MonoBehaviour
             homePanelsManager.StartIndex = beforeBoardIndex * 30;
             homePanelsManager.Initialize();
             // 次のボードも用意しておく
-            HomePanelsManager homePanelsManager2 = Instantiate(_homePuzzlePrefabs[nowBoardIndex % _homePuzzlePrefabs.Length]);
             homePanelsManager2.gameObject.SetActive(true);
             homePanelsManager2.transform.parent = _homeParent;
             homePanelsManager2.transform.localScale = Vector3.one * 0.5f;

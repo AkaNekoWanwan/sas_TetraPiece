@@ -33,7 +33,7 @@ public class MainSceneLoader : MonoBehaviour
         // 読み込みが完了するまで待機
         while (!asyncLoad.isDone)
         {
-            Debug.Log($"読み込み中... {asyncLoad.progress * 100}%");
+            // Debug.Log($"読み込み中... {asyncLoad.progress * 100}%");
             yield return null; // 次のフレームまで待機
         }
     }

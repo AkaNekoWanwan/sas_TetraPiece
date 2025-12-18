@@ -48,6 +48,59 @@ public class PieceDragController : MonoBehaviour,
     // ドラッグ中の目標位置とスムージング
     private Vector3 smoothedPosition;
     private bool isDragging = false;
+    
+    // 現在のドラッグ中のマウス位置（スクリーン座標）
+    private Vector2 currentDragScreenPosition;
+    public Vector2 CurrentDragScreenPosition => currentDragScreenPosition;
+    
+    /// <summary>
+    /// addYが0の場合に現在のピース位置にするために必要なマウスのスクリーン座標を取得
+    /// </summary>
+    public Vector2 GetRequiredMousePositionForNoShift()
+    {
+        // addY = 0 の条件: targetPosition.y == originalPos.y
+        // targetPosition = worldPoint + dragOffset なので
+        // originalPos.y = worldPoint.y + dragOffset.y
+        // よって worldPoint.y = originalPos.y - dragOffset.y
+        
+        Vector3 requiredWorldPoint = new Vector3(
+            rt.position.x - dragOffset.x,
+            originalPos.y - dragOffset.y,
+            rt.position.z - dragOffset.z
+        );
+        
+        // ワールド座標をスクリーン座標に変換
+        Camera camera = GetCanvasCamera();
+        Vector2 screenPos;
+        
+        // if (RectTransformUtility.WorldPointToScreenPoint(camera, requiredWorldPoint, out screenPos))
+        // {
+        //     return screenPos;
+        // }
+        
+        return currentDragScreenPosition; // フォールバック
+    }
+    
+    /// <summary>
+    /// RectTransformが属するCanvasのカメラを取得
+    /// </summary>
+    private Camera GetCanvasCamera()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                return null;
+            }
+            else if (canvas.worldCamera != null)
+            {
+                return canvas.worldCamera;
+            }
+        }
+        return Camera.main;
+    }
+    
     public List<string> avoidPatternSeeds = default;
     public GridPieceListController _listCtrl = default;
     public List<AnswerGridPos> _answerGridPoses = default;
@@ -85,6 +138,12 @@ public class PieceDragController : MonoBehaviour,
             //     _answerGridPoses[i].shadowTransform.gameObject.SetActive(false);
 		}
         _stageManager = FindAnyObjectByType<StageManager>();
+    }
+
+    void OnDestroy()
+    {
+        // オブジェクト破棄時にドラッグ状態から削除
+        DragStateManager.UnregisterDrag(this);
     }
 
     // private void OnValidate()
@@ -165,6 +224,9 @@ public class PieceDragController : MonoBehaviour,
         wasDragged = true;
         isDragging = true;
         
+        // ドラッグ状態を登録
+        DragStateManager.RegisterDrag(this);
+        
         // DOTweenのアニメーションを停止して、直接制御に切り替え
         // DOTween.Kill(rt);
         _moveTween?.Kill();
@@ -178,6 +240,9 @@ public class PieceDragController : MonoBehaviour,
     public void OnDrag(PointerEventData eventData)
     {
         if (isLocked) return;
+        
+        // マウス位置を保存
+        currentDragScreenPosition = eventData.position;
         
         Vector3 worldPoint;
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
@@ -995,6 +1060,9 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     public void OnEndDrag(PointerEventData eventData)
     {
         if (isLocked) return;
+
+        // ドラッグ状態を解除
+        DragStateManager.UnregisterDrag(this);
 
         // rt.transform.localScale = Vector3.one;
         rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);

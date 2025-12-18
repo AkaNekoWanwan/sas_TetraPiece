@@ -321,9 +321,11 @@ public class StageManager : MonoBehaviour
                 if (clearBuffer == 60)
                 {
                     isDoClearGame = true;
-                    // ClearGame(true);
+                    if(GameConst.IsCreativeMode())
+                        ClearGame(true);
                     clearBuffer = 0;
-                    _clearNextButton.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetLink(_clearNextButton.gameObject);
+                    if(!GameConst.IsCreativeMode())
+                        _clearNextButton.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetLink(_clearNextButton.gameObject);
                 }
             }
         }
@@ -471,28 +473,39 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("beforeDailyClear", 1);
             }
             PlayerPrefs.Save();
-            _clearViewManager.PosText();
+            if(!GameConst.IsCreativeMode())
+                _clearViewManager.PosText();
          
             reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine);
             reloadButtonImage.transform.DOScale(Vector3.zero, 0.5f);
             isClear = true;
             // ★ カメラ移動アニメーション
             Camera cam = Camera.main;
-            if (cam != null)
+            if (cam != null )
             {
-                // Y座標 +2.5f に移動
-                cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
-                    .SetEase(Ease.InOutSine).SetDelay(0.1f);
-                cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
-                    .SetEase(Ease.InOutSine).OnComplete(() =>
-                    {    // Orthographic Size を 17 に
-            
-                        // パーティクル再生
-                        if (ps != null)
-                        {
-                            ps.Play();
-                        }
-                    });
+                if(!GameConst.IsCreativeMode())
+                {
+                    // Y座標 +2.5f に移動
+                    cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
+                        .SetEase(Ease.InOutSine).SetDelay(0.1f);
+                    cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
+                        .SetEase(Ease.InOutSine).OnComplete(() =>
+                        {    // Orthographic Size を 17 に
+                
+                            // パーティクル再生
+                            if (ps != null)
+                            {
+                                ps.Play();
+                            }
+                        });
+                }
+                else
+                {
+                    cam.DOOrthoSize(cam.orthographicSize-1.5f, 0.8f)
+                        .SetEase(Ease.InOutSine).SetDelay(0.1f);
+                    cam.transform.DOMoveY(cam.transform.position.y + 1.5f, 0.7f)
+                        .SetEase(Ease.InOutSine);
+                }
             }
         }
     }
