@@ -134,7 +134,7 @@ public class FadeManager : MonoBehaviour
 	/// <param name='interval'>暗転にかかる時間(秒)</param>
 	public void LoadScene (string scene, float interval)
 	{
-		StartCoroutine (TransScene (scene, interval));
+		StartCoroutine (TransSceneCoroutine (scene, interval, interval));
 	}
 
 	/// <summary>

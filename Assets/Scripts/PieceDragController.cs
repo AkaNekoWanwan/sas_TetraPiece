@@ -1024,10 +1024,19 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             originalScale = initialScale;
         wasDragged = false;
 
-        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        if(rt.localScale == Vector3.one)
+        {
+            rt.localScale = Vector3.one * 0.90f;
+            rt.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+        }
+        else
+            rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
         RestoreChildrenMaterials();
         SetOutlineAlpha(1f, 0f);
-        
+
+        // アウトラインを非表示にする
+        SetOutlineAlpha(0f, 0.1f);
+
         // ★ RenderQueueを変更
         SetRenderQueue(3004 + addQueue, 3003 + addQueue);
         addQueue += 2;
