@@ -21,7 +21,9 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/Scenes/AndroidMainScene.unity
+    m_path: Assets/Scenes/IOSFirstLoadScene.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/IOSMainScene.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:

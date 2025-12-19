@@ -11,6 +11,10 @@ using System.Collections.Generic;
 /// </summary>
 public class FadeManager : MonoBehaviour
 {
+	[SerializeField, Tooltip("ローディング画像")] private Transform _loadingImage = default;
+    [SerializeField, Tooltip("透明度")] private CanvasGroup _canvasGroup = default;
+    [SerializeField, Tooltip("フェード時間")] private float _fadeDuration = 0.5f;
+	
 
 	#region Singleton
 
@@ -54,15 +58,40 @@ public class FadeManager : MonoBehaviour
 		DontDestroyOnLoad (this.gameObject);
 	}
 
+	private void FixedUpdate() {
+		if (this.isFading && _loadingImage != null && _canvasGroup != null)
+		{
+			_loadingImage.Rotate(0f, 0f, -45f);
+		}
+	}
+
 	public void OnGUI ()
 	{
-
+		// テスト
+		// _loadingImage.gameObject.SetActive(true);
+		// _canvasGroup.alpha = 1f;
+		// _loadingImage.Rotate(0f, 0f, -45f);
 		// Fade .
 		if (this.isFading) {
-			//色と透明度を更新して白テクスチャを描画 .
-			this.fadeColor.a = this.fadeAlpha;
-			GUI.color = this.fadeColor;
-			GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+			// 新しい方法
+			if(_loadingImage != null && _canvasGroup != null)
+			{
+				_canvasGroup.gameObject.SetActive(true);
+				_canvasGroup.alpha = this.fadeAlpha;
+			}
+			// 従来の方法
+			else
+			{
+				//色と透明度を更新して白テクスチャを描画 .
+				this.fadeColor.a = this.fadeAlpha;
+				GUI.color = this.fadeColor;
+				GUI.DrawTexture (new Rect (0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+			}
+		}
+		else if(_loadingImage != null && _canvasGroup != null)
+		{
+			_canvasGroup.gameObject.SetActive(false);
+			_canvasGroup.alpha = 0f;
 		}
 
 		if (this.DebugMode) {
@@ -96,9 +125,6 @@ public class FadeManager : MonoBehaviour
 				}
 			}
 		}
-
-
-
 	}
 
 	/// <summary>
@@ -116,27 +142,42 @@ public class FadeManager : MonoBehaviour
 	/// </summary>
 	/// <param name='scene'>シーン名</param>
 	/// <param name='interval'>暗転にかかる時間(秒)</param>
-	private IEnumerator TransScene (string scene, float interval)
+	public void TransScene (string scene, float interval)
 	{
-		//だんだん暗く .
-		this.isFading = true;
-		float time = 0;
-		while (time <= interval) {
-			this.fadeAlpha = Mathf.Lerp (0f, 1f, time / interval);
-			time += Time.deltaTime;
-			yield return 0;
+		StartCoroutine (TransSceneCoroutine (scene, interval, interval));
+	}
+	public void TransScene (string scene, float FadeInInterval, float FadeOutInterval)
+	{
+		StartCoroutine (TransSceneCoroutine (scene, FadeInInterval, FadeOutInterval));
+	}
+
+	public IEnumerator TransSceneCoroutine (string scene, float FadeInInterval, float FadeOutInterval)
+	{
+		Debug.Log($"TransScene:フェードイン開始");
+		if(FadeInInterval <= 0f)
+		{
+			Debug.Log("TransScene:即時フェードイン");
+			this.isFading = true;
+			this.fadeAlpha = 1f;
+		}
+		else
+		{
+			//だんだん暗く .
+			yield return StartCoroutine(FadeInCoroutine( ()=>{} , FadeInInterval, false));
 		}
 
 		//シーン切替 .
 		SceneManager.LoadScene (scene);
+		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
+		while (!asyncLoad.isDone)
+        {
+            Debug.Log($"TransScene:読み込み中... {asyncLoad.progress * 100}%");
+            yield return null; // 次のフレームまで待機
+        }
+		Debug.Log($"TransScene:フェードアウト");
 
 		//だんだん明るく .
-		time = 0;
-		while (time <= interval) {
-			this.fadeAlpha = Mathf.Lerp (1f, 0f, time / interval);
-			time += Time.deltaTime;
-			yield return 0;
-		}
+		yield return StartCoroutine(FadeOutCoroutine (FadeOutInterval));
 
 		this.isFading = false;
 	}
@@ -148,6 +189,16 @@ public class FadeManager : MonoBehaviour
 	}
 	private IEnumerator FadeInCoroutine (UnityAction onFade, float interval, bool isCompleteOff)
 	{
+		if(interval <= 0f)
+		{
+			Debug.Log("即時フェードイン");
+			this.isFading = true;
+			this.fadeAlpha = 1f;
+			if(isCompleteOff)
+				this.fadeAlpha = 0f;
+			onFade?.Invoke();
+			yield break;
+		}
 		//だんだん暗く .
 		this.isFading = true;
 		float time = 0;
@@ -169,6 +220,12 @@ public class FadeManager : MonoBehaviour
 	}
 	private IEnumerator FadeOutCoroutine (float interval)
 	{
+		if(interval <= 0)
+		{
+			this.isFading = false;
+			this.fadeAlpha = 0f;
+			yield break;
+		}
 		//だんだん明るく .
 		float time = 0;
 		this.fadeAlpha = 1f;

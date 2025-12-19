@@ -21,20 +21,6 @@ public class MainSceneLoader : MonoBehaviour
 
     public void StartLoading()
     {
-        // ボタンのクリックイベントなどから呼び出す
-        StartCoroutine(LoadSceneCoroutine("IOSMainScene"));
-    }
-
-    IEnumerator LoadSceneCoroutine(string sceneName)
-    {
-        // 非同期読み込みを開始
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
-
-        // 読み込みが完了するまで待機
-        while (!asyncLoad.isDone)
-        {
-            // Debug.Log($"読み込み中... {asyncLoad.progress * 100}%");
-            yield return null; // 次のフレームまで待機
-        }
+        FadeManager.Instance.TransScene("IOSMainScene", 0.0f, 0.5f);
     }
 }
