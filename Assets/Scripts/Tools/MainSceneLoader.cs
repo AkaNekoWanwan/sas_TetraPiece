@@ -17,6 +17,8 @@ public class MainSceneLoader : MonoBehaviour
     async void Start()
     {
         StartLoading();
+        // PlayerPrefs.SetInt("totalLevel", 306); // デバッグ用に総レベル数を306に設定
+        // PlayerPrefs.SetInt("Stage", 305); // デバッグ用に総レベル数を306に設定
     }
 
     public void StartLoading()

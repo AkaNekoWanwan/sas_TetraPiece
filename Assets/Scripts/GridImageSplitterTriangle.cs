@@ -76,8 +76,8 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         float targetH = fullH * (targetPercent / 100f);
         int squareSize = Mathf.RoundToInt(Mathf.Min(targetW, targetH));
 
-        int startX = (int)(rect.x + (fullW - squareSize) / 2f) + (int)_trimShift.x;
-        int startY = (int)(rect.y + (fullH - squareSize) / 2f) + (int)_trimShift.y;
+        int startX = (int)(rect.x + (fullW - squareSize) / 2f + _trimShift.x);
+        int startY = (int)(rect.y + (fullH - squareSize) / 2f + _trimShift.y);
 
         float triSize = squareSize / Mathf.Max(rows, cols);
         float triHeight = Mathf.Sqrt(3f) / 2f * triSize;
@@ -310,7 +310,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         RectTransform rtChild = obj.GetComponent<RectTransform>();
 
         Vector2 parentSize = parentRT.rect.size;
-        float uiSquare = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent / 100f);
+        float uiSquare = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent / 100f) * fixTargetPercentCellSize;
         float uiSize = uiSquare / Mathf.Max(rows, cols);
         float uiHeight = Mathf.Sqrt(3f) / 2f * uiSize;
 

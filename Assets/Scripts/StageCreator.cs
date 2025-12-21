@@ -309,71 +309,71 @@ public class StageCreator : MonoBehaviour
     }
     
     // ステージ作成コルーチン:ステージを一つずつ順番に作成していく
-    public IEnumerator CreateStagesCoroutine()
-    {
-        Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
-        yield return null;
+    // public IEnumerator CreateStagesCoroutine()
+    // {
+    //     Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
+    //     yield return null;
 
-        if(IsPreSetUp)
-        {
-            Debug.Log($"StageCreator:ステージ生成コルーチン:PreSetUp");
-            PreSetUp();
-            yield return null;
-        }
+    //     if(IsPreSetUp)
+    //     {
+    //         Debug.Log($"StageCreator:ステージ生成コルーチン:PreSetUp");
+    //         PreSetUp();
+    //         yield return null;
+    //     }
 
-        beforeStage = null;
-        // シード値を更新していきながらステージ作成
-        for(int i = 0; i < _createPieceplitterList.Count; i++)
-        {
-            if (beforeStage != null)
-            {
-                if(IsWaitBeforeSplit || IsWaitAfterSplit)
-                    beforeStage.SetActive(false);
-            }
-            AbstractGridImageSplitter splitter = _createPieceplitterList[i];
-            if(splitter.isSkip)
-            {
-                Debug.Log($"StageCreator:ステージ生成コルーチン:{i}をスキップ");
-                continue;
-            }
-            // if(_seeds != null)
-            //     splitter.avoidPatternSeeds = _seeds.ToList();
-            GameObject stageObject = splitter.transform.parent.parent.gameObject;
-            if(IsWaitBeforeSplit || IsWaitAfterSplit)
-                stageObject.SetActive(true);
-            Debug.Log($"StageCreator:ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
-            if(IsWaitBeforeSplit)
-            {
-                yield return null;
-                if(!IsWaitAfterSplit)
-                {
-                    if(i % 2 == 0)
-                        EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-                }
-            }
-            splitter.CreatePiece();
-            splitter.isSkip = true;
-            // if(_seeds == null)
-            //     _seeds = new HashSet<string>();
-            // _seeds.Add(splitter.PieceCreateSeed);
-            beforeStage = stageObject;
-            // if(i % 2 == 0)
-            //     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-            if(IsWaitAfterSplit)
-            {
-                yield return null;
-            }
+    //     beforeStage = null;
+    //     // シード値を更新していきながらステージ作成
+    //     for(int i = 0; i < _createPieceplitterList.Count; i++)
+    //     {
+    //         if (beforeStage != null)
+    //         {
+    //             if(IsWaitBeforeSplit || IsWaitAfterSplit)
+    //                 beforeStage.SetActive(false);
+    //         }
+    //         AbstractGridImageSplitter splitter = _createPieceplitterList[i];
+    //         if(splitter.isSkip)
+    //         {
+    //             Debug.Log($"StageCreator:ステージ生成コルーチン:{i}をスキップ");
+    //             continue;
+    //         }
+    //         // if(_seeds != null)
+    //         //     splitter.avoidPatternSeeds = _seeds.ToList();
+    //         GameObject stageObject = splitter.transform.parent.parent.gameObject;
+    //         if(IsWaitBeforeSplit || IsWaitAfterSplit)
+    //             stageObject.SetActive(true);
+    //         Debug.Log($"StageCreator:ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
+    //         if(IsWaitBeforeSplit)
+    //         {
+    //             yield return null;
+    //             if(!IsWaitAfterSplit)
+    //             {
+    //                 if(i % 2 == 0)
+    //                     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+    //             }
+    //         }
+    //         splitter.CreatePiece();
+    //         splitter.isSkip = true;
+    //         // if(_seeds == null)
+    //         //     _seeds = new HashSet<string>();
+    //         // _seeds.Add(splitter.PieceCreateSeed);
+    //         beforeStage = stageObject;
+    //         // if(i % 2 == 0)
+    //         //     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
+    //         if(IsWaitAfterSplit)
+    //         {
+    //             yield return null;
+    //         }
             
-            // --- 【変更 2-1】処理完了後のプレハブ保存呼び出し ---
-            // if (IsSavePrefabAfterSplit)
-            // {
-            //     SaveAsPrefab(stageObject);
-            // }
-            // --------------------------------------------------------
-        }
+    //         // --- 【変更 2-1】処理完了後のプレハブ保存呼び出し ---
+    //         // if (IsSavePrefabAfterSplit)
+    //         // {
+    //         //     SaveAsPrefab(stageObject);
+    //         // }
+    //         // --------------------------------------------------------
+    //     }
 
-        yield return null;
-    }
+    //     yield return null;
+    // }
     
     // ステージ作成コルーチン:各ステージの生成処理を一斉に開始する
     public IEnumerator CreateStagesCoroutine2()
@@ -410,55 +410,55 @@ public class StageCreator : MonoBehaviour
     }
 
     // 追加分
-    public async Task CreateStagesAsync()
-    {
-        Debug.Log($"StageCreator:ステージ生成Async:実行！");
+    // public async Task CreateStagesAsync()
+    // {
+    //     Debug.Log($"StageCreator:ステージ生成Async:実行！");
 
-        if(IsPreSetUp)
-        {
-            PreSetUp();
-            Debug.Log($"StageCreator:ステージ生成Async:PreSetUp, {_createPieceplitterList.Count}");
-        }
-        const int MAX_PARALLELISM = 8; 
-        using var semaphore = new SemaphoreSlim(MAX_PARALLELISM); 
+    //     if(IsPreSetUp)
+    //     {
+    //         PreSetUp();
+    //         Debug.Log($"StageCreator:ステージ生成Async:PreSetUp, {_createPieceplitterList.Count}");
+    //     }
+    //     const int MAX_PARALLELISM = 8; 
+    //     using var semaphore = new SemaphoreSlim(MAX_PARALLELISM); 
         
-        List<Task> runningTasks = new List<Task>();
-        // List<AbstractGridImageSplitter> activeSplitters = new List<AbstractGridImageSplitter>(); // 実行中のスプリッターを追跡
+    //     List<Task> runningTasks = new List<Task>();
+    //     // List<AbstractGridImageSplitter> activeSplitters = new List<AbstractGridImageSplitter>(); // 実行中のスプリッターを追跡
         
-        for(int i = 0; i < _createPieceplitterList.Count; i++)
-        {
-            int index = i;
-            AbstractGridImageSplitter splitter = _createPieceplitterList[i];
-            if(splitter.isSkip)
-            {
-                Debug.Log($"StageCreator:ステージ生成Async:{i}をスキップ");
-                continue;
-            }
-            GameObject stageObject = splitter.transform.parent.parent.gameObject;
-            Debug.Log($"StageCreator:ステージ生成Async:ステージ生成：{i}, {stageObject.name}");
+    //     for(int i = 0; i < _createPieceplitterList.Count; i++)
+    //     {
+    //         int index = i;
+    //         AbstractGridImageSplitter splitter = _createPieceplitterList[i];
+    //         if(splitter.isSkip)
+    //         {
+    //             Debug.Log($"StageCreator:ステージ生成Async:{i}をスキップ");
+    //             continue;
+    //         }
+    //         GameObject stageObject = splitter.transform.parent.parent.gameObject;
+    //         Debug.Log($"StageCreator:ステージ生成Async:ステージ生成：{i}, {stageObject.name}");
 
-            // 1. セマフォを待機：
-            //    ここで、アクティブなタスク数が上限に達していた場合、次のスロットが空くまで待機します。
-            //    (この待機は非同期なので、メインスレッドはブロックされません)
-            await semaphore.WaitAsync();
+    //         // 1. セマフォを待機：
+    //         //    ここで、アクティブなタスク数が上限に達していた場合、次のスロットが空くまで待機します。
+    //         //    (この待機は非同期なので、メインスレッドはブロックされません)
+    //         await semaphore.WaitAsync();
 
-            // 2. タスクを起動し、リストに追加
-            //    Task.Runの完了後、finallyブロックでセマフォを解放するようにすることで、
-            //    確実に次のタスクにスロットを渡します。
-            Task pieceTask = splitter.CreatePieceAsync().ContinueWith(t => 
-            {
-                // 処理が完了したら（成功/失敗にかかわらず）、セマフォを解放
-                semaphore.Release();
-                Debug.Log($"StageCreator:ステージ生成Async:ステージ生成完了：{index}, {stageObject.name}");
-            }, TaskScheduler.Default); // バックグラウンドスレッドで実行
+    //         // 2. タスクを起動し、リストに追加
+    //         //    Task.Runの完了後、finallyブロックでセマフォを解放するようにすることで、
+    //         //    確実に次のタスクにスロットを渡します。
+    //         Task pieceTask = splitter.CreatePieceAsync().ContinueWith(t => 
+    //         {
+    //             // 処理が完了したら（成功/失敗にかかわらず）、セマフォを解放
+    //             semaphore.Release();
+    //             Debug.Log($"StageCreator:ステージ生成Async:ステージ生成完了：{index}, {stageObject.name}");
+    //         }, TaskScheduler.Default); // バックグラウンドスレッドで実行
             
-            runningTasks.Add(pieceTask);
-        }
-        // 全てのタスクが完了するのを待つ
-        await Task.WhenAll(runningTasks);
+    //         runningTasks.Add(pieceTask);
+    //     }
+    //     // 全てのタスクが完了するのを待つ
+    //     await Task.WhenAll(runningTasks);
 
-        Debug.Log($"StageCreator:ステージ生成Async:全てのステージの生成が完了しました！");
-    }
+    //     Debug.Log($"StageCreator:ステージ生成Async:全てのステージの生成が完了しました！");
+    // }
 
     // 使用している画像の名前を更新する
     // ファイル名の先頭に00X_を付与する。すでに付与されている場合はそれを更新する
@@ -694,8 +694,8 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 3 && rows == 4)
         {
-            splitter._trimShift = new Vector2(247f, 68.8f);
-            splitter._shiftY = -1.6f;
+            splitter._trimShift = new Vector2(123.5f, 33f);
+            splitter._shiftY = -1.45f;
             if( shapeType == ShapeType.Hex)
                 splitter.targetPercent = 110;
         }
@@ -706,8 +706,8 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 4 && rows == 5)
         {
-            splitter._trimShift = new Vector2(247.5f, 68f);
-            splitter._shiftY = -1.28f;
+            splitter._trimShift = new Vector2(124f, 34.5f);
+            splitter._shiftY = -1.25f;
             if( shapeType == ShapeType.Hex)
                 splitter.targetPercent = 115;
         }
@@ -720,7 +720,7 @@ public class StageCreator : MonoBehaviour
         {
             // splitter._trimShift = new Vector2(260f, 87f);
             // splitter._shiftY = -0.955f;
-            splitter._shiftY = -0.85f;
+            splitter._shiftY = -0.88f;
             if( shapeType == ShapeType.Hex)
                 splitter.targetPercent = 115;
         }
@@ -731,28 +731,37 @@ public class StageCreator : MonoBehaviour
         }
         if(cols == 6)
         {
-            splitter._trimShift = new Vector2(206f, 69f);
+            splitter._trimShift = new Vector2(102f, 33.5f);
             splitter._shiftY = -0.89f;
         }
         if(cols == 6 && rows == 8)
         {
             splitter._trimShift = new Vector2(311f, 75f);
             splitter._shiftY = -0.82f;
+            if( shapeType == ShapeType.Hex)
+                splitter.fixTargetPercentCellSize = 0.995f;
         }
         if(cols == 7 && rows == 7)
         {
-            splitter._trimShift = new Vector2(212f, 68f);
+            splitter._trimShift = new Vector2(106f, 34f);
             splitter._shiftY = -0.89f;
         }
         if(cols == 7 && rows == 8)
         {
             // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
-            // splitter._trimShift = new Vector2(278f, 88f);
-            splitter._shiftY = -0.75f;
+            splitter._trimShiftSquare = new Vector2(0f, 1f);
+            splitter._shiftY = -0.69f;
             if( shapeType == ShapeType.Square)
                 splitter.targetPercent = 88;
             else
+            {
                 splitter.targetPercent = 105;
+                if( shapeType == ShapeType.Hex)
+                {
+                    splitter.fixTargetPercentCellSize = 0.995f;
+                    splitter.targetPercent = 106;
+                }
+            }
         }
         if(cols == 7 && rows == 9)
         {
@@ -762,10 +771,13 @@ public class StageCreator : MonoBehaviour
         if(cols == 8 && rows == 7)
         {
             // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
-            splitter._trimShift = new Vector2(234f, 129f);
+            splitter._trimShift = new Vector2(117.8f, 66.3f);
             // splitter._shiftY = -0.7f;
             if( shapeType == ShapeType.Triangle)
-                splitter.targetPercent = 130;
+            {
+                splitter.targetPercent = 131;
+                splitter.fixTargetPercentCellSize = 0.9925f;
+            }
         }
         if(cols == 8 && rows == 8)
         {
@@ -873,6 +885,149 @@ public class StageCreator : MonoBehaviour
         }
     }
 #endif
+
+#if UNITY_EDITOR
+    // --- 追加: 進捗バーの表示 ---
+    private void UpdateProgressBar(string title, string info, float progress)
+    {
+        // キャンセルボタン付きの進捗バーを表示
+        bool isCancelled = EditorUtility.DisplayCancelableProgressBar(title, info, progress);
+        if (isCancelled)
+        {
+            Debug.LogWarning("StageCreator: ユーザーによって処理がキャンセルされました。");
+            StopCreateStages(); // コルーチン停止
+            // Async用のキャンセルトークンなどがあればここで振る（今回は簡易的に例外等で制御検討）
+            throw new OperationCanceledException("User cancelled the operation.");
+        }
+    }
+
+    // ステージ作成コルーチン（修正版：エラー回避済み）
+    public IEnumerator CreateStagesCoroutine()
+    {
+        Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
+        
+        // 最後に必ずバーを消すためのフラグ管理
+        bool isCompleted = false;
+
+        if(IsPreSetUp)
+        {
+            EditorUtility.DisplayProgressBar("Stage Creation", "Pre-Setting Up...", 0.05f);
+            PreSetUp();
+            yield return null;
+        }
+
+        beforeStage = null;
+        int total = _createPieceplitterList.Count;
+
+        for(int i = 0; i < total; i++)
+        {
+            float progress = (float)i / total;
+            AbstractGridImageSplitter splitter = _createPieceplitterList[i];
+            GameObject stageObject = splitter.transform.parent.parent.gameObject;
+
+            // キャンセルチェック
+            bool isCancelled = EditorUtility.DisplayCancelableProgressBar(
+                "Stage Creation", 
+                $"Processing {stageObject.name} ({i + 1}/{total})", 
+                progress
+            );
+
+            if (isCancelled)
+            {
+                Debug.LogWarning("StageCreator: ユーザーによって処理がキャンセルされました。");
+                break; // ループを抜けて下の ClearProgressBar へ
+            }
+
+            if (beforeStage != null && (IsWaitBeforeSplit || IsWaitAfterSplit))
+            {
+                beforeStage.SetActive(false);
+            }
+
+            if(splitter.isSkip) continue;
+
+            if(IsWaitBeforeSplit || IsWaitAfterSplit)
+                stageObject.SetActive(true);
+
+            if(IsWaitBeforeSplit) yield return null;
+
+            splitter.CreatePiece();
+            splitter.isSkip = true;
+            beforeStage = stageObject;
+
+            if(IsWaitAfterSplit) yield return null;
+        }
+
+        // 全ループ終了、または break (キャンセル) 時に必ず実行
+        EditorUtility.ClearProgressBar();
+        yield return null;
+    }
+
+    // 追加分: CreateStagesAsync（修正版）
+    public async Task CreateStagesAsync()
+    {
+        Debug.Log($"StageCreator:ステージ生成Async:実行！");
+        
+        try {
+            if(IsPreSetUp)
+            {
+                EditorUtility.DisplayProgressBar("Stage Creation", "Pre-Setting Up...", 0f);
+                PreSetUp();
+            }
+
+            const int MAX_PARALLELISM = 8; 
+            using var semaphore = new SemaphoreSlim(MAX_PARALLELISM); 
+            List<Task> runningTasks = new List<Task>();
+            
+            int total = _createPieceplitterList.Count;
+            int completedCount = 0;
+
+            for(int i = 0; i < total; i++)
+            {
+                // Asyncの場合、ループ内でキャンセルチェック
+                float progress = (float)completedCount / total;
+                if (EditorUtility.DisplayCancelableProgressBar("Stage Creation (Async)", $"Waiting for queue... ({completedCount}/{total})", progress))
+                {
+                    throw new OperationCanceledException();
+                }
+
+                AbstractGridImageSplitter splitter = _createPieceplitterList[i];
+                if(splitter.isSkip) { completedCount++; continue; }
+
+                await semaphore.WaitAsync();
+
+                Task pieceTask = splitter.CreatePieceAsync().ContinueWith(t => 
+                {
+                    semaphore.Release();
+                    Interlocked.Increment(ref completedCount);
+                    // メインスレッドではない場合があるため、ここでのUI更新は避けるか、注意が必要
+                }, TaskScheduler.Default);
+                
+                runningTasks.Add(pieceTask);
+            }
+            
+            // 全完了を待機している間もバーを出すためのループ（簡易版）
+            while (completedCount < runningTasks.Count)
+            {
+                float progress = (float)completedCount / total;
+                if (EditorUtility.DisplayCancelableProgressBar("Stage Creation (Async)", $"Processing tasks... ({completedCount}/{total})", progress))
+                {
+                    // 実行中のタスクを止めるのは難しいため、表示を消して中断
+                    break; 
+                }
+                await Task.Delay(100);
+            }
+            await Task.WhenAll(runningTasks);
+        }
+        catch (OperationCanceledException) {
+            Debug.LogWarning("StageCreator: Async処理がキャンセルされました。");
+        }
+        finally {
+            EditorUtility.ClearProgressBar();
+        }
+
+        Debug.Log($"StageCreator:ステージ生成Async:終了");
+    }
+#endif
 }
 
 #if UNITY_EDITOR
@@ -929,7 +1084,3 @@ public class StageCreatorEditor : Editor
     }
 }
 #endif
-
-
-
-

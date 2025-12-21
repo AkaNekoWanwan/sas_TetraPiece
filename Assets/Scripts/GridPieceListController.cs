@@ -87,15 +87,6 @@ public class GridPieceListController : MonoBehaviour
             pcs = GetComponentsInChildren<PieceDragController>(false).ToList();
 
         Debug.Log($"queue:{queue}, {queue.Count}");
-        // Vector2 size = _rectTransform.sizeDelta;
-        // size.x = pcs.Count * spacing + 2f;
-
-        // if(!UnityEditor.EditorApplication.isPlaying)
-        //     _rectTransform.sizeDelta = size;
-        // var pos = _rectTransform.anchoredPosition;
-        // pos.x += spacing / 4;
-        // _rectTransform.anchoredPosition = pos;
-        // _targetSizeDelta = size;
     }
 
     void Awake()
@@ -189,16 +180,6 @@ public class GridPieceListController : MonoBehaviour
 
     public void SetCellScale(float size, ShapeType shapeType)
     {
-        // GridPieceListController gridPieceListController = GetGridPieceListController();
-        // gridPieceListController._PieceDragControllersScale = 0.45f * (270f / size);
-
-        
-        // if(GameConst.IsCreativeMode())
-        // {
-        //     _PieceDragControllersScale = 0.9f;
-        //     return;
-        // }
-
         _PieceDragControllersScale = 0.67f * 185f / size;
         if(shapeType == ShapeType.Square)
             _PieceDragControllersScale *= 0.75f;

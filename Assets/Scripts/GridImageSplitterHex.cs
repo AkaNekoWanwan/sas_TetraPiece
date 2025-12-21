@@ -288,7 +288,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
         RectTransform rtChild = obj.GetComponent<RectTransform>();
 
         Vector2 parentSize = parentRT.rect.size;
-        float uiSquareBase = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent / 100f);
+        float uiSquareBase = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent * fixTargetPercentCellSize / 100f);
         int uiSquareInt = Mathf.RoundToInt(uiSquareBase);
         int uiCellSizeInt = uiSquareInt / Mathf.Max(rows, cols);
         float uiRadius = uiCellSizeInt / 2f;

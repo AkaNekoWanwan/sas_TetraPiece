@@ -21,6 +21,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     [Header("Target Range (Center % of image)")]
     [Range(10, 1000)] public int targetPercent = 80;
+    [Range(0f, 2f)] public float fixTargetPercentCellSize = 1f;
 
     [Header("Output Settings")]
     public string outputFolder = "Assets/Textures/Square";
@@ -45,6 +46,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public float _shiftY = 0f;
     [Header("TriangleParam")]
     public Vector2 _trimShift = Vector2.zero;
+    public Vector2 _trimShiftSquare = Vector2.zero;
     public int uniqueId = 0;
     public int index = 0;
 
