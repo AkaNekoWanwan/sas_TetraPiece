@@ -283,6 +283,8 @@ public class StageManager : MonoBehaviour
         if(PlayerPrefs.GetInt("totalLevel", 1) == 1)
         {
             FadeManager.Instance.FadeOut(0.5f);
+            if(Guidance.Instance != null)
+                Guidance.Instance.ShowGuidance();   // ガイダンスの表示
         }
     }
 

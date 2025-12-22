@@ -13,6 +13,8 @@ public static class GameConst
     private const bool IsScreenShot = false;
 #endif
 
+    public const float ADD_Y_OFFSET = 6f;
+
     public static bool IsCreativeMode()
     {
         if(!Debug.isDebugBuild)

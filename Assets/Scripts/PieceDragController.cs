@@ -250,11 +250,19 @@ public class PieceDragController : MonoBehaviour,
         {
             // 目標位置を計算
             Vector3 targetPosition = FixZ(worldPoint + dragOffset);
-
             float addY = targetPosition.y - originalPos.y;
             addY *= 1.0f;
-            if( 0f <= addY)
-                targetPosition.y += addY;
+            
+            if( addY < 0f)
+                addY = 0f;
+
+            // 盤面上にあるなら少し上に移動させる
+            if (lastSnappedPos != Vector3.zero)
+            {
+                addY += GameConst.ADD_Y_OFFSET;
+            }
+
+            targetPosition.y += addY;
             
             // 指の細かい動きを無視するためにスムージング
             smoothedPosition = Vector3.Lerp(smoothedPosition, targetPosition, smoothingFactor);
@@ -1057,6 +1065,13 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         {
             dragOffset = rt.position - worldPoint;
             Vector3 targetPos = FixZ(worldPoint + dragOffset);
+
+            // 盤面上にあるなら少し上に移動させる
+            if (lastSnappedPos != Vector3.zero)
+            {
+                targetPos.y += GameConst.ADD_Y_OFFSET;
+            }
+
             smoothedPosition = targetPos;
             _moveTween?.Kill();
             _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
