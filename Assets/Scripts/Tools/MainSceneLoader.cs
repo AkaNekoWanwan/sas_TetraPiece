@@ -23,6 +23,6 @@ public class MainSceneLoader : MonoBehaviour
 
     public void StartLoading()
     {
-        FadeManager.Instance.TransScene("IOSMainScene", 0.0f, 0.5f);
+        FadeManager.Instance.TransScene("IOSMainScene", 0.0f, -1f);
     }
 }

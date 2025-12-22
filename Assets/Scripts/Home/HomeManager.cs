@@ -47,9 +47,12 @@ public class HomeManager : MonoBehaviour
             this.gameObject.SetActive(false);
             return;
         }
-        InitlializeColoutine();
-        // PlayerPrefs.SetInt("totalLevel", 31);
-        // GameDataManager.isPlayHomePieceAnimation = true;
+        await InitlializeColoutine();
+
+        int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+        // 初回プレイ時はフェードアウトをステージマネージャー側に任せる
+        if(totalLevel != 1) 
+            FadeManager.Instance.FadeOut(0.5f);
     }
 
     private async Task InitlializeColoutine()
@@ -58,6 +61,13 @@ public class HomeManager : MonoBehaviour
         // _backButton.onClick += OnHomeButton;
         
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+        // 初回プレイ時はホーム画面を表示しない
+        if(totalLevel == 1)
+        {
+            HideView();
+            return;
+        }
+
         int nowBoardIndex = (totalLevel - 1) / 30;
 
         // ボード完成→次のボードへ移動アニメーションを流すか
@@ -114,6 +124,7 @@ public class HomeManager : MonoBehaviour
             clearAnimSeq.Append(homePanelsManager.transform.DOLocalMoveY(1500f, 1.2f).SetEase(Ease.InBack).SetLink(homePanelsManager.gameObject));
             clearAnimSeq.Join(homePanelsManager2.transform.DOLocalMoveY(0f, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
             clearAnimSeq.Join(homePanelsManager2.transform.DOScale(Vector3.one, 2.2f).SetEase(Ease.OutCubic).SetLink(homePanelsManager2.gameObject));
+            clearAnimSeq.SetLink(this.gameObject);
         }
     }
 

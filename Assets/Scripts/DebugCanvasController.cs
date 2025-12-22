@@ -105,8 +105,6 @@ public class DebugCanvasController : MonoBehaviour
 
     public void OpenCanvas()
     {
-       
-
         DebugCanvas.SetActive(true);
         DebugCanvas.transform.DOScale(iniScaCanvas, 0.5f);
 

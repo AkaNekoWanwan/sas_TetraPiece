@@ -37,7 +37,7 @@ public class PieceDragger : MonoBehaviour,
     {
         if (isLocked) return; 
         rt.DOKill();
-        rt.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutQuad);
+        rt.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -122,9 +122,9 @@ public class PieceDragger : MonoBehaviour,
         rt.DOShakeAnchorPos(0.2f, new Vector2(15f, 0f), 10, 0f)
           .OnComplete(() =>
           {
-              rt.DOMove(originalPosition, 0.2f).SetEase(Ease.OutQuad);
-              rt.DOScale(originalScale, 0.2f).SetEase(Ease.OutQuad);
-          });
+              rt.DOMove(originalPosition, 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+              rt.DOScale(originalScale, 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+          }).SetLink(rt.gameObject);
     }
 
     // === 正解判定 ===

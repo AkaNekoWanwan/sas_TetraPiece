@@ -62,6 +62,7 @@ public class HomePanelsManager : MonoBehaviour
             HomePanels[i].rectTransform.DOSizeDelta(new Vector2(216, 216), 0.2f).SetLink(HomePanels[i].gameObject);
         }
         seq.Append(baseImage.DOColor(new Color32(255, 255, 255, 255), 0.2f).SetLink(baseImage.gameObject));
+        seq.SetLink(this.gameObject);
     }
 }
 #if UNITY_EDITOR
@@ -81,19 +82,6 @@ public class HomePanelsManager : MonoBehaviour
 
             // シーンのルートにあるオブジェクトを取得する
             GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
-
-            // foreach (GameObject obj in rootObjects)
-            // {
-            //     Debug.Log("オブジェクト名: " + obj.name);
-            //     HomePanelsManager wordGenerator = obj.GetComponent<HomePanelsManager>();
-            //     // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
-            //     if (wordGenerator != null && wordGenerator != generator)
-            //     {
-            //         wordGenerator.gameObject.SetActive(false);
-            //     }
-            // }
-            // Debug.Log("オブジェクトが選択されました。");
-            // generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得
             HomePanelsManager[] scripts = targets.Cast<HomePanelsManager>().ToArray();

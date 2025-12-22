@@ -8,6 +8,7 @@ using System.Globalization;
 using UnityEditor;
 using System.Linq;
 using AkanekoLib;
+using System.Threading.Tasks;
 
 public class StageManager : MonoBehaviour
 {
@@ -140,12 +141,11 @@ public class StageManager : MonoBehaviour
     {
         // PlayerPrefs.SetInt("totalLevel", 306); // デバッグ用に総レベル数を306に設定
         // PlayerPrefs.SetInt("Stage", 305); // デバッグ用に総レベル数を306に設定
-        StartCoroutine(InitlializeColoutine());
+        InitlializeColoutine();
     }
 
-    private IEnumerator InitlializeColoutine()
+    private async Task InitlializeColoutine()
     {
-        yield return null;
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
@@ -183,7 +183,7 @@ public class StageManager : MonoBehaviour
         }
 
         if(GameDataManager.IsHome)
-        yield return new WaitForSeconds(0.5f);
+        await Task.Yield();
 
         // 🔸ステージに応じてアクティブ設定
         if(_isStageLoadFromScene)
@@ -277,6 +277,13 @@ public class StageManager : MonoBehaviour
 
         _clearNextButton.transform.localScale = Vector3.zero;
         _clearNextButton.onClick += OnClearNext;
+
+        await Task.Yield();
+        // 初回ステージならステージの読み込みを待ってからフェードアウト
+        if(PlayerPrefs.GetInt("totalLevel", 1) == 1)
+        {
+            FadeManager.Instance.FadeOut(0.5f);
+        }
     }
 
     private string GetElapsedTimeKey()
@@ -357,6 +364,7 @@ public class StageManager : MonoBehaviour
         if (_MoveCount == 0 && !isClear)
         {
             Sequence seq = DOTween.Sequence();
+            seq.SetLink(this.gameObject);
             seq.Append(_moveCountText.transform.parent.DOScale(Vector3.one * 1.05f, 0.3f).SetEase(Ease.OutCubic).SetLink(_moveCountText.gameObject));
             seq.Append(_moveCountText.transform.parent.DOScale(Vector3.one, 0.32f).SetEase(Ease.OutCubic).SetLink(_moveCountText.gameObject));
             seq.AppendCallback(()=>{ if(!isClear)RestartGame(); });
@@ -379,7 +387,7 @@ public class StageManager : MonoBehaviour
             isRestart = true;
             
             float rotateZ = reloadButtonImage.transform.localEulerAngles.z - 360f;
-            reloadButtonImage.transform.DORotate(new Vector3(0, 0, rotateZ), 0.5f, RotateMode.FastBeyond360);
+            reloadButtonImage.transform.DORotate(new Vector3(0, 0, rotateZ), 0.5f, RotateMode.FastBeyond360).SetLink(reloadButtonImage.gameObject);
             ClearGame(false);
         }
     }
@@ -478,8 +486,8 @@ public class StageManager : MonoBehaviour
             if(!GameConst.IsCreativeMode())
                 _clearViewManager.PosText();
          
-            reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine);
-            reloadButtonImage.transform.DOScale(Vector3.zero, 0.5f);
+            reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine).SetLink(reloadButtonImage.gameObject);
+            reloadButtonImage.transform.DOScale(Vector3.zero, 0.5f).SetLink(reloadButtonImage.gameObject);
             isClear = true;
             // ★ カメラ移動アニメーション
             Camera cam = Camera.main;
@@ -489,7 +497,7 @@ public class StageManager : MonoBehaviour
                 {
                     // Y座標 +2.5f に移動
                     cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
-                        .SetEase(Ease.InOutSine).SetDelay(0.1f);
+                        .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
                     cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
                         .SetEase(Ease.InOutSine).OnComplete(() =>
                         {    // Orthographic Size を 17 に
@@ -499,14 +507,14 @@ public class StageManager : MonoBehaviour
                             {
                                 ps.Play();
                             }
-                        });
+                        }).SetLink(cam.gameObject);
                 }
                 else
                 {
                     cam.DOOrthoSize(cam.orthographicSize-1.5f, 0.8f)
-                        .SetEase(Ease.InOutSine).SetDelay(0.1f);
+                        .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
                     cam.transform.DOMoveY(cam.transform.position.y + 1.5f, 0.7f)
-                        .SetEase(Ease.InOutSine);
+                        .SetEase(Ease.InOutSine).SetLink(cam.gameObject);
                 }
             }
         }

@@ -34,7 +34,7 @@ public class HardEfffectManager : MonoBehaviour
         _hardLevelText.localScale = Vector3.zero;
 
         Sequence sequence = DOTween.Sequence();
-
+        sequence.SetLink(this.gameObject);
         sequence.AppendInterval(0.5f);
         sequence.Append(_canvasGroup.DOFade(1.0f, 0.2f).SetEase(Ease.Linear).SetLink(this.gameObject));
         sequence.Append(_hardLevelTextBanner.DOScale(Vector3.one, 0.1f).SetEase(Ease.Linear).SetLink(this.gameObject));

@@ -14,27 +14,6 @@ public class HomePanel : MonoBehaviour
     public Text NumText = default;
     public RectTransform rectTransform = default;
 
-
-    // private void OnValidate() {
-    //     rectTransform = GetComponent<RectTransform>();
-    // }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    // void Start()
-    // {
-    //     // 今のレベル
-    //     int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-    //     int refLevel = (totalLevel - 1) % 30; // 0~29
-
-    //     // 例：cellNumberが1でrefLevelが1以下ならそのステージはクリア済み
-    //     if(cellNumber <= refLevel)
-    //     {
-    //         if(cellNumber == refLevel && GameDataManager.isPlayHomePieceAnimation)
-    //             PlayAnimation();
-    //         else
-    //             Open();
-    //     }
-    // }
-
     public void UpdateView(int cellNum, int currentTotalLevel)
     {
         if(cellNum < currentTotalLevel)
@@ -64,6 +43,7 @@ public class HomePanel : MonoBehaviour
             Open();
         });
         seq.Append(this.transform.DOScale(Vector3.one, 0.25f));
+        seq.SetLink(this.gameObject);
     }
 
     private void Open()

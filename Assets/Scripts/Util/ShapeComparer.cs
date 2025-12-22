@@ -2,8 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+// 関数内でVector2Intを定義するとプレイアブルでエラーを起こすため、外部に出す
 public static class ShapeComparer
 {
+    static Vector2Int offset = Vector2Int.zero;
+    static Vector2Int baseOffset = Vector2Int.zero;
+    static Vector2Int translatedPoint = Vector2Int.zero;
     /// <summary>
     /// 2つの相対位置リストを比較し、平行移動によって形が一致するかを確認します。
     /// </summary>
@@ -41,7 +45,7 @@ public static class ShapeComparer
         // オフセット = B[i] - A[0]
         for (int i = 0; i < count; i++)
         {
-            Vector2Int baseOffset = shapeB[i] - shapeA[0];
+            baseOffset = shapeB[i] - shapeA[0];
             bool matchFound = true;
 
             // Debug.Log($"ShapeComparer: baseOffset->{baseOffset}");
@@ -50,7 +54,7 @@ public static class ShapeComparer
             // 移動後の点がsetBの中に全て存在するか確認する。
             for (int j = 0; j < count; j++)
             {
-                Vector2Int offset = baseOffset;
+                offset = baseOffset;
                 // 六角形の時の特殊処理
                 if(shapeType == ShapeType.Hex)
                 {
@@ -73,7 +77,7 @@ public static class ShapeComparer
                     }
                 }
 
-                Vector2Int translatedPoint = shapeA[j] + offset;
+                translatedPoint = shapeA[j] + offset;
 
                 // shapeBの中に移動後の点が存在しなければ、このオフセットは間違い。
                 if (!setB.Contains(translatedPoint))
@@ -97,5 +101,50 @@ public static class ShapeComparer
         Debug.Log($"ShapeComparer:捜査の末一致が見つかりませんでした: {shapeA}, {shapeB}");
         // どのオフセットを試しても完全な一致が見つからなかった場合。
         return false;
+    }
+
+    // マッピングを用いてより厳密に形状を比較するバージョン
+    public static bool CheckShapeEquality(Dictionary<Vector2Int, Vector2Int> shapeMap, ShapeType shapeType)
+    {
+        List<Vector2Int> shapeA = shapeMap.Keys.ToList();
+        List<Vector2Int> shapeB = shapeMap.Values.ToList();
+        baseOffset = shapeB[0] - shapeA[0];
+
+        foreach (var pair in shapeMap)
+        {
+            Vector2Int pointA = pair.Key;
+            Vector2Int pointB = pair.Value;
+
+            offset = baseOffset;
+            // 六角形の時の特殊処理
+            if (shapeType == ShapeType.Hex)
+            {
+                // ２点の基準座標のXの偶数奇数が異なるなら
+                if (baseOffset.x % 2 != 0)
+                {
+                    // 比較中の座標と基準座標のXの偶数奇数が異なるなら、Yの比較に補正
+                    if ((shapeA[0].x - pointA.x) % 2 != 0)
+                    {
+
+                        if (shapeA[0].x % 2 == 0)
+                        {
+                            offset.y++;
+                        }
+                        else
+                        {
+                            offset.y--;
+                        }
+                    }
+                }
+            }
+
+            translatedPoint = pointA + offset;
+            if (translatedPoint != pointB)
+            {
+                Debug.Log($"ShapeComparer:厳密比較で不一致検知: {pointA} + {offset} = {translatedPoint} != {pointB}");
+                return false;
+            }
+        }
+        return true;
     }
 }

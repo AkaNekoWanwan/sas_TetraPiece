@@ -394,12 +394,13 @@ outlineOnAlpha = 0.8f;
     {
         currentTween?.Kill();
         var seq = DOTween.Sequence();
-        seq.Append(transform.DOMove(new Vector3(iniPos.x, iniPos.y, fixedZ), releaseReturnTime).SetEase(Ease.OutQuad));
-        seq.Join(transform.DOScale(iniSca, 0.18f));
+        seq.SetLink(gameObject);
+        seq.Append(transform.DOMove(new Vector3(iniPos.x, iniPos.y, fixedZ), releaseReturnTime).SetEase(Ease.OutQuad).SetLink(gameObject));
+        seq.Join(transform.DOScale(iniSca, 0.18f).SetLink(gameObject));
         seq.OnComplete(() =>
         {
             sr.sortingOrder -= 1000;
-        });
+        }).SetLink(gameObject);
         currentTween = seq;
     }
 

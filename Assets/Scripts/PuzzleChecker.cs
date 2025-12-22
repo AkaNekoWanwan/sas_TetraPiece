@@ -183,8 +183,8 @@ public class PuzzleChecker : MonoBehaviour
             AnswerPieceInfo answerInfo = piece.GetComponent<AnswerPieceInfo>();
             if (answerInfo != null && answerInfo.answerPiece != null)
             {
-                piece.transform.DOMove(answerInfo.answerPiece.transform.position, 0.5f).SetEase(Ease.InOutQuad);
-                piece.transform.DORotateQuaternion(answerInfo.answerPiece.transform.rotation, 0.5f).SetEase(Ease.InOutQuad);
+                piece.transform.DOMove(answerInfo.answerPiece.transform.position, 0.5f).SetEase(Ease.InOutQuad).SetLink(piece.gameObject);
+                piece.transform.DORotateQuaternion(answerInfo.answerPiece.transform.rotation, 0.5f).SetEase(Ease.InOutQuad).SetLink(piece.gameObject);
             }
         }
 
@@ -198,17 +198,17 @@ public class PuzzleChecker : MonoBehaviour
         
         // パズル全体のスケールアニメーション
         var iniSca = this.transform.localScale;
-        this.transform.DOScaleY(iniSca.y * 0.85f, 0.15f).SetEase(Ease.OutQuad);
+        this.transform.DOScaleY(iniSca.y * 0.85f, 0.15f).SetEase(Ease.OutQuad).SetLink(this.gameObject);
         this.transform.DOScaleX(iniSca.x * 1.2f, 0.15f)
             .SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                this.transform.DOScaleY(iniSca.y * 1.15f, 0.065f).SetEase(Ease.OutQuad);
+                this.transform.DOScaleY(iniSca.y * 1.15f, 0.065f).SetEase(Ease.OutQuad).SetLink(this.gameObject);
                 this.transform.DOScaleX(iniSca.x * 0.85f, 0.065f).SetEase(Ease.OutQuad).OnComplete(() =>
                 {
-                    this.transform.DOScale(iniSca, 0.05f).SetEase(Ease.OutQuad);
+                    this.transform.DOScale(iniSca, 0.05f).SetEase(Ease.OutQuad).SetLink(this.gameObject);
                 });
-            });
+            }).SetLink(this.gameObject);
         ps.Play();
         StartCoroutine(ClearEffect());
     }

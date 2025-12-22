@@ -106,9 +106,9 @@ public class PieceDragController : MonoBehaviour,
     public List<AnswerGridPos> _answerGridPoses = default;
 
     public List<Vector2Int> _cellsPositions = null;
-	public List<Vector2Int> _comparisonPositions = null;
     public bool IsRandomPiece = false;  // 選択肢３個のうち１つのランダム枠か
     private Vector2Int workPos = Vector2Int.zero;
+    private Vector2Int workPos2 = Vector2Int.zero;
     private Vector3 lastSnappedPos = Vector3.zero;
     private int addQueue = 0;
     private StageManager _stageManager = default;
@@ -290,16 +290,16 @@ public class PieceDragController : MonoBehaviour,
         // Debug.Log("サイズ不具合チェック：１");
         _moveTween?.Kill();
         if(!isCreative)
-            _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+            _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(rt.gameObject);
     }
 
     void ReturnToOriginWithOccupancy()
     {
         // Debug.Log("サイズ不具合チェック：２");
         _moveTween?.Kill();
-        _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+        _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(rt.gameObject);
 
         List<Transform> children = new List<Transform>();
         List<GridCell> cells = new List<GridCell>();
@@ -340,10 +340,15 @@ bool SnapChildrenToGridsAndRecenterParent()
     List<Transform> children = new List<Transform>();
     List<GridCell> targetCells = new List<GridCell>();
     HashSet<GridCell> usedCells = new HashSet<GridCell>();
-    _comparisonPositions = new List<Vector2Int>();
+    Dictionary<Vector2Int, Vector2Int> nearestAnswerCellMap = new Dictionary<Vector2Int, Vector2Int>();
 
     foreach (Transform child in transform)
     {
+        AnswerGridPos answerGridPos = child.GetComponent<AnswerGridPos>();
+        if(answerGridPos == null)
+        {
+            continue;
+        }
         children.Add(child);
         
         // ★ 全てのanswerGridの中から最も近いものを探す
@@ -378,11 +383,14 @@ bool SnapChildrenToGridsAndRecenterParent()
         usedCells.Add(nearestAnswerCell);
         targetCells.Add(nearestAnswerCell);
 
-        workPos.x = nearestAnswerCell.gridX;
-		workPos.y = nearestAnswerCell.gridY;
-        _comparisonPositions.Add(workPos);
+        workPos.x = answerGridPos.x;
+		workPos.y = answerGridPos.y;
+
+        workPos2.x = nearestAnswerCell.gridX;
+		workPos2.y = nearestAnswerCell.gridY;
+        nearestAnswerCellMap.Add(workPos, workPos2);
     }
-    if (!ShapeComparer.CheckShapeEquality(_cellsPositions, _comparisonPositions, _listCtrl.ShapeType))
+    if (!ShapeComparer.CheckShapeEquality(nearestAnswerCellMap, _listCtrl.ShapeType))
     {
         Debug.LogWarning($"スナップ失敗: 形状の相対位置の不一致");
         return false;
@@ -432,11 +440,12 @@ bool SnapChildrenToGridsAndRecenterParent()
     // ★ 子を回転させて、ワールド座標でアニメーション
     for (int i = 0; i < children.Count; i++)
     {
+        var child = children[i];
         float targetAngle = targetCells[i].transform.eulerAngles.z;
-        children[i].rotation = Quaternion.Euler(0, 0, targetAngle);
+        child.rotation = Quaternion.Euler(0, 0, targetAngle);
         
         // ★ ワールド座標でアニメーション（親はもう正しい位置にいる）
-        children[i].DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear);
+        child.DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear).SetLink(child.gameObject);
     }
 
     // ★ アニメーション完了後にセルをマーク
@@ -446,7 +455,7 @@ bool SnapChildrenToGridsAndRecenterParent()
         Debug.Log($"スナップ完了: {gameObject.name}");
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
-    });
+    }).SetLink(gameObject);
 
     return true;
 }
@@ -841,7 +850,6 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         _cellsPositions.Clear();
         AnswerGridPos[] cells = GetComponentsInChildren<AnswerGridPos>(false);
         for (int i = 0; i < cells.Length; i++)
-        // for (int i = 0; i < _answerGridPoses.Count; i++)
 		{
 			workPos.x = cells[i].x;
 			workPos.y = cells[i].y;
@@ -946,7 +954,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             
             img.material.DOFade(targetAlpha, duration).OnComplete(() =>
             {
-            });
+            }).SetLink(img.gameObject);
         }
     }
 
@@ -1122,6 +1130,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
                 SetOutlineAlpha(0f, 0f);
 
                 Sequence seq = DOTween.Sequence();
+                seq.SetLink(this.gameObject);
                 foreach (Transform child in transform)
                 // foreach (AnswerGridPos agp in _answerGridPoses)
                 {
@@ -1250,6 +1259,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
 
             // ★ シェイク付きアニメーション (GridPieceListControllerの Shake Settings を利用)
             Sequence seq = DOTween.Sequence();
+            seq.SetLink(this.gameObject);
             seq.Append(returnedRt.DOShakePosition(_listCtrl.shakeDuration, new Vector3(_listCtrl.shakeStrength, 0, 0), _listCtrl.shakeVibrato, 90, false, true));
             seq.Append(returnedRt.DOMove(targetPos, _listCtrl.shiftTime).SetEase(Ease.OutQuad));
             // seq.Join(ReturnToList()); 

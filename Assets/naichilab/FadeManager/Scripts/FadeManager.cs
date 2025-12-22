@@ -46,6 +46,8 @@ public class FadeManager : MonoBehaviour
 	private bool isFading = false;
 	/// <summary>フェード色</summary>
 	public Color fadeColor = Color.black;
+	private float rotateDelay = 0.1f;
+	private float rotateTimer = 0.0f;
 
 
 	public void Awake ()
@@ -61,6 +63,10 @@ public class FadeManager : MonoBehaviour
 	private void FixedUpdate() {
 		if (this.isFading && _loadingImage != null && _canvasGroup != null)
 		{
+			rotateTimer += Time.fixedDeltaTime;
+			if (rotateTimer < rotateDelay)
+				return;
+			rotateTimer = 0f;
 			_loadingImage.Rotate(0f, 0f, -45f);
 		}
 	}
@@ -175,7 +181,19 @@ public class FadeManager : MonoBehaviour
             yield return null; // 次のフレームまで待機
         }
 		Debug.Log($"TransScene:フェードアウト");
-
+		
+		if(FadeOutInterval == 0f)
+		{
+			Debug.Log("TransScene:即時フェードアウト");
+			this.isFading = false;
+			this.fadeAlpha = 0f;
+			yield break;
+		}
+		// フェードアウトしない(外部から制御する)場合
+		if(FadeOutInterval < 0f)
+		{
+			yield break;
+		}
 		//だんだん明るく .
 		yield return StartCoroutine(FadeOutCoroutine (FadeOutInterval));
 

@@ -211,6 +211,7 @@ public class GridPieceListController : MonoBehaviour
         // 既存のシーケンスがあれば、念のため終了させる
         _alignSequence?.Kill(complete: false);
         _alignSequence = DOTween.Sequence(); // 新しいシーケンスを作成
+        _alignSequence.SetLink(this.gameObject);
         
         // ★ ピース移動処理をシーケンスに追加
         for (int i = 0; i < queue.Count; i++)
@@ -532,6 +533,7 @@ public class GridPieceListController : MonoBehaviour
             {
                 // 画面内に戻る場合 (D が C の位置に戻る): Shake → ターゲット位置へ
                 Sequence seq = DOTween.Sequence();
+                seq.SetLink(this.gameObject);
                 if (shouldShake)
                 {
                     seq.Append(returnedRt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
