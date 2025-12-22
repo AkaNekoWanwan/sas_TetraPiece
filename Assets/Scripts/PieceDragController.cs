@@ -52,6 +52,8 @@ public class PieceDragController : MonoBehaviour,
     // 現在のドラッグ中のマウス位置（スクリーン座標）
     private Vector2 currentDragScreenPosition;
     public Vector2 CurrentDragScreenPosition => currentDragScreenPosition;
+    private bool _isCreativeActive = false; // クリエイティブモードで「2本目の指」が押されているか
+    // クリエイティブモード（GameConst.IsCreativeMode() が true の場合）は、**「1本目の指はカーソル（位置指定）」、「2本目の指がクリック（トリガー）」。
     
     /// <summary>
     /// addYが0の場合に現在のピース位置にするために必要なマウスのスクリーン座標を取得
@@ -72,12 +74,7 @@ public class PieceDragController : MonoBehaviour,
         // ワールド座標をスクリーン座標に変換
         Camera camera = GetCanvasCamera();
         Vector2 screenPos;
-        
-        // if (RectTransformUtility.WorldPointToScreenPoint(camera, requiredWorldPoint, out screenPos))
-        // {
-        //     return screenPos;
-        // }
-        
+
         return currentDragScreenPosition; // フォールバック
     }
     

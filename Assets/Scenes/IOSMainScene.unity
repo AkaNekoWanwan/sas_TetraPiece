@@ -274,7 +274,7 @@ RectTransform:
   m_GameObject: {fileID: 1519692244227134401}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.4, y: 3.4, z: 3.4}
+  m_LocalScale: {x: 2.21, y: 2.21, z: 2.21}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 846867589006695762}
@@ -1315,14 +1315,14 @@ RectTransform:
   m_GameObject: {fileID: 4524906849311130942}
   m_LocalRotation: {x: 0, y: 0, z: 0.81915206, w: 0.57357645}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.65, y: 0.65, z: 0.65}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 127846533061943622}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 110}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 19.1, y: -238.5}
+  m_AnchoredPosition: {x: 20, y: -375}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &883445642999623057
@@ -6549,8 +6549,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Guidance
   guidanceRect: {fileID: 846867589006695762}
-  startAnchorPos: {x: 20, y: -240}
-  endAnchorPos: {x: 90, y: -25}
+  startAnchorPos: {x: 20, y: -375}
+  endAnchorPos: {x: 127, y: -25}
   animationDuration: 1.5
   loopNumber: -1
 --- !u!224 &4526246808350786020
