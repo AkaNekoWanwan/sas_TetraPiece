@@ -117,9 +117,24 @@ public class HandCursorController : MonoBehaviour
 
     void Update()
     {
+        bool isTouchingNow = false;
+        bool isTouchDown = false;
+        bool isTouchUp = false;
+        // IsCreativeTwoPointTouch
+        if(GameDataManager.OnTouchDown)
+            isTouchDown = true;
+        if(GameDataManager.OnTouch)
+        {
+            isTouchingNow = true;
+            // Debug.Log("HandCursor: isTouchingNow");
+        }
+        if(GameDataManager.OnTouchUp )
+            isTouchUp = true;
+
         // ===== ピース追従モード：ドラッグ中のピースに追従 =====
         if (followDraggedPiece && DragStateManager.IsDragging)
         {
+            Debug.Log("HandCursor: piece follow");
             // 異なるキャンバス間での座標変換を正しく処理
             if (ScreenToParentLocal(Camera.main.WorldToScreenPoint(DragStateManager.CurrentDraggingPiece.transform.position), out var localPos))
             {
@@ -138,10 +153,12 @@ public class HandCursorController : MonoBehaviour
         }
 
         // ===== Press start =====
-        if (Input.GetMouseButtonDown(0))
+        if (isTouchDown)
         {
             isTouching = true;
             lockedNear = false;
+
+            // Debug.Log("HandCursor: Touch Down");
 
             KillAllTweens(); // 途中のTweenは破棄
 
@@ -196,15 +213,13 @@ public class HandCursorController : MonoBehaviour
         }
 
         // ===== While pressing =====
-        if (isTouching && Input.GetMouseButton(0))
+        if (isTouching && isTouchingNow)
         {
             // TweenThenExact の初回寄せ中は待つ
             if (followMode == FollowMode.TweenThenExact && moveTween != null && moveTween.IsActive())
                 return;
-
             if (!ScreenToParentLocal(Input.mousePosition, out var localPos))
                 return;
-
             var targetPos = localPos + dragOffset;
             float dist = Vector2.Distance(handCursor.anchoredPosition, targetPos);
 
@@ -268,7 +283,7 @@ public class HandCursorController : MonoBehaviour
         }
 
         // ===== Release =====
-        if (Input.GetMouseButtonUp(0))
+        if (isTouchUp)
         {
             if (!isTouching) 
             {

@@ -321,6 +321,7 @@ public class StageManager : MonoBehaviour
         {
             pureElapsedTime += Time.deltaTime;
         }
+        GameDataManager.UpdateTouchInfo();
     }
     public void FixedUpdate()
     {

@@ -217,6 +217,11 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        OnBeginDragExecute(eventData);
+    }
+
+    public void OnBeginDragExecute(PointerEventData eventData)
+    {
         if (isLocked) return;
         wasDragged = true;
         isDragging = true;
@@ -235,6 +240,11 @@ public class PieceDragController : MonoBehaviour,
     }
 
     public void OnDrag(PointerEventData eventData)
+    {
+        OnDragExecute(eventData);
+    }
+
+    public void OnDragExecute(PointerEventData eventData)
     {
         if (isLocked) return;
         
@@ -263,6 +273,182 @@ public class PieceDragController : MonoBehaviour,
             
             // 指の細かい動きを無視するためにスムージング
             smoothedPosition = Vector3.Lerp(smoothedPosition, targetPosition, smoothingFactor);
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        OnPointerDownExecute(eventData);
+    }
+    public void OnPointerDownExecute(PointerEventData eventData)
+    {
+        if (isLocked) return;
+        transform.SetAsLastSibling();
+        var hand = FindAnyObjectByType<HandCursorController>();
+        originalPos = rt.position;
+        if(!isSetOriginalScale)
+            originalScale = initialScale;
+        wasDragged = false;
+
+        if(rt.localScale == Vector3.one)
+        {
+            rt.localScale = Vector3.one * 0.90f;
+            rt.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+        }
+        else
+            rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        RestoreChildrenMaterials();
+        SetOutlineAlpha(1f, 0f);
+
+        // アウトラインを非表示にする
+        SetOutlineAlpha(0f, 0.1f);
+
+        // ★ RenderQueueを変更
+        SetRenderQueue(3004 + addQueue, 3003 + addQueue);
+        addQueue += 2;
+
+        VibratorManager.Vibrate(70, 40);
+
+        Vector3 worldPoint;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            rt, eventData.position, eventData.pressEventCamera, out worldPoint))
+        {
+            dragOffset = rt.position - worldPoint;
+            Vector3 targetPos = FixZ(worldPoint + dragOffset);
+
+            // 盤面上にあるなら少し上に移動させる
+            if (lastSnappedPos != Vector3.zero)
+            {
+                targetPos.y += GameConst.ADD_Y_OFFSET;
+            }
+
+            smoothedPosition = targetPos;
+            _moveTween?.Kill();
+            _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
+        }
+
+        AudioManager.Instance.PlayHoldSound();
+        SetActiveShadow(false);
+    }
+
+    public void SetActiveShadow(bool isActive)
+    {
+        foreach (AnswerGridPos agp in _answerGridPoses)
+        {
+            agp.shadowTransform.gameObject.SetActive(isActive);
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        OnEndDragExecute(eventData);
+    }
+
+    public void OnEndDragExecute(PointerEventData eventData)
+    {
+        if (isLocked) return;
+
+        // ドラッグ状態を解除
+        DragStateManager.UnregisterDrag(this);
+
+        // rt.transform.localScale = Vector3.one;
+        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        AudioManager.Instance.PlayPlaceSound();
+        isDragging = false;
+
+        bool snapStarted = SnapChildrenToGridsAndRecenterParent();
+        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted}");
+        if (!snapStarted)
+        {
+            ReleaseOccupiedCells();
+            RestoreRenderQueue();
+            SetOutlineAlpha(1f, 0.2f);
+            
+            // ★ 分岐ロジック: 最後にスナップされた位置があるか？
+            if (lastSnappedPos != Vector3.zero) 
+            {
+                // 1. 盤面に一度置かれたことがある場合
+                ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
+            }
+            else
+            {
+                // 2. リストから初めてドラッグされた場合
+                // リストに戻す (シェイクなし)
+                if (_listCtrl != null) 
+                {
+                    // ★ 変更箇所: shouldShake: false を渡してシェイクを抑制
+                    _listCtrl.NotifyReturned(this, shouldShake: false); 
+                }
+                // Debug.Log("サイズ不具合チェック：５");
+                rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+                SetActiveShadow(true);
+            }
+            
+            return;
+        }
+        DOVirtual.DelayedCall(0.4f, () =>
+        {
+            var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
+            if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
+
+            // ★ RenderQueueを元に戻す
+            RestoreRenderQueue();
+
+            if (CheckAnswer() && !isCreative)
+            {
+                isLocked = true;
+                SetOutlineAlpha(0f, 0f);
+
+                Sequence seq = DOTween.Sequence();
+                seq.SetLink(this.gameObject);
+                foreach (Transform child in transform)
+                // foreach (AnswerGridPos agp in _answerGridPoses)
+                {
+                    AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
+                    if (agp != null && agp.answerGrid != null)
+                    {
+                        agp.answerGrid.SetActive(false);
+                    }
+                }
+                AudioManager.Instance.PlayMergeSound();
+                var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
+                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear));
+                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.15f).SetEase(Ease.Linear));
+            }
+            else
+            {
+                RestoreChildrenMaterials();
+                SetOutlineAlpha(1f, 0f);
+            }
+
+            // TryMergeNearbyPieces();
+        });
+        if(_isMove)
+            _stageManager.CountDownMove();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        OnPointerUpExecute(eventData);
+        if(!isDragging)
+            OnEndDragExecute(eventData);
+    }
+
+    public void OnPointerUpExecute(PointerEventData eventData)
+    {
+        if (!wasDragged && !isLocked)
+        {
+            isDragging = false;
+            var hand = FindAnyObjectByType<HandCursorController>();
+            
+            // ★ RenderQueueを元に戻す
+            RestoreRenderQueue();
+            
+            // ReturnToOrigin();
+        }
+        if(lastSnappedPos == Vector3.zero && !isDragging)
+        {
+            rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         }
     }
 
@@ -1026,166 +1212,6 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
 
     // ★ 元のRenderQueueを保存する辞書を追加
     private Dictionary<Material, int> originalRenderQueues = new Dictionary<Material, int>();
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (isLocked) return;
-        transform.SetAsLastSibling();
-        var hand = FindAnyObjectByType<HandCursorController>();
-        originalPos = rt.position;
-        if(!isSetOriginalScale)
-            originalScale = initialScale;
-        wasDragged = false;
-
-        if(rt.localScale == Vector3.one)
-        {
-            rt.localScale = Vector3.one * 0.90f;
-            rt.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
-        }
-        else
-            rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
-        RestoreChildrenMaterials();
-        SetOutlineAlpha(1f, 0f);
-
-        // アウトラインを非表示にする
-        SetOutlineAlpha(0f, 0.1f);
-
-        // ★ RenderQueueを変更
-        SetRenderQueue(3004 + addQueue, 3003 + addQueue);
-        addQueue += 2;
-
-        VibratorManager.Vibrate(70, 40);
-
-        Vector3 worldPoint;
-        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, eventData.position, eventData.pressEventCamera, out worldPoint))
-        {
-            dragOffset = rt.position - worldPoint;
-            Vector3 targetPos = FixZ(worldPoint + dragOffset);
-
-            // 盤面上にあるなら少し上に移動させる
-            if (lastSnappedPos != Vector3.zero)
-            {
-                targetPos.y += GameConst.ADD_Y_OFFSET;
-            }
-
-            smoothedPosition = targetPos;
-            _moveTween?.Kill();
-            _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
-        }
-
-        AudioManager.Instance.PlayHoldSound();
-        SetActiveShadow(false);
-    }
-
-    public void SetActiveShadow(bool isActive)
-    {
-        foreach (AnswerGridPos agp in _answerGridPoses)
-        {
-            agp.shadowTransform.gameObject.SetActive(isActive);
-        }
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (isLocked) return;
-
-        // ドラッグ状態を解除
-        DragStateManager.UnregisterDrag(this);
-
-        // rt.transform.localScale = Vector3.one;
-        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
-        AudioManager.Instance.PlayPlaceSound();
-        isDragging = false;
-
-        bool snapStarted = SnapChildrenToGridsAndRecenterParent();
-        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted}");
-        if (!snapStarted)
-        {
-            ReleaseOccupiedCells();
-            RestoreRenderQueue();
-            SetOutlineAlpha(1f, 0.2f);
-            
-            // ★ 分岐ロジック: 最後にスナップされた位置があるか？
-            if (lastSnappedPos != Vector3.zero) 
-            {
-                // 1. 盤面に一度置かれたことがある場合
-                ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
-            }
-            else
-            {
-                // 2. リストから初めてドラッグされた場合
-                // リストに戻す (シェイクなし)
-                if (_listCtrl != null) 
-                {
-                    // ★ 変更箇所: shouldShake: false を渡してシェイクを抑制
-                    _listCtrl.NotifyReturned(this, shouldShake: false); 
-                }
-                // Debug.Log("サイズ不具合チェック：５");
-                rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
-                SetActiveShadow(true);
-            }
-            
-            return;
-        }
-        DOVirtual.DelayedCall(0.4f, () =>
-        {
-            var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
-            if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
-
-            // ★ RenderQueueを元に戻す
-            RestoreRenderQueue();
-
-            if (CheckAnswer() && !isCreative)
-            {
-                isLocked = true;
-                SetOutlineAlpha(0f, 0f);
-
-                Sequence seq = DOTween.Sequence();
-                seq.SetLink(this.gameObject);
-                foreach (Transform child in transform)
-                // foreach (AnswerGridPos agp in _answerGridPoses)
-                {
-                    AnswerGridPos agp = child.GetComponent<AnswerGridPos>();
-                    if (agp != null && agp.answerGrid != null)
-                    {
-                        agp.answerGrid.SetActive(false);
-                    }
-                }
-                AudioManager.Instance.PlayMergeSound();
-                var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
-                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear));
-                seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.15f).SetEase(Ease.Linear));
-            }
-            else
-            {
-                RestoreChildrenMaterials();
-                SetOutlineAlpha(1f, 0f);
-            }
-
-            // TryMergeNearbyPieces();
-        });
-        if(_isMove)
-            _stageManager.CountDownMove();
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (!wasDragged && !isLocked)
-        {
-            isDragging = false;
-            var hand = FindAnyObjectByType<HandCursorController>();
-            
-            // ★ RenderQueueを元に戻す
-            RestoreRenderQueue();
-            
-            // ReturnToOrigin();
-        }
-        if(lastSnappedPos == Vector3.zero && !isDragging)
-        {
-            rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
-        }
-    }
 
     // ★ RenderQueueを設定する新しいメソッド
     void SetRenderQueue(int cellQueue, int outlineQueue)

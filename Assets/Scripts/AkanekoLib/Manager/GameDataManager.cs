@@ -100,4 +100,65 @@ public static class GameDataManager
                 break;
         }
     }
+
+    public static bool IsCreativeTwoPointTouch()
+    {
+        if(GameConst.IsCreativeMode() == false)
+            return false;
+        if(Input.touchCount != 2 && !Input.GetKey(KeyCode.LeftShift))
+            return false;
+        return true;
+    }
+
+    private static bool _onTouch = false;
+    private static bool _onTouchDown = false;
+    private static bool _onTouchUp = false;
+    private static bool _beforeOnTouch = false;
+    public static bool OnTouch => _onTouch;
+    public static bool OnTouchDown => _onTouchDown;
+    public static bool OnTouchUp => _onTouchUp;
+    public static void UpdateTouchInfo()
+    {
+        if(!GameConst.IsCreativeMode())
+        {
+            if(Input.touchCount > 0 || Input.GetMouseButton(0))
+            {
+                _onTouch = true;
+            }
+            else
+            {
+                _onTouch = false;
+            }
+        }
+        else
+        {
+            if(IsCreativeTwoPointTouch())
+            {
+                _onTouch = true;
+            }
+            else
+            {
+                _onTouch = false;
+            }
+        }
+
+        if(_onTouch)
+        {
+            if(!_beforeOnTouch)
+                _onTouchDown = true;
+            else
+                _onTouchDown = false;
+            _onTouchUp = false;
+            _beforeOnTouch = true;
+        }
+        else
+        {
+            if(_beforeOnTouch)
+                _onTouchUp = true;
+            else
+                _onTouchUp = false;
+            _onTouchDown = false;
+            _beforeOnTouch = false;
+        }
+    }
 }

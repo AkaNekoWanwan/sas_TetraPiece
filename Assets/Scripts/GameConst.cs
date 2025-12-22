@@ -3,7 +3,7 @@ using UnityEngine;
 public static class GameConst
 {
 // #if UNITY_EDITOR
-    private const bool IsCreative = true;
+    private const bool IsCreative = false;
 // #else
     // private const bool IsCreative = false;
 // #endif
