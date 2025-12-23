@@ -92,6 +92,8 @@ public class HandCursorController : MonoBehaviour
     private Camera cam;
     private RectTransform targetRect;
 
+    private bool _isSetFollowDraggedPieceOffset = false;
+
     void Awake()
     {
         if (!handCursor) handCursor = GetComponent<RectTransform>();
@@ -138,6 +140,12 @@ public class HandCursorController : MonoBehaviour
             // 異なるキャンバス間での座標変換を正しく処理
             if (ScreenToParentLocal(Camera.main.WorldToScreenPoint(DragStateManager.CurrentDraggingPiece.transform.position), out var localPos))
             {
+                if( !_isSetFollowDraggedPieceOffset)
+                {
+                    pieceFollowOffset = handCursor.anchoredPosition - localPos;
+                    _isSetFollowDraggedPieceOffset = true;
+                }
+
                 handCursor.anchoredPosition = localPos + pieceFollowOffset;
                 
                 // ピース追従中はロック状態を維持
@@ -151,6 +159,7 @@ public class HandCursorController : MonoBehaviour
             }
             return; // ピース追従中は通常の処理をスキップ
         }
+        _isSetFollowDraggedPieceOffset = false;
 
         // ===== Press start =====
         if (isTouchDown)
@@ -162,7 +171,7 @@ public class HandCursorController : MonoBehaviour
 
             KillAllTweens(); // 途中のTweenは破棄
 
-            if (!ScreenToParentLocal(Input.mousePosition, out var localPos))
+            if (!ScreenToParentLocal(GameDataManager.GetMousePosition(), out var localPos))
                 return;
 
             var targetPos = localPos + dragOffset;
@@ -218,7 +227,7 @@ public class HandCursorController : MonoBehaviour
             // TweenThenExact の初回寄せ中は待つ
             if (followMode == FollowMode.TweenThenExact && moveTween != null && moveTween.IsActive())
                 return;
-            if (!ScreenToParentLocal(Input.mousePosition, out var localPos))
+            if (!ScreenToParentLocal(GameDataManager.GetMousePosition(), out var localPos))
                 return;
             var targetPos = localPos + dragOffset;
             float dist = Vector2.Distance(handCursor.anchoredPosition, targetPos);
@@ -255,13 +264,10 @@ public class HandCursorController : MonoBehaviour
         }
 
         // ===== Idle (not pressing): slow follow + jitter ignore =====
-        Debug.Log($"Touching Log: 1: isTouching={isTouching}, isTouchingNow={isTouchingNow}, useIdleFollow={useIdleFollow}, Input.touchCount={Input.touchCount}");
         if (!isTouching && useIdleFollow)
         {
-            Debug.Log($"Touching Log: 2");
-            if (ScreenToParentLocal(Input.mousePosition, out var localPos))
+            if (ScreenToParentLocal(GameDataManager.GetMousePosition(), out var localPos))
             {
-                Debug.Log($"Touching Log: 3");
                 // 小揺れはターゲット更新しない
                 if (!hasIdleTarget || Vector2.Distance(lastIdleTarget, localPos) >= idleMinPointerDelta)
                 {

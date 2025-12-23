@@ -49,7 +49,7 @@ public class PieceDragController : MonoBehaviour,
     private Vector3 smoothedPosition;
     private bool isDragging = false;
     private bool isCreativeDragging = false;
-    private Vector3 _tapMousePos = Vector3.zero;
+    private Vector2 _tapMousePos = Vector2.zero;
 
     public static PieceDragController draggingPiece = null;
     
@@ -116,7 +116,6 @@ public class PieceDragController : MonoBehaviour,
     private StageManager _stageManager = default;
     private bool _isMove = false;
     private bool _isTaping = false;
-    private PointerEventData _lastEventData = null;
 
     void Awake()
     {
@@ -175,7 +174,7 @@ public class PieceDragController : MonoBehaviour,
             }
             if(GameDataManager.OnTouch)
             {
-                if((_tapMousePos != Input.mousePosition && draggingPiece == this) || isDragging)
+                if((_tapMousePos != GameDataManager.GetMousePosition() && draggingPiece == this) || isDragging)
                 {
                     if(!isDragging)
                     {
@@ -281,26 +280,6 @@ public class PieceDragController : MonoBehaviour,
     {
         if(GameConst.IsCreativeMode() )
         {
-            // if( GameDataManager.OnTouch)
-            // {
-            //     if(_isOnPointer && draggingPiece == null)
-            //     {
-            //         OnPointerDownExecute(eventData);
-            //     }
-            //     if(draggingPiece == this)
-            //     {
-            //         if(!isDragging)
-            //         {
-            //             OnBeginDragExecute();
-            //         }
-            //         OnDragExecute();
-            //     }
-            // }
-            // else if( draggingPiece == this)
-            // {
-            //     OnPointerUpExecute();
-            //     OnEndDragExecute();
-            // }
             return;
         }
         OnDragExecute();
@@ -308,18 +287,18 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnDragExecute()
     {
-        // Debug.Log($"OnDragExecute:{eventData.position}, {Input.mousePosition}, {eventData.pressEventCamera}");
+        // Debug.Log($"OnDragExecute:{eventData.position}, {GameDataManager.GetMousePosition()}, {eventData.pressEventCamera}");
 
         if (isLocked) return;
         
         // マウス位置を保存
-        currentDragScreenPosition = Input.mousePosition;
+        currentDragScreenPosition = GameDataManager.GetMousePosition();
         
         Vector3 worldPoint;
         // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
         //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, Input.mousePosition, Camera.main, out worldPoint))
+            rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
         {
             // 目標位置を計算
             Vector3 targetPosition = FixZ(worldPoint + dragOffset);
@@ -347,7 +326,6 @@ public class PieceDragController : MonoBehaviour,
         if(GameConst.IsCreativeMode() && draggingPiece == null)
         {
             _isOnPointer = true;
-            _lastEventData = eventData;
             if(GameDataManager.OnTouch)
                 OnPointerDownExecute();
             return;
@@ -365,7 +343,7 @@ public class PieceDragController : MonoBehaviour,
         if(!isSetOriginalScale)
             originalScale = initialScale;
         wasDragged = false;
-        _tapMousePos = Input.mousePosition;
+        _tapMousePos = GameDataManager.GetMousePosition();
 
         if(rt.localScale == Vector3.one)
         {
@@ -390,7 +368,7 @@ public class PieceDragController : MonoBehaviour,
         // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
         //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, Input.mousePosition, Camera.main, out worldPoint))
+            rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
         {
             dragOffset = rt.position - worldPoint;
             Vector3 targetPos = FixZ(worldPoint + dragOffset);
@@ -547,7 +525,6 @@ public class PieceDragController : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
         _isOnPointer = true;
-        _lastEventData = eventData;
         if(GameConst.IsCreativeMode() )
         {
             if( GameDataManager.OnTouch)

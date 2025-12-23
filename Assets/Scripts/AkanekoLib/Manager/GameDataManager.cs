@@ -112,6 +112,9 @@ public static class GameDataManager
         return false;
     }
 
+
+    // クリエイティブモードをゲーム中に切り替えられるようにするための処理
+    private static bool IsCreativeMode = false;
     private static bool _onTouch = false;
     private static bool _onTouchDown = false;
     private static bool _onTouchUp = false;
@@ -161,6 +164,32 @@ public static class GameDataManager
                 _onTouchUp = false;
             _onTouchDown = false;
             _beforeOnTouch = false;
+        }
+    }
+
+    public static Vector2 GetMousePosition()
+    {
+        if(!GameConst.IsCreativeMode())
+        {
+            if(Input.touchCount > 0)
+            {
+                return Input.GetTouch(0).position;
+            }
+            else
+            {
+                return Input.mousePosition;
+            }
+        }
+        else
+        {
+            if(Input.touchCount > 0)
+            {
+                return Input.GetTouch(0).position;
+            }
+            else
+            {
+                return Input.mousePosition;
+            }
         }
     }
 }
