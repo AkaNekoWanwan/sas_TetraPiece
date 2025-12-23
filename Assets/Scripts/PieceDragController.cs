@@ -10,7 +10,7 @@ using UnityEditor;
 
 public class PieceDragController : MonoBehaviour,
     IPointerDownHandler, IPointerUpHandler,
-    IBeginDragHandler, IDragHandler, IEndDragHandler
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Snap Settings")]
     public Transform gridParent;
@@ -48,11 +48,16 @@ public class PieceDragController : MonoBehaviour,
     // ドラッグ中の目標位置とスムージング
     private Vector3 smoothedPosition;
     private bool isDragging = false;
+    private bool isCreativeDragging = false;
+    private Vector3 _tapMousePos = Vector3.zero;
+
+    public static PieceDragController draggingPiece = null;
     
     // 現在のドラッグ中のマウス位置（スクリーン座標）
     private Vector2 currentDragScreenPosition;
     public Vector2 CurrentDragScreenPosition => currentDragScreenPosition;
     private bool _isCreativeActive = false; // クリエイティブモードで「2本目の指」が押されているか
+    private bool _isOnPointer = false; // ポインターがピース上にあるか
     // クリエイティブモード（GameConst.IsCreativeMode() が true の場合）は、**「1本目の指はカーソル（位置指定）」、「2本目の指がクリック（トリガー）」。
     
     /// <summary>
@@ -110,6 +115,8 @@ public class PieceDragController : MonoBehaviour,
     private int addQueue = 0;
     private StageManager _stageManager = default;
     private bool _isMove = false;
+    private bool _isTaping = false;
+    private PointerEventData _lastEventData = null;
 
     void Awake()
     {
@@ -155,6 +162,34 @@ public class PieceDragController : MonoBehaviour,
         if (isDragging && !isLocked)
         {
             rt.position = smoothedPosition;
+            // lastEventData
+        }
+        if(GameConst.IsCreativeMode())
+        {
+            if(_isOnPointer && !_isTaping && draggingPiece == null)
+            {
+                if(GameDataManager.OnTouch)
+                {
+                    OnPointerDownExecute();
+                }
+            }
+            if(GameDataManager.OnTouch)
+            {
+                if((_tapMousePos != Input.mousePosition && draggingPiece == this) || isDragging)
+                {
+                    if(!isDragging)
+                    {
+                        OnBeginDragExecute();
+                    }
+                    OnDragExecute();
+                }
+            }
+            
+            if( draggingPiece == this && !GameDataManager.OnTouch)
+            {
+                OnPointerUpExecute();
+                OnEndDragExecute();
+            }
         }
     }
 
@@ -181,8 +216,6 @@ public class PieceDragController : MonoBehaviour,
         pos.z = initialZ;
         return pos;
     }
-
-   
 
     void RestoreChildrenMaterials()
     {
@@ -217,10 +250,15 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        OnBeginDragExecute(eventData);
+        if(GameConst.IsCreativeMode())
+        {
+            if(!_isTaping)
+                return;
+        }
+        OnBeginDragExecute();
     }
 
-    public void OnBeginDragExecute(PointerEventData eventData)
+    public void OnBeginDragExecute()
     {
         if (isLocked) return;
         wasDragged = true;
@@ -241,19 +279,47 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
-        OnDragExecute(eventData);
+        if(GameConst.IsCreativeMode() )
+        {
+            // if( GameDataManager.OnTouch)
+            // {
+            //     if(_isOnPointer && draggingPiece == null)
+            //     {
+            //         OnPointerDownExecute(eventData);
+            //     }
+            //     if(draggingPiece == this)
+            //     {
+            //         if(!isDragging)
+            //         {
+            //             OnBeginDragExecute();
+            //         }
+            //         OnDragExecute();
+            //     }
+            // }
+            // else if( draggingPiece == this)
+            // {
+            //     OnPointerUpExecute();
+            //     OnEndDragExecute();
+            // }
+            return;
+        }
+        OnDragExecute();
     }
 
-    public void OnDragExecute(PointerEventData eventData)
+    public void OnDragExecute()
     {
+        // Debug.Log($"OnDragExecute:{eventData.position}, {Input.mousePosition}, {eventData.pressEventCamera}");
+
         if (isLocked) return;
         
         // マウス位置を保存
-        currentDragScreenPosition = eventData.position;
+        currentDragScreenPosition = Input.mousePosition;
         
         Vector3 worldPoint;
+        // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+        //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, eventData.position, eventData.pressEventCamera, out worldPoint))
+            rt, Input.mousePosition, Camera.main, out worldPoint))
         {
             // 目標位置を計算
             Vector3 targetPosition = FixZ(worldPoint + dragOffset);
@@ -278,17 +344,28 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        OnPointerDownExecute(eventData);
+        if(GameConst.IsCreativeMode() && draggingPiece == null)
+        {
+            _isOnPointer = true;
+            _lastEventData = eventData;
+            if(GameDataManager.OnTouch)
+                OnPointerDownExecute();
+            return;
+        }
+        OnPointerDownExecute();
     }
-    public void OnPointerDownExecute(PointerEventData eventData)
+    public void OnPointerDownExecute()
     {
         if (isLocked) return;
+        _isTaping = true;
+        draggingPiece = this;
         transform.SetAsLastSibling();
         var hand = FindAnyObjectByType<HandCursorController>();
         originalPos = rt.position;
         if(!isSetOriginalScale)
             originalScale = initialScale;
         wasDragged = false;
+        _tapMousePos = Input.mousePosition;
 
         if(rt.localScale == Vector3.one)
         {
@@ -310,8 +387,10 @@ public class PieceDragController : MonoBehaviour,
         VibratorManager.Vibrate(70, 40);
 
         Vector3 worldPoint;
+        // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+        //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, eventData.position, eventData.pressEventCamera, out worldPoint))
+            rt, Input.mousePosition, Camera.main, out worldPoint))
         {
             dragOffset = rt.position - worldPoint;
             Vector3 targetPos = FixZ(worldPoint + dragOffset);
@@ -341,10 +420,15 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        OnEndDragExecute(eventData);
+        if(GameConst.IsCreativeMode())
+        {
+            if(draggingPiece != this)
+                return;
+        }
+        OnEndDragExecute();
     }
 
-    public void OnEndDragExecute(PointerEventData eventData)
+    public void OnEndDragExecute()
     {
         if (isLocked) return;
 
@@ -429,13 +513,19 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        OnPointerUpExecute(eventData);
-        if(!isDragging)
-            OnEndDragExecute(eventData);
+        if(GameConst.IsCreativeMode())
+        {
+            if(draggingPiece != this)
+                return;
+        }
+        OnPointerUpExecute();
+        if(!isDragging || GameConst.IsCreativeMode())
+            OnEndDragExecute();
     }
 
-    public void OnPointerUpExecute(PointerEventData eventData)
+    public void OnPointerUpExecute()
     {
+        _isTaping = false;
         if (!wasDragged && !isLocked)
         {
             isDragging = false;
@@ -450,6 +540,28 @@ public class PieceDragController : MonoBehaviour,
         {
             rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         }
+
+        draggingPiece = null;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _isOnPointer = true;
+        _lastEventData = eventData;
+        if(GameConst.IsCreativeMode() )
+        {
+            if( GameDataManager.OnTouch)
+            {
+                if( !_isTaping && draggingPiece == null)
+                {
+                    OnPointerDownExecute();
+                }
+            }
+        }
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _isOnPointer = false;
     }
 
   public void ReleaseOccupiedCells()

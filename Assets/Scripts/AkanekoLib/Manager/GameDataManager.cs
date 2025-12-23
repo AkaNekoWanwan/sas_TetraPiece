@@ -105,9 +105,11 @@ public static class GameDataManager
     {
         if(GameConst.IsCreativeMode() == false)
             return false;
-        if(Input.touchCount != 2 && !Input.GetKey(KeyCode.LeftShift))
-            return false;
-        return true;
+        if(2 <= Input.touchCount)
+            return true;
+        if((Input.GetKey(KeyCode.LeftShift) || Input.GetMouseButton(1)) && Input.GetMouseButton(0))
+            return true;
+        return false;
     }
 
     private static bool _onTouch = false;
