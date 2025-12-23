@@ -171,7 +171,8 @@ public class StageManager : MonoBehaviour
         {
             _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
         }
-        _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
+        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
+        _creativeCanvas.SetActive(GameConst.IsCreativeMode());
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
 
         if(GameConst.IsCreativeMode())
@@ -280,7 +281,7 @@ public class StageManager : MonoBehaviour
 
         await Task.Yield();
         // 初回ステージならステージの読み込みを待ってからフェードアウト
-        if(PlayerPrefs.GetInt("totalLevel", 1) == 1)
+        if(PlayerPrefs.GetInt("totalLevel", 1) == 1 || GameConst.IsCreativeMode())
         {
             FadeManager.Instance.FadeOut(0.5f);
             if(Guidance.Instance != null && GameConst.IsCreativeMode() == false)

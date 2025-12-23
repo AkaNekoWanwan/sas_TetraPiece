@@ -3,12 +3,12 @@ using UnityEngine;
 public static class GameConst
 {
 // #if UNITY_EDITOR
-    private const bool IsCreative = false;
+    private const bool IsCreative = true;
 // #else
     // private const bool IsCreative = false;
 // #endif
 #if UNITY_EDITOR
-    private const bool IsScreenShot = true;
+    private const bool IsScreenShot = false;
 #else
     private const bool IsScreenShot = false;
 #endif

@@ -255,10 +255,13 @@ public class HandCursorController : MonoBehaviour
         }
 
         // ===== Idle (not pressing): slow follow + jitter ignore =====
+        Debug.Log($"Touching Log: 1: isTouching={isTouching}, isTouchingNow={isTouchingNow}, useIdleFollow={useIdleFollow}, Input.touchCount={Input.touchCount}");
         if (!isTouching && useIdleFollow)
         {
+            Debug.Log($"Touching Log: 2");
             if (ScreenToParentLocal(Input.mousePosition, out var localPos))
             {
+                Debug.Log($"Touching Log: 3");
                 // 小揺れはターゲット更新しない
                 if (!hasIdleTarget || Vector2.Distance(lastIdleTarget, localPos) >= idleMinPointerDelta)
                 {
