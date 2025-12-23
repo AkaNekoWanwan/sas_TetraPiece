@@ -163,7 +163,7 @@ public class PieceDragController : MonoBehaviour,
             rt.position = smoothedPosition;
             // lastEventData
         }
-        if(GameConst.IsCreativeMode())
+        if(GameDataManager.IsCreativeMode)
         {
             if(_isOnPointer && !_isTaping && draggingPiece == null)
             {
@@ -249,7 +249,7 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if(GameConst.IsCreativeMode())
+        if(GameDataManager.IsCreativeMode)
         {
             if(!_isTaping)
                 return;
@@ -278,7 +278,7 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(GameConst.IsCreativeMode() )
+        if(GameDataManager.IsCreativeMode )
         {
             return;
         }
@@ -323,7 +323,7 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(GameConst.IsCreativeMode() && draggingPiece == null)
+        if(GameDataManager.IsCreativeMode && draggingPiece == null)
         {
             _isOnPointer = true;
             if(GameDataManager.OnTouch)
@@ -398,7 +398,7 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if(GameConst.IsCreativeMode())
+        if(GameDataManager.IsCreativeMode)
         {
             if(draggingPiece != this)
                 return;
@@ -491,13 +491,13 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if(GameConst.IsCreativeMode())
+        if(GameDataManager.IsCreativeMode)
         {
             if(draggingPiece != this)
                 return;
         }
         OnPointerUpExecute();
-        if(!isDragging || GameConst.IsCreativeMode())
+        if(!isDragging || GameDataManager.IsCreativeMode)
             OnEndDragExecute();
     }
 
@@ -525,7 +525,7 @@ public class PieceDragController : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
         _isOnPointer = true;
-        if(GameConst.IsCreativeMode() )
+        if(GameDataManager.IsCreativeMode )
         {
             if( GameDataManager.OnTouch)
             {
@@ -1164,7 +1164,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             // float scale = 1.05f;
 
             float scale = 1.00f;
-            if(isCreative || GameConst.IsCreativeMode())
+            if(isCreative || GameDataManager.IsCreativeMode)
                 scale = 0f;
             // if(triOutlineHandler != null)
             //     scale = triOutlineHandler.Scale;

@@ -49,7 +49,7 @@ public class AdsManager : MonoBehaviour
 
         MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
         {
-            if(GameConst.IsCreativeMode() || GameConst.IsScreenShotMode())
+            if(GameDataManager.IsCreativeMode || GameConst.IsScreenShotMode())
             {
                 return;
             }

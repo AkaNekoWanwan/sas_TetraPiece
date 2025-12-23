@@ -51,7 +51,7 @@ public class HomeManager : MonoBehaviour
 
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
         // 初回プレイ時はフェードアウトをステージマネージャー側に任せる
-        if(totalLevel != 1 || GameConst.IsCreativeMode()) 
+        if(totalLevel != 1 || GameDataManager.IsCreativeMode) 
             FadeManager.Instance.FadeOut(0.5f);
     }
 
@@ -62,7 +62,7 @@ public class HomeManager : MonoBehaviour
         
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
         // 初回プレイ時はホーム画面を表示しない
-        if(totalLevel == 1 || GameConst.IsCreativeMode())
+        if(totalLevel == 1 || GameDataManager.IsCreativeMode)
         {
             HideView();
             return;

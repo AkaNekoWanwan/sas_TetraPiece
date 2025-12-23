@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class SettingManager : MonoBehaviour
 {
@@ -34,6 +35,12 @@ public class SettingManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if(AudioManager.Instance == null)
+        {
+            SceneManager.LoadScene ("FirstLoadScene");
+            return;
+        }
+
         _settingView.gameObject.SetActive(true);
         _settingView.localScale = Vector3.zero;
         _closeButton.onClick += CloseView;
@@ -51,7 +58,7 @@ public class SettingManager : MonoBehaviour
         {
             // ホームに戻る
             GameDataManager.IsHome = true;
-            PlayerPrefs.SetInt("DailyStage", -1);
+            PlayerPrefs.SetInt("FirstLoadScene", -1);
             FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         };
     }

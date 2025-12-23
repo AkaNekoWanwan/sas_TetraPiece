@@ -43,7 +43,6 @@ public class StageManager : MonoBehaviour
     public float pureElapsedTime; // 純粋な経過時間
     private Coroutine autoSaveRoutine;
     private const string ELAPSED_TIME_KEY = "StageElapsedTime";
-
     public ClearViewManager _clearViewManager = default;
     public GameObject _defaultCanvas = default;
     public DebugUIManager _debugUIManager = default;
@@ -132,7 +131,7 @@ public class StageManager : MonoBehaviour
         {
             isTest = false;
         }
-        else if(GameConst.IsCreativeMode())
+        else if(GameDataManager.IsCreativeMode)
         {
             // isTest = true;
         }
@@ -146,6 +145,8 @@ public class StageManager : MonoBehaviour
 
     private async Task InitlializeColoutine()
     {
+        reloadButtonImage.gameObject.SetActive(!GameConst.IsScreenShotMode());
+        
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
         isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
@@ -163,7 +164,7 @@ public class StageManager : MonoBehaviour
         
         if(!GameDataManager.IsInit)
         {
-            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameConst.IsCreativeMode() && !GameConst.IsScreenShotMode();
+            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameDataManager.IsCreativeMode && !GameConst.IsScreenShotMode();
             GameDataManager.Initialize();
             GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
         }
@@ -171,11 +172,11 @@ public class StageManager : MonoBehaviour
         {
             _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
         }
-        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameConst.IsCreativeMode());
-        _creativeCanvas.SetActive(GameConst.IsCreativeMode());
-        _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameConst.IsCreativeMode());
+        // _creativeCanvas.SetActive(Debug.isDebugBuild && GameDataManager.IsCreativeMode);
+        _creativeCanvas.SetActive(GameDataManager.IsCreativeMode);
+        _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameDataManager.IsCreativeMode);
 
-        if(GameConst.IsCreativeMode())
+        if(GameDataManager.IsCreativeMode)
         {
             _debugUIManager.onDebugViewToggled += (bool isActive)=>{
                 _defaultCanvas.SetActive(isActive);
@@ -281,10 +282,10 @@ public class StageManager : MonoBehaviour
 
         await Task.Yield();
         // 初回ステージならステージの読み込みを待ってからフェードアウト
-        if(PlayerPrefs.GetInt("totalLevel", 1) == 1 || GameConst.IsCreativeMode())
+        if(PlayerPrefs.GetInt("totalLevel", 1) == 1 || GameDataManager.IsCreativeMode)
         {
             FadeManager.Instance.FadeOut(0.5f);
-            if(Guidance.Instance != null && GameConst.IsCreativeMode() == false)
+            if(Guidance.Instance != null && GameDataManager.IsCreativeMode == false)
                 Guidance.Instance.ShowGuidance();   // ガイダンスの表示
         }
     }
@@ -334,10 +335,10 @@ public class StageManager : MonoBehaviour
                 if (clearBuffer == 60)
                 {
                     isDoClearGame = true;
-                    if(GameConst.IsCreativeMode())
+                    if(GameDataManager.IsCreativeMode)
                         ClearGame(true);
                     clearBuffer = 0;
-                    if(!GameConst.IsCreativeMode())
+                    if(!GameDataManager.IsCreativeMode)
                         _clearNextButton.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetLink(_clearNextButton.gameObject);
                 }
             }
@@ -364,7 +365,8 @@ public class StageManager : MonoBehaviour
     {
         if(_moveCountText == null)
             return;
-        _MoveCount--;
+        if(!GameDataManager.IsCreativeMode)
+            _MoveCount--;
         if (_MoveCount == 0 && !isClear)
         {
             Sequence seq = DOTween.Sequence();
@@ -487,7 +489,7 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("beforeDailyClear", 1);
             }
             PlayerPrefs.Save();
-            if(!GameConst.IsCreativeMode())
+            if(!GameDataManager.IsCreativeMode)
                 _clearViewManager.PosText();
          
             reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine).SetLink(reloadButtonImage.gameObject);
@@ -497,7 +499,7 @@ public class StageManager : MonoBehaviour
             Camera cam = Camera.main;
             if (cam != null )
             {
-                if(!GameConst.IsCreativeMode())
+                if(!GameDataManager.IsCreativeMode)
                 {
                     // Y座標 +2.5f に移動
                     cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)

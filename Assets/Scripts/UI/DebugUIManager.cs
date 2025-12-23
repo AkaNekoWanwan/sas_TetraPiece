@@ -38,6 +38,14 @@ public class DebugUIManager : MonoBehaviour
         }
     }
 
+    public void OnSwitchCreativeMode()
+    {
+        bool isCreativeMode = !GameDataManager.IsCreativeMode;
+        GameDataManager.IsCreativeMode = isCreativeMode;
+        GameDataManager.IsDebugView = false;
+        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.3f);
+    }
+
     // 指定したコマンドインデックスのボタンを押しているか
     private bool TryTapCommandButton(int commandIndex)
     {   

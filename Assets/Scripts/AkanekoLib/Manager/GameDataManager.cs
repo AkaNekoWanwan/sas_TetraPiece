@@ -103,7 +103,7 @@ public static class GameDataManager
 
     public static bool IsCreativeTwoPointTouch()
     {
-        if(GameConst.IsCreativeMode() == false)
+        if(GameDataManager.IsCreativeMode == false)
             return false;
         if(2 <= Input.touchCount)
             return true;
@@ -114,7 +114,7 @@ public static class GameDataManager
 
 
     // クリエイティブモードをゲーム中に切り替えられるようにするための処理
-    private static bool IsCreativeMode = false;
+    public static bool IsCreativeMode = false;
     private static bool _onTouch = false;
     private static bool _onTouchDown = false;
     private static bool _onTouchUp = false;
@@ -124,7 +124,7 @@ public static class GameDataManager
     public static bool OnTouchUp => _onTouchUp;
     public static void UpdateTouchInfo()
     {
-        if(!GameConst.IsCreativeMode())
+        if(!GameDataManager.IsCreativeMode)
         {
             if(Input.touchCount > 0 || Input.GetMouseButton(0))
             {
@@ -169,7 +169,7 @@ public static class GameDataManager
 
     public static Vector2 GetMousePosition()
     {
-        if(!GameConst.IsCreativeMode())
+        if(!GameDataManager.IsCreativeMode)
         {
             if(Input.touchCount > 0)
             {
