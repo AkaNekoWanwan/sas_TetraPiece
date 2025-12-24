@@ -17,13 +17,13 @@ public class StageManager : MonoBehaviour
     public bool isDoClearGame = false;
     public bool isGameOver;
     public bool isPause;
-    public GameObject[] stages;
-    public GameObject[] dailyStages;
+    public GameObject[] _stages;
+    public GameObject[] _dailyStages;
     public bool _isStageLoadFromScene = true;
     public StageInfo[] _stagePrefabs;
     public StageInfo[] _dailyStagePrefabs;
     public Transform stageParent;
-    public int isNowStage;
+    public int _currentStage;
     public bool isRestart;
     public bool isTest;
     public Image reloadButtonImage;
@@ -48,6 +48,11 @@ public class StageManager : MonoBehaviour
     public DebugUIManager _debugUIManager = default;
     public GameObject _creativeCanvas = default;
     public CustomButton _clearNextButton = default;
+
+    [Header("Addressable Stage Prefabs Settings")]
+    public int MAxStageCount = 504;
+    public int MAxDailyStageCount = 31;
+
     private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
     private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
 
@@ -146,10 +151,10 @@ public class StageManager : MonoBehaviour
     private async Task InitlializeColoutine()
     {
         reloadButtonImage.gameObject.SetActive(!GameConst.IsScreenShotMode());
-        
+
         isClear = false;
         firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
-        isNowStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+        _currentStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
 
         _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
         if(_dailyStage == -1)
@@ -192,25 +197,26 @@ public class StageManager : MonoBehaviour
         {
             if (!isTest)
             {
-                for (int i = 0; i < stages.Length; i++)
+                for (int i = 0; i < _stages.Length; i++)
                 {
-                    bool isActive = (i == isNowStage && _dailyStage == -1);
-                    stages[i].SetActive(isActive);
+                    bool isActive = (i == _currentStage && _dailyStage == -1);
+                    _stages[i].SetActive(isActive);
                     if(isActive)
-                        isHard = stages[i].GetComponent<StageInfo>().isHard;
+                        isHard = _stages[i].GetComponent<StageInfo>().isHard;
                 }
-                for(int i = 0; i < dailyStages.Length; i++)
+                for(int i = 0; i < _dailyStages.Length; i++)
                 {
-                    dailyStages[i].SetActive(i + 1 == _dailyStage);
+                    _dailyStages[i].SetActive(i + 1 == _dailyStage);
                 }
             }
         }
-        else
+        else if((_stagePrefabs.Length > 0 && _dailyStage == -1) 
+        || (_dailyStagePrefabs.Length > 0 && _dailyStage != -1))
         {
-            Debug.Log($"ステージロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
+            Debug.Log($"ステージロード：{_currentStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
             StageInfo stage = null;
             if(_dailyStage == -1)
-                stage = Instantiate(_stagePrefabs[isNowStage]);
+                stage = Instantiate(_stagePrefabs[_currentStage]);
             else
                 stage = Instantiate(_dailyStagePrefabs[_dailyStage - 1]);
             if( stageParent != null)
@@ -219,6 +225,26 @@ public class StageManager : MonoBehaviour
             stage.transform.localPosition = Vector3.zero;
             stage.gameObject.SetActive(true);
             isHard = stage.isHard;
+        }
+        // Addressableからステージを読み込む場合
+        else if(!_isStageLoadFromScene)
+        {
+            Debug.Log($"Addressableステージロード：{_currentStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
+            StageInfo stage = null;
+            if(_dailyStage == -1)
+                stage = await AddressableManager.InstantiateStageAsync(_currentStage, MAxStageCount, STAGE_PREFABS_PATH);
+            else
+                stage = await AddressableManager.InstantiateStageAsync(_dailyStage, MAxDailyStageCount, DAILY_STAGE_PREFABS_PATH, true);
+            if( stageParent != null)
+                stage.transform.parent = stageParent;
+            stage.transform.localScale = Vector3.one;
+            stage.transform.localPosition = Vector3.zero;
+            stage.gameObject.SetActive(true);
+            isHard = stage.isHard;
+        }
+        else
+        {
+            
         }
 
         if(isHard)
@@ -265,7 +291,7 @@ public class StageManager : MonoBehaviour
 
         firebaseManager.StageStart("");
 
-        Debug.Log($"▶ ステージ {isNowStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
+        Debug.Log($"▶ ステージ {_currentStage} 開始。前回経過時間 {pureElapsedTime:F2} 秒から再開");
 
         // 🔸5秒ごとに経過時間を保存
         autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
@@ -292,7 +318,7 @@ public class StageManager : MonoBehaviour
 
     private string GetElapsedTimeKey()
     {
-        string ret = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+        string ret = $"{ELAPSED_TIME_KEY}_{_currentStage}";
         if(_dailyStage != -1)
         {
             ret = $"{ELAPSED_TIME_KEY}_Daily_{_dailyStage}";
@@ -312,7 +338,7 @@ public class StageManager : MonoBehaviour
             {
                 PlayerPrefs.SetFloat(key, pureElapsedTime);
                 PlayerPrefs.Save();
-                Debug.Log($"💾 自動保存: ステージ{isNowStage} 経過時間 {pureElapsedTime:F1}秒");
+                Debug.Log($"💾 自動保存: ステージ{_currentStage} 経過時間 {pureElapsedTime:F1}秒");
             }
         }
     }
@@ -385,7 +411,7 @@ public class StageManager : MonoBehaviour
 
             firebaseManager.StageRestart(stageName);
 
-            string key = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+            string key = $"{ELAPSED_TIME_KEY}_{_currentStage}";
             PlayerPrefs.SetFloat(key, pureElapsedTime);
             PlayerPrefs.Save();
 
@@ -412,7 +438,7 @@ public class StageManager : MonoBehaviour
             GameDataManager.isPlayHomePieceAnimation = true; // ホームのステージ進行アニメーション実行
         // 広告再生の判定
         Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
-        if( 60 <= AdsTimerManager.instance.ElapsedTime && 4 <= PlayerPrefs.GetInt("totalLevel", 1))
+        if( 60 <= AdsTimerManager.instance.ElapsedTime && 4 <= PlayerPrefs.GetInt("totalLevel", 1) && !GameDataManager.IsCreativeMode)
         {
             AdsTimerManager.instance.ElapsedTime = 0f;
             AdsTimerManager.instance.IsCounter = false;
@@ -471,9 +497,9 @@ public class StageManager : MonoBehaviour
                     PlayerPrefs.SetInt("RequestReview", 1);
                 }
 
-                PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
+                PlayerPrefs.SetInt("Stage", _currentStage + 1); // 次のステージを保存
                 PlayerPrefs.SetInt("totalLevel", currentTotalLevel + 1); // 全ステージ数を保存
-                if (isNowStage + 1 >= GetStageLength())
+                if (_currentStage + 1 >= GetStageLength())
                 {
                     // 25ステージ目からループさせる
                     PlayerPrefs.SetInt("Stage", 25); // 最後のステージをクリアしたら最初のステージに戻す
@@ -533,8 +559,8 @@ public class StageManager : MonoBehaviour
         {
             firebaseManager.StageClear(stageName,pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
-            PlayerPrefs.SetInt("Stage", isNowStage + 1); // 次のステージを保存
-            Debug.Log($"ステージリロード：{isNowStage}, {PlayerPrefs.GetInt("Stage", 0)}");
+            PlayerPrefs.SetInt("Stage", _currentStage + 1); // 次のステージを保存
+            Debug.Log($"ステージリロード：{_currentStage}, {PlayerPrefs.GetInt("Stage", 0)}");
             PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
             if ( PlayerPrefs.GetInt("Stage") >= GetStageLength() )
             {
@@ -559,7 +585,7 @@ public class StageManager : MonoBehaviour
         if (isClear == false)
         {
             isClear = true;
-            PlayerPrefs.SetInt("Stage", isNowStage - 1); // 次のステージを保存
+            PlayerPrefs.SetInt("Stage", _currentStage - 1); // 次のステージを保存
             PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) - 1); // 全ステージ数を保存
             if (PlayerPrefs.GetInt("Stage") <0)
             {
@@ -576,7 +602,7 @@ public class StageManager : MonoBehaviour
     private int GetStageLength()
     {
         if(_isStageLoadFromScene)
-            return stages.Length;
+            return _stages.Length;
         return _stagePrefabs.Length;
     }
 
@@ -585,11 +611,11 @@ public class StageManager : MonoBehaviour
     {
         if (pauseStatus)
         {
-            string key = $"{ELAPSED_TIME_KEY}_{isNowStage}";
+            string key = $"{ELAPSED_TIME_KEY}_{_currentStage}";
             PlayerPrefs.SetFloat(key, pureElapsedTime);
             PlayerPrefs.Save();
 
-            Debug.Log($"⏸ 中断。ステージ{isNowStage} 経過時間 {pureElapsedTime:F2}秒 保存");
+            Debug.Log($"⏸ 中断。ステージ{_currentStage} 経過時間 {pureElapsedTime:F2}秒 保存");
             firebaseManager.Withdrwal(pureElapsedTime);
         }
         else
