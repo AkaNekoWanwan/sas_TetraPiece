@@ -198,11 +198,13 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 }
 
                 Vector3 setPos = answerObj.transform.position;
-                setPos.y += _shiftY;
+                setPos.x += _trimShift.x;
+                setPos.y += _trimShift.y;
                 answerObj.transform.position = setPos;
 
                 setPos = cellObj.transform.position;
-                setPos.y += _shiftY;
+                setPos.x += _trimShift.x;
+                setPos.y += _trimShift.y;
                 cellObj.transform.position = setPos;
                 
 

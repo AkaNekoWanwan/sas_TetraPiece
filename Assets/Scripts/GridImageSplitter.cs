@@ -76,8 +76,8 @@ public class GridImageSplitter : AbstractGridImageSplitter
         int squareSize = Mathf.RoundToInt(Mathf.Min(fullW, fullH) * (targetPercent / 100f));
 
         // 画像中心を基準に正方形範囲を決定
-        int startX = (int)(rect.x + (fullW - squareSize) / 2f + _trimShiftSquare.x);
-        int startY = (int)(rect.y + (fullH - squareSize) / 2f + _trimShiftSquare.y);
+        int startX = (int)(rect.x + (fullW - squareSize) / 2f + _trimShift.x);
+        int startY = (int)(rect.y + (fullH - squareSize) / 2f + _trimShift.y);
 
         // === 2️⃣ 分割単位（正方形セルサイズ） ===
         int cellSize = Mathf.RoundToInt(squareSize / Mathf.Max(rows, cols));
@@ -222,7 +222,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                 Vector2 parentSize = parentRT.rect.size;
 
                 // 正方形領域（UI上）の辺長
-                float uiSquare = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent / 100f);
+                float uiSquare = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent * fixTargetPercentCellSize / 100f);
 
                 // 分割セルのサイズ（常に正方形）
                 float uiCellSize = uiSquare / Mathf.Max(rows, cols);

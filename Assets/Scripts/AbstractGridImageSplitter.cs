@@ -45,11 +45,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     protected Coroutine _createPieceCoriutine = null;
 
-    [Header("HexParam")]
-    public float _shiftY = 0f;
     [Header("TriangleParam")]
     public Vector2 _trimShift = Vector2.zero;
-    public Vector2 _trimShiftSquare = Vector2.zero;
     public int uniqueId = 0;
     public int index = 0;
 
@@ -307,7 +304,9 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         }
     }
 
-    public void Addressable()
+    // 画像をAddressable化してグループに登録する
+    // isUseImageLoader: AddressableImageLoaderを使うかどうか　(画像をAddressable化してImageLoaderで読み込む場合はtrue、ステージ自体をAddressable化する場合はfalse)
+    public void Addressable(bool isUseImageLoader = false)
     {
     #if UNITY_EDITOR
         // 1. Addressables Settings の取得
@@ -384,18 +383,21 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             string fileName = Path.GetFileName(assetPath);
             string newAssetPath = newDirectory + "/" + fileName;
 
-            foreach (var image in imageDic[sprite])
+            if(isUseImageLoader)
             {
-                // 画像をAddressable化した各オブジェクトに代わりにAddressableImageLoaderをつける(パスを記憶してawake時にロードする機能)
-                AddressableImageLoader addressableImageLoader = image.gameObject.GetComponent<AddressableImageLoader>();
-                if(addressableImageLoader == null)
+                foreach (var image in imageDic[sprite])
                 {
-                    addressableImageLoader = image.gameObject.AddComponent<AddressableImageLoader>();
-                }
-                addressableImageLoader.addressName = newAssetPath;
-                image.sprite = null;
-            }
 
+                    // 画像をAddressable化した各オブジェクトに代わりにAddressableImageLoaderをつける(パスを記憶してawake時にロードする機能)
+                    AddressableImageLoader addressableImageLoader = image.gameObject.GetComponent<AddressableImageLoader>();
+                    if(addressableImageLoader == null)
+                    {
+                        addressableImageLoader = image.gameObject.AddComponent<AddressableImageLoader>();
+                    }
+                    addressableImageLoader.addressName = newAssetPath;
+                    image.sprite = null;
+                }
+            }
             // ここでセーブ
             // 3. 新しいディレクトリが存在しない場合、作成
             if (!AssetDatabase.IsValidFolder(newDirectory))
@@ -451,6 +453,68 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         Debug.LogWarning("Addressable設定はUnity Editor上でのみ実行可能です。");
     #endif
     }
+
+        // 画像でなく該当プレハブをAddressable化する
+    public void AddressableStage()
+    {
+#if UNITY_EDITOR
+        // 1. Addressables Settings の取得
+        var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+        if (settings == null)
+        {
+            Debug.LogError("Addressable Asset Settingsが見つかりません。Addressablesを有効にしてください。");
+            return;
+        }
+
+        // 2. シーン上のインスタンスからプレハブアセットを取得
+        // 自身がプレハブインスタンスでない場合は処理を中止
+        GameObject instanceRoot = this.transform.parent.parent.gameObject;
+        var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(instanceRoot);
+
+        if (prefabAsset == null)
+        {
+            Debug.LogError("このゲームオブジェクトはプレハブインスタンスではありません。プレハブとして保存されているステージでのみ実行してください。");
+            return;
+        }
+        
+        // プレハブ名を取得 (これがグループ名になる)
+        string groupName = prefabAsset.name;
+
+        // 3. グループの取得または新規作成
+        AddressableAssetGroup group = settings.FindGroup(groupName);
+        if (group == null)
+        {
+            // プレハブ名と同じ名前のAssetGroupsを作成
+            Debug.Log($"Addressable Group '{groupName}' を新規作成しました。");
+            var groupTemplate = settings.GetGroupTemplateObject(0) as AddressableAssetGroupTemplate;
+            group = settings.CreateGroup(groupName, false, false, true, null, groupTemplate.GetTypes());
+            groupTemplate.ApplyToAddressableAssetGroup(group);
+        }
+
+        // 4. Addressable化するアセットを収集
+        Debug.Log($"Addressable Stage 1");
+        // A. プレハブアセット自体
+        string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+        
+        var guid = AssetDatabase.AssetPathToGUID(prefabPath);
+        AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
+
+        if(entry != null)
+        {
+            Debug.Log($"✅ ステージのAddressable化成功: {prefabPath}, {group}");
+        }
+        else
+        {
+            Debug.Log($"❌ ステージのAddressable化失敗: {prefabPath}, {group}");
+        }
+
+        // 6
+        // 設定の保存と更新
+        EditorUtility.SetDirty(settings);
+        AssetDatabase.SaveAssets();
+        SaveAsPrefab.Save(this.transform.parent.parent.gameObject, PrefabSavePath);
+#endif
+    }
 }
 
 #if UNITY_EDITOR
@@ -480,9 +544,14 @@ public class AbstractGridImageSplitterEditor : Editor
         {
             script.CreatePiece();
         }
-        if (GUILayout.Button("Addressable設定とグループ登録"))
+        if (GUILayout.Button("画像のみAddressable化"))
         {
-            script.Addressable();
+            script.Addressable(true);
+        }
+        if (GUILayout.Button("ステージのAddressable化"))
+        {
+            script.AddressableStage();
+            script.Addressable(false);  // AddressableStageとAddressableの共通処理をまとめる場合はこの行を削除してください
         }
     }
 }

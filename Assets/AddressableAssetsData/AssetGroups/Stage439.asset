@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage439
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage439
+  m_GUID: a3cc11e61e25c4cf3929e049bde0088d
+  m_SerializeEntries:
+  - m_GUID: 3b0b927133cbe422e957fbd2907bff1c
+    m_Address: Assets/Prefabs/Stages/Stage439.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 24dff2f450b104edeaa9d267d69544fb, type: 2}
+    - {fileID: 11400000, guid: 0308e19bf173549d6b275b00dfc389ac, type: 2}
+    - {fileID: 11400000, guid: ebfecc29151ea41d0bfa1de2b9525f90, type: 2}

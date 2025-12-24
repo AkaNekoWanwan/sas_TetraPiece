@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage255
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage255
+  m_GUID: 51c416b0109cb4d7ca3a6e01d5c5c7d2
+  m_SerializeEntries:
+  - m_GUID: 4f8a97029ff3f4045b89258d1f06f58f
+    m_Address: Assets/Prefabs/Stages/Stage255.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ac36b66a7bbb64fef8d950eb04e1af09, type: 2}
+    - {fileID: 11400000, guid: edcd33ecd0c034b77866e0b3db6d65da, type: 2}
+    - {fileID: 11400000, guid: 812e5a3d2815842feb81bd31c2efca20, type: 2}

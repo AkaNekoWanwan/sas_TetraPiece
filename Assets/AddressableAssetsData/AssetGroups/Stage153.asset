@@ -1,0 +1,274 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage153
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage153
+  m_GUID: d29b53f1600f044cbbba94b496312964
+  m_SerializeEntries:
+  - m_GUID: 056b3e1e17e7b458d952fd4656b371d1
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06973235f6c304655b987376ad908c69
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 10460f43d79d6448d859523d062a838f
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15a9cba1bd36048de92c63c9e3944438
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ffe502e0ae0547a2bec0e69bc34f2ca
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2120b4cbbc0f54fb9b8ff2c585e38dba
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 22994e4d0ab324a4a94cbcc315d01af3
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31c88a339bfe447548356d6d5510f70d
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39927c6325de544c08ecf4d4e27b334e
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39f627614cd634776b422d8f40eb9ee1
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a1a87bddcb1849598b581e979e2fbc0
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 453ec3eedfad54b55a5f616f7ebe887f
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 477eda890508a40668eb7ba6e75856f7
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a43848a7e5db4fc89e29cb4c91734d6
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4bb1a1f3c3b264269abc3b7b959abd65
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4da34a3c4616d4bc081c7effdc711434
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 529dc2baae668408ba0eb9654a1e4d61
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 535a5455e6f9742d18dd87d4aaf1e8d1
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 573e89becbaa04afd975664dadd75d72
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 574ce70b2478c4e2888737e6a9829ba9
+    m_Address: Assets/Prefabs/Stages/Stage153.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59099abdbdd62423d82feca0fdf913d5
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60ac28d5de28f4eaca3fdde8481cc4b6
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7067e44c0ed4a43f982626bb516ac98e
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 718f6b1f02ce04356904e54ef04aa36e
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72452dec4545e4d5b99969de916523be
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 72a96332879d240ca9552fb4c6ef1d7a
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7dd13b0ce3be740d2b348bad2840efb6
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82233f8b4c4224386861819e72ec2837
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87ec4045e31984a71b0ecfb000a8831f
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90c39cad1bceb422a85a500ae0d66721
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a3ce512192fa409087eaa80b3a7f5af
+    m_Address: Assets/Textures/Originals/ResizedImages2/159_waist-up-portrait-of-young-brunette-woman-eating-a-2025-10-15-19-41-57-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a219bb9127fe14ba792063de8b41bde7
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a78c86b89dc614c15a1be39edc790208
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7cce0e86a9964f5ca6408103ace4624
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a82e08dbfab1e48dfbe97bc55ef67008
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bbcb8b419b96e4a588cfe551c6ccab80
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c37922787caab43f4aca1e5ba59a8257
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c76f57bd2dd0e44709e7cfea2672e1fc
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9d8034350d4c4f8a9f81496e3b49b32
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cc7c1adeae09a44828bb7af65b3658f4
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cfbf7eb966a7b4305864b67fe63a4156
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1b1ee556a1fe4a07b1eafe39e0c038b
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9d5562f238fc41b68ab93454c5ecaf3
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_7_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dff02071d9dee45808f92337fd5b1bdb
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_3_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1fec67e14bae4aff80111142a308169
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ea4bd94e5f8ed4fcb893f3f1b887526a
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0c3f5d5cf3e14f10945fb13d405c2a3
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_6_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f2f5a1212dee64ebb978e2db302f6676
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_1_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3325811aa7754becbc458c1192e2958
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_5_5.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: faa51c98568df42ca9e1277da1a23286
+    m_Address: Assets/Prefabs/Addressable/Stage153/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 36340dc18b4b4486cbd3258a71cfe47a, type: 2}
+    - {fileID: 11400000, guid: dd5c95d755c4140b0bd53c2dae6590d9, type: 2}
+    - {fileID: 11400000, guid: e6506533a4fb142e38e8f45ae480c9c8, type: 2}

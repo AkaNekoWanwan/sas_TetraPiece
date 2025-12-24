@@ -33,12 +33,19 @@ public class StageInfo : MonoBehaviour
         AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
         spritter.Addressable();
     }
+    public void StageAddressable()
+    {
+        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+        spritter.AddressableStage();
+        spritter.Addressable(false);
+    }
 
 #endif
 }
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(StageInfo))]
+    [CanEditMultipleObjects]
     public class StageInfoEditor : Editor
     {
         public void OnEnable()
@@ -126,6 +133,27 @@ public class StageInfo : MonoBehaviour
                 // 処理が完了したら進捗バーを閉じる
                 EditorUtility.ClearProgressBar();
                 Debug.Log($"Addressable設定が完了しました。対象数: {totalCount} 件");
+            }
+
+            if(GUILayout.Button("StageのAddressable化(選択全体に適用)"))
+            {
+                // 処理をUndo可能にするための記述（推奨）
+                Undo.RecordObjects(scripts, "Addressable Stage Stages"); 
+
+                for (int i = 0; i < totalCount; i++)
+                {
+                    StageInfo script = scripts[i];
+                    string title = $"Addressable設定中 ({i + 1}/{totalCount})";
+                    string info = $"ステージ: {script.gameObject.name} をStageグループに登録中...";
+                    float progress = (float)i / totalCount;
+                    
+                    // 進捗バーを表示・更新
+                    EditorUtility.DisplayProgressBar(title, info, progress);
+
+                    script.StageAddressable(); 
+                }
+                // 処理が完了したら進捗バーを閉じる
+                EditorUtility.ClearProgressBar();
             }
 
             if (GUILayout.Button("画像分割"))

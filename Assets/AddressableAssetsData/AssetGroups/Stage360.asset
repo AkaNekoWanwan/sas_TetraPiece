@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage360
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage360
+  m_GUID: 9e84f6264aa17443aa8e5f4a82e56d0d
+  m_SerializeEntries:
+  - m_GUID: d996900f3f31c42ee95de4665db18f50
+    m_Address: Assets/Prefabs/Stages/Stage360.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 084faca65a56242b28fd2d76fb1df5b4, type: 2}
+    - {fileID: 11400000, guid: b81133a37f5c840aea01a6c0aa20d507, type: 2}
+    - {fileID: 11400000, guid: 4e6ad5e8735034004a64e7c58c80bed4, type: 2}

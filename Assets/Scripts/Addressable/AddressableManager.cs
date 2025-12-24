@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 public static class AddressableManager
 {
+    // private static List<GameObject> loadedObjects = new List<GameObject>();
     public static async Task<StageInfo> InstantiateStageAsync(int currentStage, int MAxStageCount, string stagePrefabsPath, bool isDailyStage = false)
     {
         // ステージ番号は0うめ３けたで管理しているため、引数で受け取ったステージ番号を加工する
@@ -18,7 +19,11 @@ public static class AddressableManager
         await handle.Task;
         if(handle.Status == AsyncOperationStatus.Succeeded)
         {
-            return handle.Result.GetComponent<StageInfo>();
+            var stageObject = handle.Result;
+            // Ondestroyで解放させる
+            stageObject.AddComponent<AddressableDestroyer>();
+            // loadedObjects.Add(stageObject);
+            return stageObject.GetComponent<StageInfo>();
         }
         else
         {

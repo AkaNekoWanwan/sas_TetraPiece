@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage487
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage487
+  m_GUID: 2d67cba2d12444fcc8313eab7aea5a2c
+  m_SerializeEntries:
+  - m_GUID: 05fe9110792bf40d8979d4e8a0c0cba8
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28827432bcfad445d81d4aa80b58b00f
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c7ad7f80a5f84c76b654a2765423a64
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e1e652bbfe034a2b941b2a3725f3019
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2f9cade61bbc24f01a20c487e40c31c0
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3074ae58a02d44accab7174270be1e09
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 455f01f41df5e4cad9c7ca1108f2dcdd
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46b227e7606c54601820ccd86925fb08
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4833bb7a0cf5e4f0d95b76b0d9d94074
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5717e5c5a5832451c977e3cc0e9c7a3c
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5922c23434df94145b0fd9424a6a8b19
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6273f4f65234b4bf9894c9d32de1c48d
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c4891e8771194ff1aa0af74c738cbfb
+    m_Address: Assets/Textures/Originals/ResizedImages2/515_multiracial-group-of-young-friends-meeting-outdoor-2025-03-13-09-36-41-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 845762015e537442fb3993173c815867
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8492b8b6650ec44a3aa39b91bc94d56b
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa426aaf4d0b24d70b61789104df2ba0
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b832897186d0d49608f896833a8fa3e6
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2922736f38ce4756a5a388d60b73c03
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca72aa2fa77984947ade43b661d02622
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce3405636fe7844b59362e273df3c29b
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2c4ad03ecf89430291bcb0abb4cb723
+    m_Address: Assets/Prefabs/Stages/Stage487.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e27255bfc921e447dbf80ccfebb11047
+    m_Address: Assets/Prefabs/Addressable/Stage487/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 42f5c5353f58346b89c3f882b85bdb4b, type: 2}
+    - {fileID: 11400000, guid: c5babfaf8ab4441b0955751c595c21ec, type: 2}
+    - {fileID: 11400000, guid: baad6f0f903434acbb197f752971ea4d, type: 2}

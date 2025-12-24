@@ -50,8 +50,8 @@ public class StageManager : MonoBehaviour
     public CustomButton _clearNextButton = default;
 
     [Header("Addressable Stage Prefabs Settings")]
-    public int MAxStageCount = 504;
-    public int MAxDailyStageCount = 31;
+    public int _AddressableMaxStageCount = 504;
+    public int _AddressableMaxDailyStageCount = 31;
 
     private const string STAGE_PREFABS_PATH = "Assets/Prefabs/Stages/";
     private const string DAILY_STAGE_PREFABS_PATH = "Assets/Prefabs/DailyStages/";
@@ -232,9 +232,9 @@ public class StageManager : MonoBehaviour
             Debug.Log($"Addressableステージロード：{_currentStage}, {PlayerPrefs.GetInt("Stage", 0)}, {PlayerPrefs.GetInt("totalLevel", 1)}");
             StageInfo stage = null;
             if(_dailyStage == -1)
-                stage = await AddressableManager.InstantiateStageAsync(_currentStage, MAxStageCount, STAGE_PREFABS_PATH);
+                stage = await AddressableManager.InstantiateStageAsync(_currentStage, _AddressableMaxStageCount, STAGE_PREFABS_PATH);
             else
-                stage = await AddressableManager.InstantiateStageAsync(_dailyStage, MAxDailyStageCount, DAILY_STAGE_PREFABS_PATH, true);
+                stage = await AddressableManager.InstantiateStageAsync(_dailyStage, _AddressableMaxDailyStageCount, DAILY_STAGE_PREFABS_PATH, true);
             if( stageParent != null)
                 stage.transform.parent = stageParent;
             stage.transform.localScale = Vector3.one;
@@ -601,6 +601,11 @@ public class StageManager : MonoBehaviour
 
     private int GetStageLength()
     {
+        if(!_isStageLoadFromScene && _stagePrefabs.Length <= 0)
+        {
+            return _AddressableMaxStageCount;
+        }
+
         if(_isStageLoadFromScene)
             return _stages.Length;
         return _stagePrefabs.Length;

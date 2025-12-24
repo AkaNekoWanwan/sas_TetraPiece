@@ -308,73 +308,6 @@ public class StageCreator : MonoBehaviour
         return allSplitters;
     }
     
-    // ステージ作成コルーチン:ステージを一つずつ順番に作成していく
-    // public IEnumerator CreateStagesCoroutine()
-    // {
-    //     Debug.Log($"StageCreator:ステージ生成コルーチン:実行！");
-    //     yield return null;
-
-    //     if(IsPreSetUp)
-    //     {
-    //         Debug.Log($"StageCreator:ステージ生成コルーチン:PreSetUp");
-    //         PreSetUp();
-    //         yield return null;
-    //     }
-
-    //     beforeStage = null;
-    //     // シード値を更新していきながらステージ作成
-    //     for(int i = 0; i < _createPieceplitterList.Count; i++)
-    //     {
-    //         if (beforeStage != null)
-    //         {
-    //             if(IsWaitBeforeSplit || IsWaitAfterSplit)
-    //                 beforeStage.SetActive(false);
-    //         }
-    //         AbstractGridImageSplitter splitter = _createPieceplitterList[i];
-    //         if(splitter.isSkip)
-    //         {
-    //             Debug.Log($"StageCreator:ステージ生成コルーチン:{i}をスキップ");
-    //             continue;
-    //         }
-    //         // if(_seeds != null)
-    //         //     splitter.avoidPatternSeeds = _seeds.ToList();
-    //         GameObject stageObject = splitter.transform.parent.parent.gameObject;
-    //         if(IsWaitBeforeSplit || IsWaitAfterSplit)
-    //             stageObject.SetActive(true);
-    //         Debug.Log($"StageCreator:ステージ生成コルーチン:ステージ生成：{i}, {stageObject.name}");
-    //         if(IsWaitBeforeSplit)
-    //         {
-    //             yield return null;
-    //             if(!IsWaitAfterSplit)
-    //             {
-    //                 if(i % 2 == 0)
-    //                     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-    //             }
-    //         }
-    //         splitter.CreatePiece();
-    //         splitter.isSkip = true;
-    //         // if(_seeds == null)
-    //         //     _seeds = new HashSet<string>();
-    //         // _seeds.Add(splitter.PieceCreateSeed);
-    //         beforeStage = stageObject;
-    //         // if(i % 2 == 0)
-    //         //     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-    //         if(IsWaitAfterSplit)
-    //         {
-    //             yield return null;
-    //         }
-            
-    //         // --- 【変更 2-1】処理完了後のプレハブ保存呼び出し ---
-    //         // if (IsSavePrefabAfterSplit)
-    //         // {
-    //         //     SaveAsPrefab(stageObject);
-    //         // }
-    //         // --------------------------------------------------------
-    //     }
-
-    //     yield return null;
-    // }
-    
     // ステージ作成コルーチン:各ステージの生成処理を一斉に開始する
     public IEnumerator CreateStagesCoroutine2()
     {
@@ -408,57 +341,6 @@ public class StageCreator : MonoBehaviour
         }
         yield break;
     }
-
-    // 追加分
-    // public async Task CreateStagesAsync()
-    // {
-    //     Debug.Log($"StageCreator:ステージ生成Async:実行！");
-
-    //     if(IsPreSetUp)
-    //     {
-    //         PreSetUp();
-    //         Debug.Log($"StageCreator:ステージ生成Async:PreSetUp, {_createPieceplitterList.Count}");
-    //     }
-    //     const int MAX_PARALLELISM = 8; 
-    //     using var semaphore = new SemaphoreSlim(MAX_PARALLELISM); 
-        
-    //     List<Task> runningTasks = new List<Task>();
-    //     // List<AbstractGridImageSplitter> activeSplitters = new List<AbstractGridImageSplitter>(); // 実行中のスプリッターを追跡
-        
-    //     for(int i = 0; i < _createPieceplitterList.Count; i++)
-    //     {
-    //         int index = i;
-    //         AbstractGridImageSplitter splitter = _createPieceplitterList[i];
-    //         if(splitter.isSkip)
-    //         {
-    //             Debug.Log($"StageCreator:ステージ生成Async:{i}をスキップ");
-    //             continue;
-    //         }
-    //         GameObject stageObject = splitter.transform.parent.parent.gameObject;
-    //         Debug.Log($"StageCreator:ステージ生成Async:ステージ生成：{i}, {stageObject.name}");
-
-    //         // 1. セマフォを待機：
-    //         //    ここで、アクティブなタスク数が上限に達していた場合、次のスロットが空くまで待機します。
-    //         //    (この待機は非同期なので、メインスレッドはブロックされません)
-    //         await semaphore.WaitAsync();
-
-    //         // 2. タスクを起動し、リストに追加
-    //         //    Task.Runの完了後、finallyブロックでセマフォを解放するようにすることで、
-    //         //    確実に次のタスクにスロットを渡します。
-    //         Task pieceTask = splitter.CreatePieceAsync().ContinueWith(t => 
-    //         {
-    //             // 処理が完了したら（成功/失敗にかかわらず）、セマフォを解放
-    //             semaphore.Release();
-    //             Debug.Log($"StageCreator:ステージ生成Async:ステージ生成完了：{index}, {stageObject.name}");
-    //         }, TaskScheduler.Default); // バックグラウンドスレッドで実行
-            
-    //         runningTasks.Add(pieceTask);
-    //     }
-    //     // 全てのタスクが完了するのを待つ
-    //     await Task.WhenAll(runningTasks);
-
-    //     Debug.Log($"StageCreator:ステージ生成Async:全てのステージの生成が完了しました！");
-    // }
 
     // 使用している画像の名前を更新する
     // ファイル名の先頭に00X_を付与する。すでに付与されている場合はそれを更新する
@@ -685,104 +567,120 @@ public class StageCreator : MonoBehaviour
             }
         }
 
-        splitter._trimShift = new Vector2(216f, 87f);
-        splitter._shiftY = -1.76f;
-        if(cols == 3)
-        {
-            splitter._trimShift = new Vector2(216f, 87f);
-            splitter._shiftY = -1.76f;
-        }
+        // splitter._trimShift = new Vector2(216f, 87f);
+        // splitter._shiftY = -1.76f;
+
+        // 各ステージごとの微調整
+        // できれば調整が不要になるようCreatePieceを改善したい
+        // 現仕様では1~9ステージと、12~27ステージ(3ステージごと)を確認して調整すると全パターン対応可能
+        // iD:3 = 3x4　1,4,7ステージなど
         if(cols == 3 && rows == 4)
         {
-            splitter._trimShift = new Vector2(123.5f, 33f);
-            splitter._shiftY = -1.45f;
-            if( shapeType == ShapeType.Hex)
-                splitter.targetPercent = 110;
-        }
-        if(cols == 4)
-        {
-            splitter._trimShift = new Vector2(243f, 87f);
-            splitter._shiftY = -1.3f;
-        }
-        if(cols == 4 && rows == 5)
-        {
-            splitter._trimShift = new Vector2(124f, 34.5f);
-            splitter._shiftY = -1.25f;
-            if( shapeType == ShapeType.Hex)
-                splitter.targetPercent = 115;
-        }
-        if(cols == 5)
-        {
-            splitter._trimShift = new Vector2(260f, 87f);
-            splitter._shiftY = -1.07f;
-        }
-        if(cols == 5 && rows == 7)
-        {
-            // splitter._trimShift = new Vector2(260f, 87f);
-            // splitter._shiftY = -0.955f;
-            splitter._shiftY = -0.88f;
-            if( shapeType == ShapeType.Hex)
-                splitter.targetPercent = 115;
-        }
-        if(cols == 5 && rows == 8)
-        {
-            splitter._trimShift = new Vector2(260f, 87f);
-            splitter._shiftY = -0.9f;
-        }
-        if(cols == 6)
-        {
-            splitter._trimShift = new Vector2(102f, 33.5f);
-            splitter._shiftY = -0.89f;
-        }
-        if(cols == 6 && rows == 8)
-        {
-            splitter._trimShift = new Vector2(311f, 75f);
-            splitter._shiftY = -0.82f;
-            if( shapeType == ShapeType.Hex)
-                splitter.fixTargetPercentCellSize = 0.995f;
-        }
-        if(cols == 7 && rows == 7)
-        {
-            splitter._trimShift = new Vector2(106f, 34f);
-            splitter._shiftY = -0.89f;
-        }
-        if(cols == 7 && rows == 8)
-        {
-            // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
-            splitter._trimShiftSquare = new Vector2(0f, 1f);
-            splitter._shiftY = -0.69f;
             if( shapeType == ShapeType.Square)
-                splitter.targetPercent = 88;
-            else
             {
-                splitter.targetPercent = 105;
-                if( shapeType == ShapeType.Hex)
-                {
-                    splitter.fixTargetPercentCellSize = 0.995f;
-                    splitter.targetPercent = 106;
-                }
+                splitter.fixTargetPercentCellSize = 0.995f;
+                splitter._trimShift = new Vector2(0f, 1f);
             }
-        }
-        if(cols == 7 && rows == 9)
-        {
-            // splitter._trimShift = new Vector2(278f, 88f);
-            splitter._shiftY = -0.7f;
-        }
-        if(cols == 8 && rows == 7)
-        {
-            // Debug.LogWarning($"StageCreator:Shift未設定！:{i}, cols:{cols}, rows:{rows}");
-            splitter._trimShift = new Vector2(117.8f, 66.3f);
-            // splitter._shiftY = -0.7f;
             if( shapeType == ShapeType.Triangle)
             {
-                splitter.targetPercent = 131;
-                splitter.fixTargetPercentCellSize = 0.9925f;
+                splitter._trimShift = new Vector2(324f, 87f);
+            }
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter.targetPercent = 110;
+                splitter._trimShift = new Vector2(0f, -1.45f);
             }
         }
+        // iD:4 = 4x5 2,5,8ステージなど
+        if(cols == 4 && rows == 5)
+        {
+            if( shapeType == ShapeType.Square)
+            {
+                splitter.fixTargetPercentCellSize = 0.995f;
+                splitter._trimShift = new Vector2(0f, 1f);
+            }
+            if( shapeType == ShapeType.Triangle)
+            {
+                splitter._trimShift = new Vector2(324f, 87f);
+                splitter.fixTargetPercentCellSize = 0.997f;
+            }
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter.targetPercent = 115;
+                splitter._trimShift = new Vector2(0f, -1.2f);
+            }
+        }
+        // iD:5 = 5x7(四角六角)　3,9ステージなど
+        if(cols == 5 && rows == 7)
+        {
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter.targetPercent = 115;
+                splitter._trimShift = new Vector2(0f, -0.88f);
+            }
+            if( shapeType == ShapeType.Square)
+            {
+                splitter.fixTargetPercentCellSize = 0.995f;
+                splitter._trimShift = new Vector2(0f, 1f);
+            }
+        }
+        // iD:5 = 6x6(三角) 6sテージなど
+        if(cols == 6 && rows == 6)
+        {
+            splitter._trimShift = new Vector2(267f, 87f);
+        }
+        // iD:6 = 6x8(四角六角) 12,18ステージなど
+        if(cols == 6 && rows == 8)
+        {
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter._trimShift = new Vector2(0f, -0.78f);
+                splitter.fixTargetPercentCellSize = 0.995f;
+            }
+            // 四角は特に調整不要
+            if( shapeType == ShapeType.Square)
+            {
+                
+            }
+        }
+        // iD:6 = 7x7(三角) 15ステージなど
+        if(cols == 7 && rows == 7)
+        {
+            splitter._trimShift = new Vector2(278f, 87f);
+        }
+        // iD:7 = 7x8(四角六角) 21,27ステージなど
+        if(cols == 7 && rows == 8)
+        {
+            if( shapeType == ShapeType.Square)
+            {
+                splitter.targetPercent = 88;
+                splitter.fixTargetPercentCellSize = 0.995f;
+            }
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter.targetPercent = 105;
+                splitter._trimShift = new Vector2(0f, -0.69f);
+            }
+        }
+        // iD:7 = 8x7(三角) 24ステージなど
+        if(cols == 8 && rows == 7)
+        {
+            splitter._trimShift = new Vector2(312f, 175f);
+            splitter.targetPercent = 131;
+            splitter.fixTargetPercentCellSize = 0.9925f;
+        }
+        // iD:8 = 7x9(四角六角) デイリーステージなど
+        if(cols == 7 && rows == 9)
+        {
+            if( shapeType == ShapeType.Hex)
+            {
+                splitter._trimShift = new Vector2(0f, -0.7f);
+            }
+        }
+        // iD:8 = 8x8(三角) デイリーステージなど(現在未使用)
         if(cols == 8 && rows == 8)
         {
-            splitter._trimShift = new Vector2(278f, 88f);
-            splitter._shiftY = -0.69f;
+            splitter._trimShift = new Vector2(324f, 87f);
         }
     }
 

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: DailyStage031
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: DailyStage031
+  m_GUID: 5ad1a2bb5534a4c78a87e36faa61ebb7
+  m_SerializeEntries:
+  - m_GUID: d809ccfd4f9b64ecba5b123ba6cc9709
+    m_Address: Assets/Prefabs/DailyStages/DailyStage031.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fd4d4045d3edd48f193560aa8d90025b, type: 2}
+    - {fileID: 11400000, guid: 1582b04390b364762ae83c15267c1660, type: 2}
+    - {fileID: 11400000, guid: dc5f19a59ce144be5888180ad97945e8, type: 2}

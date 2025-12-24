@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage241
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage241
+  m_GUID: 0a077330350354db38b174907f5916ae
+  m_SerializeEntries:
+  - m_GUID: 0cc5a1afee91b414591e8f5227a44d2f
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0cdf25144ea28413dbe7a299be8bd9d5
+    m_Address: Assets/Prefabs/Stages/Stage241.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42ee574d74aeb4e00a9f85dedbda5fa4
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e8243c353b7b46ceac527981be1bcc4
+    m_Address: Assets/Textures/Originals/ResizedImages2/249_kayaking-on-autumn-river-sport-on-river-in-poland-2025-03-24-05-17-52-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 87754194b6f4949fab9b26a81711b836
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 906d7a0c5dbc44de4a768368b9eae224
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 971c58f5f5af84fcbab86779e6439523
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d0a690e27d774b2b8116c9b04faa2e4
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b98365c019fb7460d9de7e08bea568b3
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: caa6c087a5cee4d638e388f0264a95e5
+    m_Address: Assets/Prefabs/Addressable/Stage241/hex_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 04bf31232562048b8962ae88d0b26a92, type: 2}
+    - {fileID: 11400000, guid: a2d6e50d688114d0dacb34e2db6ee255, type: 2}
+    - {fileID: 11400000, guid: 0c03ee8f45dd242d3bf3a943cc92f216, type: 2}

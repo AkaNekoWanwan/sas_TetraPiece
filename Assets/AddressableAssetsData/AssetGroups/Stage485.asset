@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Stage485
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Stage485
+  m_GUID: 23848e8bc3e0b43dd9556722a2553a2b
+  m_SerializeEntries:
+  - m_GUID: 4cafc0cabd66d4d0abec8192e4c66021
+    m_Address: Assets/Prefabs/Stages/Stage485.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 87a63808511394ae9a89ac0f86fb4188, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 399a862a13b7045d8a25a5db87c89692, type: 2}
+    - {fileID: 11400000, guid: 62ffad62f3bea48e284f12d77f4dde04, type: 2}
+    - {fileID: 11400000, guid: 34d56679228574de4981473d79b6239e, type: 2}
