@@ -512,7 +512,12 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 continue;
             if(image.name == "shadow")
                 continue;
-            if(image.name == "Button_Square04")
+            string assetPath = AssetDatabase.GetAssetPath(image.sprite);
+            if (string.IsNullOrEmpty(assetPath)) continue;
+            string fileName = Path.GetFileName(assetPath);
+            if(fileName == "Button_Square04.png")
+                continue;
+            if(fileName == "Button_Square04")
                 continue;
 
             if(!imageDic.ContainsKey(image.sprite))
