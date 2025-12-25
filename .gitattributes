@@ -1,3 +1,4 @@
 *.bundle filter=lfs diff=lfs merge=lfs -text
 *.prefab filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
+*.obb filter=lfs diff=lfs merge=lfs -text
