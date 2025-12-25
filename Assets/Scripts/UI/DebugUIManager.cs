@@ -10,6 +10,9 @@ public class DebugUIManager : MonoBehaviour
     public List<int> _switchViewCommand;
     public GameObject _view = default;
 
+    public Text _buttonText = default;
+    public InputField _inputField = default;
+
     public List<int> _currentCommand = default;
 
     public event System.Action<bool> onDebugViewToggled;
@@ -42,6 +45,34 @@ public class DebugUIManager : MonoBehaviour
     {
         bool isCreativeMode = !GameDataManager.IsCreativeMode;
         GameDataManager.IsCreativeMode = isCreativeMode;
+        GameDataManager.IsDebugView = false;
+        FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.3f);
+    }
+
+    // _inputFieldの値が変更されたときに呼ばれる
+    public void OnInputFieldValueChanged()
+    {
+        _buttonText.text = "ステージ" + int.Parse(_inputField.text) + "をプレイ";
+    }
+
+    public void OnClose()
+    {
+        _view.SetActive(false);
+        GameDataManager.IsDebugView = false;
+        onDebugViewToggled?.Invoke(false);
+    }
+
+    public void OnSetTotalLevel()
+    {
+        int inputLevel = int.Parse(_inputField.text);
+        PlayerPrefs.SetInt("totalLevel", inputLevel);
+
+        int stageLevel = inputLevel;
+        if(504 < inputLevel)
+        {
+            inputLevel = (inputLevel - 504) % (504 - 25) + 25; // 25〜504の範囲に変換
+        }
+        PlayerPrefs.SetInt("Stage", inputLevel - 1);
         GameDataManager.IsDebugView = false;
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.3f);
     }

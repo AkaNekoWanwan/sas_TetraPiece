@@ -154,7 +154,8 @@ public class StageManager : MonoBehaviour
 
         isClear = false;
         _firebaseManager = GameObject.Find("FirebaseManager").GetComponent<FirebaseManager>();
-        _currentStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+        // _currentStage = PlayerPrefs.GetInt("Stage", 0); // PlayerPrefsから現在のステージを取得
+        _currentStage = GetStage(PlayerPrefs.GetInt("totalLevel", 1));
 
         _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
         if(_dailyStage == -1)
@@ -634,13 +635,12 @@ public class StageManager : MonoBehaviour
         if (isClear == false)
         {
             isClear = true;
-            PlayerPrefs.SetInt("Stage", _currentStage + 1); // 次のステージを保存
             Debug.Log($"ステージリロード：{_currentStage}, {PlayerPrefs.GetInt("Stage", 0)}");
-            PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) + 1); // 全ステージ数を保存
-            if ( PlayerPrefs.GetInt("Stage") >= GetStageLength() )
-            {
-                PlayerPrefs.SetInt("Stage", 0); // 最後のステージをクリアしたら最初のステージに戻す
-            }
+            int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+            totalLevel++;
+            int setStage = GetStage(totalLevel);
+            PlayerPrefs.SetInt("totalLevel", totalLevel); // 全ステージ数を保存
+            PlayerPrefs.SetInt("Stage", setStage);
             PlayerPrefs.Save();
             ReLoadScene(0.0f); 
             GameDataManager.InitMoveCount = -1;
@@ -660,18 +660,27 @@ public class StageManager : MonoBehaviour
         if (isClear == false)
         {
             isClear = true;
-            PlayerPrefs.SetInt("Stage", _currentStage - 1); // 次のステージを保存
-            PlayerPrefs.SetInt("totalLevel", PlayerPrefs.GetInt("totalLevel", 1) - 1); // 全ステージ数を保存
-            if (PlayerPrefs.GetInt("Stage") <0)
-            {
-                PlayerPrefs.SetInt("Stage", GetStageLength()-1); // 最後のステージをクリアしたら最初のステージに戻す
-            }
+
+            int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
+            totalLevel--;
+            if(totalLevel < 1)
+                totalLevel = 1;
+            PlayerPrefs.SetInt("totalLevel", totalLevel); // 全ステージ数を保存
+            PlayerPrefs.SetInt("Stage", GetStage(totalLevel)); // 最後のステージをクリアしたら最初のステージに戻す
             PlayerPrefs.Save();
             ReLoadScene(0.0f); 
             GameDataManager.InitMoveCount = -1;
             GameDataManager.DailyInitMoveCount = -1;
             // SceneManager.LoadScene (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
+    }
+
+    private int GetStage(int totalLevel)
+    {
+        int stage = totalLevel - 1;
+        if( GetStageLength() <= stage)
+            stage  = (stage - GetStageLength()) % (GetStageLength() - 25) + 25; // 25〜504の範囲に変換
+        return stage;
     }
 
     private int GetStageLength()
