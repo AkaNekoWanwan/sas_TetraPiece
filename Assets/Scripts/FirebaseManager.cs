@@ -29,8 +29,6 @@ public class FirebaseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-
         if (isInit == 0)
         {
             AddOpen();
@@ -56,85 +54,119 @@ public class FirebaseManager : MonoBehaviour
     //PlayerPrefs.GetInt("Skin", 0)
     public void AddOpen()
     {
-      
-   
-
-
         Firebase.Analytics.FirebaseAnalytics.LogEvent("App_Open",
-                          new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1))
-
-                            //  new Parameter("is_Pop", PlayerPrefs.GetInt("isPop",0)),
-                            //     new Parameter("is_Slow", PlayerPrefs.GetInt("isSlow",0)),
-                            //     new Parameter("is_Big", PlayerPrefs.GetInt("isBig",0)),
-                            //     new Parameter("is_ForwardCheck", PlayerPrefs.GetInt("isForwardCheck",0)),
-                            //      new Parameter("is_SwithQuick", PlayerPrefs.GetInt("isSwithQuick",0)),
-
-                            //                                    new Parameter("Slow_Function_Count", PlayerPrefs.GetInt("SlowFunction", 0))
-                            );
-
+                          new Parameter("Stage", GetCurrentStage())
+                        );
     }
-    public void StageStart(string stageName)
+    public void StageStart()
     {
-
+        int Current_Attempt = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Current_Attempt", 1);
+        int Failure_count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Failure_count", 0);
+        int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
 
         //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Start",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("StageName", stageName)
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("Move_Limit", GetMove_Limit()),
+                            new Parameter("Move_Count", 0),
+                            new Parameter("Current_Attempt", Current_Attempt),
+                            new Parameter("Failure_count", Failure_count),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                            new Parameter("Undo_Count", Undo_Count)
+                        );
+        // 試行回数カウントアップ
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Current_Attempt", Current_Attempt + 1);
 
-                         );
+        // Debug.Log($"FirebaseManager StageStart, Stage: {GetCurrentStage()}, Move_Limit: {GetMove_Limit()}, Move_Count: 0, Current_Attempt: {Current_Attempt}, Failure_count: {Failure_count}, IsDaily: {(IsDailyStage() ? "TRUE" : "FALSE")}, Undo_Count: {Undo_Count}");
     }
 
-  public void StageClear(string stageName, float clearTime)
+    public void StageClear(int Move_Count, float ClearTime)
     {
+        int Current_Attempt = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Current_Attempt", 1);
+        int Failure_count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Failure_count", 0);
+        int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
 
-        Debug.Log("FirebaseManager StageClear" + stageName + " " + clearTime);
-
+        //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Clear",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("StageName", stageName),
-                            new Parameter("ClearTime", clearTime)
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("Move_Limit", GetMove_Limit()),
+                            new Parameter("Move_Count", GetMove_Limit() - Move_Count),
+                            new Parameter("Current_Attempt", Current_Attempt),
+                            new Parameter("Failure_count", Failure_count),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                            new Parameter("Undo_Count", Undo_Count),
+                            new Parameter("ClearTime", ClearTime)   // クリアタイム(これのみ命名に_を使用しないので注意)
+                        );
+        // 試行回数リセット
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Current_Attempt", 1);
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Failure_count", 0);
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
 
-                         );
+        // Debug.Log($"FirebaseManager StageClear, Stage: {GetCurrentStage()}, Move_Limit: {GetMove_Limit()}, Move_Count: {GetMove_Limit() - Move_Count}, Current_Attempt: {Current_Attempt}, Failure_count: {Failure_count}, IsDaily: {(IsDailyStage() ? "TRUE" : "FALSE")}, Undo_Count: {Undo_Count}");
     }
-    public void StageFail(string stageName)
+    public void StageFailure(int Move_Count)
     {
-   
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Fail",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("StageName", stageName)
-                         );
+        int Current_Attempt = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Current_Attempt", 1);
+        int Failure_count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Failure_count", 0);
+        Failure_count++;
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Failure_count", Failure_count);
+        int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
+        //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
+        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Failure",
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("Move_Limit", GetMove_Limit()),
+                            new Parameter("Move_Count", GetMove_Limit() - Move_Count),
+                            new Parameter("Current_Attempt", Current_Attempt),
+                            new Parameter("Failure_count", Failure_count),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                            new Parameter("Undo_Count", Undo_Count)
+                        );
+        // Debug.Log($"FirebaseManager Stage_Failure, Stage: {GetCurrentStage()}, Move_Limit: {GetMove_Limit()}, Move_Count: {GetMove_Limit() - Move_Count}, Current_Attempt: {Current_Attempt}, Failure_count: {Failure_count}, IsDaily: {(IsDailyStage() ? "TRUE" : "FALSE")}, Undo_Count: {Undo_Count}");
     }
-    public void StageRestart(string stageName)
+    public void StageUndo(int Move_Count)
     {
-        
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Restart",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("StageName", stageName)
-                         );
+        int Current_Attempt = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Current_Attempt", 1);
+        int Failure_count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Failure_count", 0);
+        int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
+        Undo_Count++;
+        PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Undo_Count", Undo_Count);
+        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Failure",
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("Move_Limit", GetMove_Limit()),
+                            new Parameter("Move_Count", GetMove_Limit() - Move_Count),
+                            new Parameter("Current_Attempt", Current_Attempt),
+                            new Parameter("Failure_count", Failure_count),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                            new Parameter("Undo_Count", Undo_Count)
+                        );
+
+        // Debug.Log($"FirebaseManager StageUndo, Stage: {GetCurrentStage()}, Move_Limit: {GetMove_Limit()}, Move_Count: {GetMove_Limit() - Move_Count}, Current_Attempt: {Current_Attempt}, Failure_count: {Failure_count}, IsDaily: {(IsDailyStage() ? "TRUE" : "FALSE")}, Undo_Count: {Undo_Count}");
     }
     public void TapCount(string stageName, bool isTouch)
     {
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Tap_Count",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("StageName", stageName),
                             new Parameter("isTouch", isTouch.ToString())
-                         );
+                        );
     }
     public void RewindMove(string stageName)
     {
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Rewind_Move",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("StageName", stageName)
-                         );
+                        );
     }
   public void Withdrwal(float pureElapsedTime)
     {
         Debug.Log("FirebaseManager Withdrwal");
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Withdrawal",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                         new Parameter("Stage", GetCurrentStage()),
+                         new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("engagement_time", pureElapsedTime) // リバイブしたかどうか
-                         );
+                        );
     }
 
     public void WatchInste(bool CanWatch, string stageName, double eCPM = 0f)
@@ -142,7 +174,8 @@ public class FirebaseManager : MonoBehaviour
         string canWatch = CanWatch ? "True" : "False";
         Debug.Log("FirebaseManager WatchInsta" + canWatch + " eCPM: " + eCPM);
         Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Inste",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1) - 1),
+                            new Parameter("Stage", GetCurrentStage() - 1),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("Stage_Name", stageName),
                             new Parameter("eCPM", eCPM),
                             new Parameter("CanWatch", canWatch)
@@ -152,7 +185,8 @@ public class FirebaseManager : MonoBehaviour
     public void EventWatchBanner(bool isWatch)
     {
         FirebaseAnalytics.LogEvent("Watch_Banner", 
-                            new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()));
     }
     public void EventWatchReward(bool isWatch)
@@ -164,10 +198,10 @@ public class FirebaseManager : MonoBehaviour
         }
 
         FirebaseAnalytics.LogEvent("Watch_Reward", 
-                            new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()),
                             new Parameter("WatchRewardCount", watchRewardCount));
-        // Debug.Log("isWatchReward:" + isWatch + ", " + watchRewardCount);
         if(isWatch)
         {
             watchRewardCount++;
@@ -178,8 +212,36 @@ public class FirebaseManager : MonoBehaviour
     {
         Debug.Log("FirebaseManager RevenueBanner"+ eCPM);
             Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Banner",
-                         new Parameter("Stage", PlayerPrefs.GetInt("totalLevel", 1)),
-                            new Parameter("eCPM", eCPM)
-                         );
+                            new Parameter("Stage", GetCurrentStage()),
+                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                            new Parameter("eCPM", eCPM));
+
+    }
+
+    private int GetCurrentStage()
+    {
+        int stage = PlayerPrefs.GetInt("totalLevel", 1);
+        if(IsDailyStage())
+        {
+            stage = PlayerPrefs.GetInt("DailyStage", -1) + 1;
+        }
+        return stage;
+    }
+    private int GetMove_Limit()
+    {
+        int Move_Limit = GameDataManager.InitMoveCount;
+        if(IsDailyStage())
+        {
+            Move_Limit = GameDataManager.DailyInitMoveCount;
+        }
+        return Move_Limit;
+    }
+    private bool IsDailyStage()
+    {
+        return 0 <= PlayerPrefs.GetInt("DailyStage", -1);
+    }
+    private string IsDailyPrefsSTR()
+    {
+        return IsDailyStage() ? "DAILY" : "NORMAL";
     }
 }

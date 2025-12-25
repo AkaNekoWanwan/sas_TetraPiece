@@ -25,11 +25,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 32b4fb75a1f414ebe9c285722e1ceb5d
-    m_Address: Assets/Prefabs/Stages/Stage007.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 342c460cf78fd4cbdb34cbd173fb9caa
     m_Address: Assets/Prefabs/Addressable/Stage007/hex_1_0.png
     m_ReadOnly: 0
@@ -56,12 +51,17 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 93f9c90233e3e49819928fcb21e6d86f
-    m_Address: Assets/Textures/Originals/ResizedImages2/007_007_close-up-summer-lifestyle-portrait-of-young-fas-2024-11-28-14-43-33-utc.jpg
+    m_Address: Assets/Prefabs/Addressable/Stage007/007_007_close-up-summer-lifestyle-portrait-of-young-fas-2024-11-28-14-43-33-utc.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9c569d5ab30d845b88c2cf2dca2838c5
     m_Address: Assets/Prefabs/Addressable/Stage007/hex_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4c9af3a869354398838803f0541c660
+    m_Address: Assets/Prefabs/Addressable/Stage006/006_006_shutterstock_2594097213.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

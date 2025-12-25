@@ -21,8 +21,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
             DestroyImmediate(transform.GetChild(0).gameObject);
         }
 
-        Image img = GetComponent<Image>();
-        if (img == null || img.sprite == null)
+        if (_splitImage == null || _splitImage.sprite == null)
         {
             Debug.LogError("Image または Sprite が設定されていません。");
             return;
@@ -35,7 +34,7 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
             return;
         }
 
-        Sprite sprite = img.sprite;
+        Sprite sprite = _splitImage.sprite;
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
         
@@ -166,8 +165,8 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                 cellObj.transform.SetParent(this.transform, false);
 
                 // Spriteの紐付けはSetupRectAndSprite内で実施
-                SetupRectAndSprite(answerObj, img, sp, radius, hexWidth, hexHeight, x, y);
-                SetupRectAndSprite(cellObj, img, sp, radius, hexWidth, hexHeight, x, y);
+                SetupRectAndSprite(answerObj, _splitImage, sp, radius, hexWidth, hexHeight, x, y);
+                SetupRectAndSprite(cellObj, _splitImage, sp, radius, hexWidth, hexHeight, x, y);
 
                 // === コンポーネント付与 ===
                 GridCell gridCell = answerObj.AddComponent<GridCell>();

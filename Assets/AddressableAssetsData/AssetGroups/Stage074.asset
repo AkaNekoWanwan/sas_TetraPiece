@@ -100,11 +100,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 89ef4eca1c24a4d6b9c43f2b333ab4ab
-    m_Address: Assets/Prefabs/Stages/Stage074.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8a0e817fb59dc46f58a7ef93811c4ab1
     m_Address: Assets/Prefabs/Addressable/Stage074/grid_3_2.png
     m_ReadOnly: 0
@@ -126,7 +121,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 999b1ed44857842da9b13a650679ba44
-    m_Address: Assets/Textures/Originals/ResizedImages2/074_074_baseKayack_1080x1350.png
+    m_Address: Assets/Prefabs/Addressable/Stage074/074_074_baseKayack_1080x1350.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

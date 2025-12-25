@@ -15,8 +15,108 @@ MonoBehaviour:
   m_GroupName: Stage091
   m_GUID: 4c1157ae0147541e9ba5cd42827841b0
   m_SerializeEntries:
-  - m_GUID: 02b925578ac6e40f9a385f47743f62bf
-    m_Address: Assets/Prefabs/Stages/Stage091.prefab
+  - m_GUID: 07473051cecd342099c72b1ce974dd10
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 09bc555f11f5243a882700d8c85272e7
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 15460cf68318548e3add6f0e81beb2f2
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1caf68a2883ef4094b6b714ef0a226ee
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 29f925d9bd2c24d1c93acfd2b720ee9f
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b14c0cb7a9a64a8793e027e1a0e8683
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2faf9221639784c528b514ce76d25a68
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 69406420c86c04547873844905cff91f
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 709d51f48ab0746609235bcafea56e4d
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 780303bdc6a04415f828165fb289ac3d
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 802d20834bed94cfc9c83da4b9066bda
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a368909693b24b9ba4a448b2fd4c71d
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_2_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8cbdfbea1e1544db39bd39680509189b
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a5c55c43574dc479bac3bec5a5ac6d3d
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c478ee77cc5f048f69d94b249158e387
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5f56a3d603cc4acd92c90d9410ccc10
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d80eef72e3ace4dc9aaebd258f1dc212
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db7d67530e66c491aa919aabf91b5d0f
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df690ec7aece54a0ab31f7057873802d
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e79e94647869e4ccaab407e9559e1756
+    m_Address: Assets/Prefabs/Addressable/Stage091/091_beauty-girl-portrait-with-colorful-makeup-nail-po-2025-10-15-10-56-48-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fcfde676e3735463da66bc849d278b66
+    m_Address: Assets/Prefabs/Addressable/Stage091/grid_1_1.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

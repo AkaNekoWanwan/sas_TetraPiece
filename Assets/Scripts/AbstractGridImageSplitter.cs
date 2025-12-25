@@ -51,7 +51,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public int index = 0;
 
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
-    
+
+    protected Image _splitImage;
 
 #if UNITY_EDITOR
     private void OnValidate() {
@@ -108,6 +109,29 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     public virtual void SplitImage()
     {
+        _splitImage = this.gameObject.GetComponent<Image>();
+        if(_splitImage == null)
+        {
+            Debug.LogError("Image コンポーネントが見つかりません。");
+            return;
+        }
+        // spriteがnullの場合、AddressableImageLoaderから読み込んでみる(addressable経由でなく通常の読み込み)
+        if(_splitImage.sprite == null)
+        {
+            AddressableImageLoader addressableImageLoader = this.gameObject.GetComponent<AddressableImageLoader>();
+            if(addressableImageLoader != null)
+            {
+                string addressName = addressableImageLoader.addressName;
+                if(!string.IsNullOrEmpty(addressName))
+                {
+                    Sprite loadedSprite = AssetDatabase.LoadAssetAtPath<Sprite>(addressName);
+                    if(loadedSprite != null)
+                    {
+                        _splitImage.sprite = loadedSprite;
+                    }
+                }
+            }
+        }
 
     }
 
@@ -206,6 +230,129 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             _gridPieceListController.gridParent = this.transform;
             _gridPieceListController.ShapeType = GetShapeType();
             _gridPieceListController.IsSetShapeType = true;
+        }
+
+        _trimShift = new Vector2(0f, 0f);
+        // 各ステージごとの微調整
+        // できれば調整が不要になるようCreatePieceを改善したい
+        // 現仕様では1~9ステージと、12~27ステージ(3ステージごと)を確認して調整すると全パターン対応可能
+        // iD:3 = 3x4　1,4,7ステージなど
+        if(cols == 3 && rows == 4)
+        {
+            if( GetShapeType() == ShapeType.Square)
+            {
+                fixTargetPercentCellSize = 0.995f;
+                _trimShift = new Vector2(0f, 1f);
+            }
+            if( GetShapeType() == ShapeType.Triangle)
+            {
+                _trimShift = new Vector2(324f, 87f);
+            }
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                targetPercent = 110;
+                _trimShift = new Vector2(0f, -1.45f);
+            }
+        }
+        // iD:4 = 4x5 2,5,8ステージなど
+        if(cols == 4 && rows == 5)
+        {
+            if( GetShapeType() == ShapeType.Square)
+            {
+                fixTargetPercentCellSize = 0.995f;
+                _trimShift = new Vector2(0f, 1f);
+            }
+            if( GetShapeType() == ShapeType.Triangle)
+            {
+                _trimShift = new Vector2(324f, 87f);
+                fixTargetPercentCellSize = 0.997f;
+            }
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                targetPercent = 115;
+                _trimShift = new Vector2(0f, -1.2f);
+            }
+        }
+        // iD:5 = 5x7(四角六角)　3,9ステージなど
+        if(cols == 5 && rows == 7)
+        {
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                targetPercent = 115;
+                _trimShift = new Vector2(0f, -0.88f);
+            }
+            if( GetShapeType() == ShapeType.Square)
+            {
+                fixTargetPercentCellSize = 0.995f;
+                _trimShift = new Vector2(0f, 1f);
+            }
+        }
+        // iD:5 = 6x6(三角) 6sテージなど
+        if(cols == 6 && rows == 6)
+        {
+            if( GetShapeType() == ShapeType.Triangle)
+                _trimShift = new Vector2(267f, 87f);
+        }
+        // iD:6 = 6x8(四角六角) 12,18ステージなど
+        if(cols == 6 && rows == 8)
+        {
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                _trimShift = new Vector2(0f, -0.78f);
+                fixTargetPercentCellSize = 0.995f;
+            }
+            // 四角は特に調整不要
+            if( GetShapeType() == ShapeType.Square)
+            {
+                _trimShift = new Vector2(0f, 0f);
+                targetPercent = 100;
+                fixTargetPercentCellSize = 1f;
+            }
+        }
+        // iD:6 = 7x7(三角) 15ステージなど
+        if(cols == 7 && rows == 7)
+        {
+            if( GetShapeType() == ShapeType.Triangle)
+                _trimShift = new Vector2(278f, 87f);
+        }
+        // iD:7 = 7x8(四角六角) 21,27ステージなど
+        if(cols == 7 && rows == 8)
+        {
+            if( GetShapeType() == ShapeType.Square)
+            {
+                targetPercent = 88;
+                fixTargetPercentCellSize = 0.995f;
+                _trimShift = new Vector2(0f, 0f);
+            }
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                targetPercent = 105;
+                _trimShift = new Vector2(0f, -0.69f);
+            }
+        }
+        // iD:7 = 8x7(三角) 24ステージなど
+        if(cols == 8 && rows == 7)
+        {
+            if( GetShapeType() == ShapeType.Triangle)
+            {
+                _trimShift = new Vector2(312f, 175f);
+                targetPercent = 131;
+                fixTargetPercentCellSize = 0.9925f;
+            }
+        }
+        // iD:8 = 7x9(四角六角) デイリーステージなど
+        if(cols == 7 && rows == 9)
+        {
+            _trimShift = new Vector2(0f, 0f);
+            if( GetShapeType() == ShapeType.Hex)
+            {
+                _trimShift = new Vector2(0f, -0.7f);
+            }
+        }
+        // iD:8 = 8x8(三角) デイリーステージなど(現在未使用)
+        if(cols == 8 && rows == 8)
+        {
+            _trimShift = new Vector2(324f, 87f);
         }
     }
     private void Split(bool isStatic)
@@ -407,36 +554,44 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             }
             AssetDatabase.Refresh(); 
 
+            // newAssetPathに既に同じ名前のアセットが存在する場合、上書きする
+            if (File.Exists(newAssetPath) && assetPath != newAssetPath)
+            {
+                Debug.Log($"同名アセットが存在するため上書きします: {newAssetPath}");
+                AssetDatabase.DeleteAsset(newAssetPath);
+            }
+
             // 5. AssetDatabase.MoveAssetを使用してアセットを移動
             string result = AssetDatabase.MoveAsset(assetPath, newAssetPath);
 
-            AssetDatabase.Refresh(); 
+            // AssetDatabase.Refresh(); 
 
             var guid = AssetDatabase.AssetPathToGUID(newAssetPath);
             AddressableAssetEntry entry = settings.CreateOrMoveEntry(guid, group);
 
             if(entry != null)
             {
-                Debug.Log($"✅ SpriteのAddressable化成功: {newAssetPath}, {group}");
+                // Debug.Log($"✅ SpriteのAddressable化成功: {newAssetPath}, {group}");
             }
             else
             {
-                Debug.Log($"❌ SpriteのAddressable化失敗: {newAssetPath}, {group}");
+                // Debug.Log($"❌ SpriteのAddressable化失敗: {newAssetPath}, {group}");
             }
 
             if (string.IsNullOrEmpty(result))
             {
-                Debug.Log($"✅ Spriteアセットを移動しました: {assetPath} -> {newAssetPath}");
+                // Debug.Log($"✅ Spriteアセットを移動しました: {assetPath} -> {newAssetPath}");
 
                 // 移動後、AssetDatabaseに変更を保存
-                AssetDatabase.SaveAssets(); 
+                // AssetDatabase.SaveAssets(); 
                 // EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<Object>(newAssetPath)); // 移動したアセットを強調表示（オプション）
             }
             else
             {
-                Debug.LogError($"❌ Spriteアセットの移動に失敗しました: {result}");
-                Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
+                // Debug.LogError($"❌ Spriteアセットの移動に失敗しました: {result}");
+                // Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
             }
+            AssetDatabase.SaveAssets(); 
         }
 
         Debug.Log($"Addressable 1");

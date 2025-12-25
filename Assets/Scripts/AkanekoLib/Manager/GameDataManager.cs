@@ -26,6 +26,8 @@ public static class GameDataManager
 
     public static bool IsDebugView = false;
 
+    public static bool IsStageStarted = false;
+
     public static event UnityAction<bool> onOptionVibChanged;
     public static event UnityAction<bool> onOptionSeChanged;
     public static event UnityAction<bool> onOptionBgmChanged;

@@ -85,11 +85,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3a9b17017e8334fb785743b386010260
-    m_Address: Assets/Prefabs/Stages/Stage114.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c4d04443eea4482e9cef0fb4d387f91
     m_Address: Assets/Prefabs/Addressable/Stage114/tri_1_7.png
     m_ReadOnly: 0
@@ -156,7 +151,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 79e927f7e2ba44dd48fdc28e03b6afe6
-    m_Address: Assets/Textures/Originals/ResizedImages2/116_jungle_1080x1350.png
+    m_Address: Assets/Prefabs/Addressable/Stage114/116_jungle_1080x1350.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

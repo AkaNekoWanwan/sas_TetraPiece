@@ -59,6 +59,7 @@ public class SettingManager : MonoBehaviour
             // ホームに戻る
             GameDataManager.IsHome = true;
             PlayerPrefs.SetInt("FirstLoadScene", -1);
+            PlayerPrefs.SetInt("DailyStage", -1);
             FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.5f);
         };
     }

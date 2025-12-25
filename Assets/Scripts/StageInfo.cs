@@ -31,7 +31,7 @@ public class StageInfo : MonoBehaviour
     public void Addressable()
     {
         AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
-        spritter.Addressable();
+        spritter.Addressable(true);
     }
     public void StageAddressable()
     {
@@ -62,18 +62,18 @@ public class StageInfo : MonoBehaviour
             // シーンのルートにあるオブジェクトを取得する
             GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
-            foreach (GameObject obj in rootObjects)
-            {
-                Debug.Log("オブジェクト名: " + obj.name);
-                StageInfo wordGenerator = obj.GetComponent<StageInfo>();
-                // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
-                if (wordGenerator != null && wordGenerator != generator)
-                {
-                    wordGenerator.gameObject.SetActive(false);
-                }
-            }
-            Debug.Log("オブジェクトが選択されました。");
-            generator.gameObject.SetActive(true);
+            // foreach (GameObject obj in rootObjects)
+            // {
+            //     Debug.Log("オブジェクト名: " + obj.name);
+            //     StageInfo wordGenerator = obj.GetComponent<StageInfo>();
+            //     // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
+            //     if (wordGenerator != null && wordGenerator != generator)
+            //     {
+            //         wordGenerator.gameObject.SetActive(false);
+            //     }
+            // }
+            // Debug.Log("オブジェクトが選択されました。");
+            // generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得
             StageInfo[] scripts = targets.Cast<StageInfo>().ToArray();
@@ -171,6 +171,29 @@ public class StageInfo : MonoBehaviour
                     EditorUtility.DisplayProgressBar(title, info, progress);
 
                     script.SplitImage(); 
+                }
+                // 処理が完了したら進捗バーを閉じる
+                EditorUtility.ClearProgressBar();
+            }
+
+            // プレハブを保存するだけのボタン
+            if (GUILayout.Button("プレハブ保存 (選択全体に適用)"))
+            {
+                // 処理をUndo可能にするための記述（推奨）
+                Undo.RecordObjects(scripts, "Save Prefabs");    
+                for (int i = 0; i < totalCount; i++)
+                {
+                    StageInfo script = scripts[i];
+                    string title = $"プレハブ保存中 ({i + 1}/{totalCount})";
+                    string info = $"ステージ: {script.gameObject.name} のプレハブを保存中...";
+                    float progress = (float)i / totalCount;
+                    
+                    // 進捗バーを表示・更新
+                    EditorUtility.DisplayProgressBar(title, info, progress);
+
+                    // プレハブ保存処理
+                    string prefabPath = $"Assets/Prefabs/Stages/{script.gameObject.name}.prefab";
+                    PrefabUtility.SaveAsPrefabAssetAndConnect(script.gameObject, prefabPath, InteractionMode.UserAction);
                 }
                 // 処理が完了したら進捗バーを閉じる
                 EditorUtility.ClearProgressBar();

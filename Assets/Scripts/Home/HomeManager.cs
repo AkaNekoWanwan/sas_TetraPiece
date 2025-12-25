@@ -190,6 +190,9 @@ public class HomeManager : MonoBehaviour
         this.gameObject.SetActive(false);
         _homeParent.gameObject.SetActive(false);
         _hardEfffectManager.PlayHardAnimation(GameDataManager.IsHard);
+
+        if(!GameDataManager.IsStageStarted)
+            FirebaseManager.instance.StageStart();
     }
     public void ShowView()
     {

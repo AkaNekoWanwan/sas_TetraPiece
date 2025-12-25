@@ -26,8 +26,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
             DestroyImmediate(transform.GetChild(0).gameObject);
         }
 
-        Image img = GetComponent<Image>();
-        if (img == null || img.sprite == null)
+        if (_splitImage == null || _splitImage.sprite == null)
         {
             Debug.LogError("Image または Sprite が設定されていません。");
             return;
@@ -40,7 +39,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
             return;
         }
 
-        Sprite sprite = img.sprite;
+        Sprite sprite = _splitImage.sprite;
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
         
@@ -167,8 +166,8 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 cellObj.transform.SetAsFirstSibling(); // CellをAnswerより手前に配置
 
                 // 💡 Sprite引数を追加し、SetupRectAndSpriteを呼び出す
-                SetupRectAndSprite(answerObj, img, sp, triSize, triHeight, x, y);
-                SetupRectAndSprite(cellObj,   img, sp, triSize, triHeight, x, y);
+                SetupRectAndSprite(answerObj, _splitImage, sp, triSize, triHeight, x, y);
+                SetupRectAndSprite(cellObj,   _splitImage, sp, triSize, triHeight, x, y);
 
                 GridCell answerCell = answerObj.AddComponent<GridCell>();
                 answerCell.isUpSide = pointingUp;

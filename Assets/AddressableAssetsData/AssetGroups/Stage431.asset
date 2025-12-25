@@ -65,11 +65,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4759cd35f13114b96a6d3216b4ad0e47
-    m_Address: Assets/Prefabs/Stages/Stage431.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 53ce80b90f9764efe9f7651d7628ba4e
     m_Address: Assets/Prefabs/Addressable/Stage431/hex_1_1.png
     m_ReadOnly: 0
@@ -176,7 +171,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dbac604b0d3f64bfcb15a6884b410935
-    m_Address: Assets/Textures/Originals/ResizedImages2/455_Muscle_1080x1350.png
+    m_Address: Assets/Prefabs/Addressable/Stage431/455_Muscle_1080x1350.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

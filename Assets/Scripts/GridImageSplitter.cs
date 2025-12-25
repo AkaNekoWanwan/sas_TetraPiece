@@ -26,9 +26,8 @@ public class GridImageSplitter : AbstractGridImageSplitter
         {
             DestroyImmediate(transform.GetChild(0).gameObject);
         }
-
-        Image img = GetComponent<Image>();
-        if (img == null || img.sprite == null)
+        
+        if (_splitImage == null || _splitImage.sprite == null)
         {
             Debug.LogError("Image または Sprite が設定されていません。");
             return;
@@ -41,7 +40,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
             return;
         }
 
-        Sprite sprite = img.sprite;
+        Sprite sprite = _splitImage.sprite;
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
 
@@ -218,7 +217,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                     cellObj.transform.SetParent(this.transform, false);
                 }
 
-                RectTransform parentRT = img.GetComponent<RectTransform>();
+                RectTransform parentRT = _splitImage.GetComponent<RectTransform>();
                 Vector2 parentSize = parentRT.rect.size;
 
                 // 正方形領域（UI上）の辺長

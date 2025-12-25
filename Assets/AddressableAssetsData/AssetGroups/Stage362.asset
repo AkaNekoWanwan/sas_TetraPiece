@@ -95,11 +95,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 75c0d9529b7aa46279c8bf6f0479c355
-    m_Address: Assets/Prefabs/Stages/Stage362.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 76e37ce3cef5648b28142a56aeb22984
     m_Address: Assets/Prefabs/Addressable/Stage362/grid_5_0.png
     m_ReadOnly: 0
@@ -146,7 +141,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bc0561294e2744289b2446b36a38c9d0
-    m_Address: Assets/Textures/Originals/ResizedImages2/370_hamburgershopcat.jpg
+    m_Address: Assets/Prefabs/Addressable/Stage362/370_hamburgershopcat.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

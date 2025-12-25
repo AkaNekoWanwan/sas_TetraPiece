@@ -15,8 +15,108 @@ MonoBehaviour:
   m_GroupName: Stage011
   m_GUID: c883c7fd0e4a940129b67d6f8dbde2d4
   m_SerializeEntries:
-  - m_GUID: 3b93b0522b58a4070bcc77f549327bef
-    m_Address: Assets/Prefabs/Stages/Stage011.prefab
+  - m_GUID: 03686e9e6fb6c4d73b372c1fc4a1d04b
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_1_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 076cb43b35de54f2989dcc093bfe0a63
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_2_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b9ac333bb8b74a1f97d077efdbc4cea
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_0_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 422f0b13562d64584943fc3ab30f5f33
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_3_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5320b9e9bfc8b4ed48a2af26409d295b
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_1_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ab4d52cab7d647f79eb493e82987237
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_3_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 651f7038b37d949b8963256acfc95162
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_4_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7119fd4e08a334e649e660f69e6c13c6
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_0_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99869832c252b400c8fca0593f482501
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_4_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ad3425b027774c4396080e49bbcb031
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_1_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a433e1454aa224292aaf70b671e6d2b7
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_0_2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9c85614e74de42e8be359f4f4b8009a
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_4_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aafd3572ac34e4f92b8f21c97bd86f05
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_2_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: adf4d559aa3924b69a01ab0ebcf7a65c
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_3_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b39a24bf620a24e079b28108d82ff6cb
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_4_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bdb3e7ba4ac2c4898bc2dda1a8859d07
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_2_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4ec8026a702f46e7ae7d62b664aac5c
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_3_0.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d1c5c3b27c0b840779432de4f8f9b3df
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_0_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8871f3ea9cea4923809f1e21aaf195e
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_1_3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfbaeaf364b8c46e6aa40892aa106141
+    m_Address: Assets/Prefabs/Addressable/Stage011/011_011_attractive-young-woman-in-yellow-sunglasses-posing-2024-11-15-23-00-53-utc.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecf2dc4e187004406997b77e494e9877
+    m_Address: Assets/Prefabs/Addressable/Stage011/grid_2_0.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

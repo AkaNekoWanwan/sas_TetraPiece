@@ -55,11 +55,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 41e2658fdcd0d4248a291a4863f31b71
-    m_Address: Assets/Prefabs/Stages/Stage343.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 42b5932148677455c9e22bb2c2043ed5
     m_Address: Assets/Prefabs/Addressable/Stage343/grid_5_4.png
     m_ReadOnly: 0
@@ -141,7 +136,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a90297d20b1ee41d386664fbacf71757
-    m_Address: Assets/Textures/Originals/ResizedImages2/351_miller-2399101_1920.jpg
+    m_Address: Assets/Prefabs/Addressable/Stage343/351_miller-2399101_1920.jpg
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
