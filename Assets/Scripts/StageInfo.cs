@@ -62,18 +62,18 @@ public class StageInfo : MonoBehaviour
             // シーンのルートにあるオブジェクトを取得する
             GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
-            // foreach (GameObject obj in rootObjects)
-            // {
-            //     Debug.Log("オブジェクト名: " + obj.name);
-            //     StageInfo wordGenerator = obj.GetComponent<StageInfo>();
-            //     // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
-            //     if (wordGenerator != null && wordGenerator != generator)
-            //     {
-            //         wordGenerator.gameObject.SetActive(false);
-            //     }
-            // }
-            // Debug.Log("オブジェクトが選択されました。");
-            // generator.gameObject.SetActive(true);
+            foreach (GameObject obj in rootObjects)
+            {
+                Debug.Log("オブジェクト名: " + obj.name);
+                StageInfo wordGenerator = obj.GetComponent<StageInfo>();
+                // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
+                if (wordGenerator != null && wordGenerator != generator)
+                {
+                    wordGenerator.gameObject.SetActive(false);
+                }
+            }
+            Debug.Log("オブジェクトが選択されました。");
+            generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得
             StageInfo[] scripts = targets.Cast<StageInfo>().ToArray();

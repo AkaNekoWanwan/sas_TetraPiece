@@ -52,9 +52,9 @@ MonoBehaviour:
   m_CheckForContentUpdateRestrictionsOption: 0
   m_MonoScriptBundleCustomNaming: 
   m_RemoteCatalogBuildPath:
-    m_Id: d23d28b5530a24f92942a20b28642ea2
+    m_Id: 8d86148565ffa4ce38cd625d13351f52
   m_RemoteCatalogLoadPath:
-    m_Id: a47c8e1a02b9241a3b32efbd3426569d
+    m_Id: 986a7b334790c4446924d1b029d58e2f
   m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
@@ -634,7 +634,7 @@ MonoBehaviour:
       - m_Id: 986a7b334790c4446924d1b029d58e2f
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: a47c8e1a02b9241a3b32efbd3426569d
-        m_Value: <undefined>
+        m_Value: http://localhost
       - m_Id: d23d28b5530a24f92942a20b28642ea2
         m_Value: 'ServerData/[BuildTarget]'
     m_ProfileEntryNames:
@@ -665,7 +665,7 @@ MonoBehaviour:
   m_CertificateHandlerType:
     m_AssemblyName: 
     m_ClassName: 
-  m_ActivePlayerDataBuilderIndex: 3
+  m_ActivePlayerDataBuilderIndex: 2
   m_DataBuilders:
   - {fileID: 11400000, guid: d6c579f44c9d04a36993e7ac2a550fa2, type: 2}
   - {fileID: 11400000, guid: 9e4d79b21d0b243bbb553c9219fc8262, type: 2}
