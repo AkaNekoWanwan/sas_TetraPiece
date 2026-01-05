@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.AddressableAssets;
@@ -49,6 +50,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public Vector2 _trimShift = Vector2.zero;
     public int uniqueId = 0;
     public int index = 0;
+
+    public Action<int, int, string> OnUpdateProgressBar;
 
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
 
@@ -164,8 +167,14 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     // ステージ作成に必要な一連の流れを実行
     public void CreatePiece()
     {
+        // 画像からピースのセルを生成
+        OnUpdateProgressBar?.Invoke(0, 100, "piece cell creating...");
         BeforeSplit();
+        // ピースセルをいい感じに組み合わせてピースとしてまとめる
+        OnUpdateProgressBar?.Invoke(33, 100, "piece creating...");
         Split(true);
+        // ピースのセットアップとPrefab保存
+        OnUpdateProgressBar?.Invoke(67, 100, "piece setup and saving...");
         AfterSplit();
     }
 
@@ -456,6 +465,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public void Addressable(bool isUseImageLoader = false)
     {
     #if UNITY_EDITOR
+        OnUpdateProgressBar?.Invoke(0, 100, "Addressables Settings の取得中...");
+
         // 1. Addressables Settings の取得
         var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null)
@@ -464,6 +475,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             return;
         }
 
+        OnUpdateProgressBar?.Invoke(1, 100, "自身のプレハブインスタンスの取得中...");
         // 2. シーン上のインスタンスからプレハブアセットを取得
         // 自身がプレハブインスタンスでない場合は処理を中止
         GameObject instanceRoot = this.transform.parent.parent.gameObject;
@@ -477,7 +489,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         
         // プレハブ名を取得 (これがグループ名になる)
         string groupName = prefabAsset.name;
-
+        OnUpdateProgressBar?.Invoke(2, 100, $"Addressable Group '{groupName}' の取得または新規作成中...");
         // 3. グループの取得または新規作成
         AddressableAssetGroup group = settings.FindGroup(groupName);
         if (group == null)
@@ -494,18 +506,13 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             Debug.Log($"既存の Addressable Group '{groupName}' をクリアしました。");
         }
         
-        // 4. Addressable化するアセットを収集
-        Debug.Log($"Addressable 1");
-        // A. プレハブアセット自体
-        string prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
-        
-        // B. プレハブ内で使われているSpriteアセットを収集
-        // List<Object> assetsToAddressable = new List<Object>();
 
         // プレハブ内の全ImageコンポーネントからSpriteを収集
+        OnUpdateProgressBar?.Invoke(4, 100, "Imageコンポーネント取得中...");
         Image[] images = instanceRoot.GetComponentsInChildren<Image>(true);
 
         Dictionary<Sprite, List<Image>> imageDic = new Dictionary<Sprite, List<Image>>();
+        int index = 0;
         foreach (var image in images)
         {
             if(_shadowSprite == image.sprite)
@@ -524,8 +531,16 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 imageDic.Add(image.sprite, new List<Image>());
 
             imageDic[image.sprite].Add(image);
+
+            // n% -> 50%進捗更新
+            OnUpdateProgressBar?.Invoke(4 + index / 2, images.Length + 4, $"ImageからAddressable化対象のSpriteを収集中...{index + 1}/{images.Length}");
+            index++;
         }
 
+        float totalSprites = (float)imageDic.Keys.Count;
+        index = 0;
+        // 各SpriteアセットをAddressable化してグループに登録
+        // 50% -> 95%進捗更新
         foreach (var sprite in imageDic.Keys)
         {
             string assetPath = AssetDatabase.GetAssetPath(sprite);
@@ -539,9 +554,9 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
             if(isUseImageLoader)
             {
+                float subIndex = 0f;
                 foreach (var image in imageDic[sprite])
                 {
-
                     // 画像をAddressable化した各オブジェクトに代わりにAddressableImageLoaderをつける(パスを記憶してawake時にロードする機能)
                     AddressableImageLoader addressableImageLoader = image.gameObject.GetComponent<AddressableImageLoader>();
                     if(addressableImageLoader == null)
@@ -550,8 +565,12 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                     }
                     addressableImageLoader.addressName = newAssetPath;
                     image.sprite = null;
+                    subIndex += 1f;
+                    OnUpdateProgressBar?.Invoke((int)(50f + ((float)index / 2f + subIndex / (float)imageDic[sprite].Count) * 45f / totalSprites), 100, $"{fileName}のAddressable化中：Imageの更新中 ({subIndex}/{imageDic[sprite].Count}){index + 1}/{totalSprites} ");
                 }
             }
+
+            OnUpdateProgressBar?.Invoke((int)(50f + ((float)index + 0.5f) * 45f / totalSprites), 100, $"{fileName}のAddressable化中：ファイル移動中...{index + 1}/{totalSprites}");
             // ここでセーブ
             // 3. 新しいディレクトリが存在しない場合、作成
             if (!AssetDatabase.IsValidFolder(newDirectory))
@@ -599,10 +618,11 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 // Debug.LogError($"パス: {assetPath} -> {newAssetPath}");
             }
             AssetDatabase.SaveAssets(); 
+            index++;
         }
 
-        Debug.Log($"Addressable 1");
-
+        // Debug.Log($"Addressable 1");
+        OnUpdateProgressBar?.Invoke(95, 100, $"設定の保存と更新中...");
         // 6. 設定の保存と更新
         EditorUtility.SetDirty(settings);
         AssetDatabase.SaveAssets();
@@ -704,11 +724,33 @@ public class AbstractGridImageSplitterEditor : Editor
         }
         if (GUILayout.Button("Auto Create piece"))
         {
+            script.OnUpdateProgressBar = null;
+            script.OnUpdateProgressBar += (current, total, message) =>
+            {
+                EditorUtility.DisplayProgressBar("ステージ生成中", message, (float)current / total);
+                if (current >= total)
+                {
+                    EditorUtility.ClearProgressBar();
+                }
+            };
             script.CreatePiece();
+            EditorUtility.ClearProgressBar();
+            script.OnUpdateProgressBar = null;
         }
         if (GUILayout.Button("画像のみAddressable化"))
         {
+            script.OnUpdateProgressBar = null;
+            script.OnUpdateProgressBar += (current, total, message) =>
+            {
+                EditorUtility.DisplayProgressBar("Addressable化 実行中", message, (float)current / total);
+                if (current >= total)
+                {
+                    EditorUtility.ClearProgressBar();
+                }
+            };
             script.Addressable(true);
+            EditorUtility.ClearProgressBar();
+            script.OnUpdateProgressBar = null;
         }
         if (GUILayout.Button("ステージのAddressable化"))
         {

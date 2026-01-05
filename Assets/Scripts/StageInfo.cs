@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.IO;
 
 #if UNITY_EDITOR
 using UnityEngine.SceneManagement; // SceneManagerを使用するために必要
@@ -13,33 +15,41 @@ using System.Linq;
 
 public class StageInfo : MonoBehaviour
 {
+    public AbstractGridImageSplitter _spritter;
+    public Action<int, int, string> OnUpdateProgressBar;
     public string stageName;
     public bool isHard = false;
+
+    public AbstractGridImageSplitter Spritter{
+        get{
+            if(_spritter == null)
+            {
+                _spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
+            }
+            return _spritter;
+        }
+    }
 
 #if UNITY_EDITOR
     public void SetUpStage()
     {
-        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
-        spritter.CreatePiece();
+        Spritter.OnUpdateProgressBar = OnUpdateProgressBar;
+        Spritter.CreatePiece();
     }
     public void SplitImage()
     {
-        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
-        spritter.Deletepiece();
-        spritter.SplitImage();
-    }
+        Spritter.Deletepiece();
+        Spritter.SplitImage();
+    }   
     public void Addressable()
     {
-        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
-        spritter.Addressable(true);
+        Spritter.Addressable(true);
     }
     public void StageAddressable()
     {
-        AbstractGridImageSplitter spritter = this.gameObject.GetComponentInChildren<AbstractGridImageSplitter>();
-        spritter.AddressableStage();
-        spritter.Addressable(false);
+        Spritter.AddressableStage();
+        Spritter.Addressable(false);
     }
-
 #endif
 }
 
@@ -88,14 +98,20 @@ public class StageInfo : MonoBehaviour
                 for (int i = 0; i < totalCount; i++)
                 {
                     StageInfo script = scripts[i];
-                    string title = $"Addressable設定中 ({i + 1}/{totalCount})";
+                    string title = $"ステージ生成中 ({i + 1}/{totalCount})";
                     string info = $"ステージ: {script.gameObject.name} をセットアップ中...";
                     float progress = (float)i / totalCount;
+                    script.OnUpdateProgressBar += (current, total, subInfo) =>
+                    {
+                        float subProgress = (float)current / total;
+                        EditorUtility.DisplayProgressBar(title, info + " " + subInfo, progress + subProgress / totalCount);
+                    };
                     
                     // 進捗バーを表示・更新
                     EditorUtility.DisplayProgressBar(title, info, progress);
 
                     script.SetUpStage(); 
+                    script.OnUpdateProgressBar = null; // イベントハンドラをリセット
                 }
                 EditorUtility.ClearProgressBar();
             }
@@ -110,6 +126,11 @@ public class StageInfo : MonoBehaviour
                     string title = $"Addressable設定中 ({i + 1}/{totalCount})";
                     string info = $"ステージ: {script.gameObject.name} をAddressableに登録中...";
                     float progress = (float)i / totalCount;
+                    script.OnUpdateProgressBar += (current, total, subInfo) =>
+                    {
+                        float subProgress = (float)current / total;
+                        EditorUtility.DisplayProgressBar(title, info + " " + subInfo, progress + subProgress / totalCount);
+                    };
                     
                     // 進捗バーを表示・更新
                     // キャンセルボタンを押された場合、処理を中断
@@ -121,10 +142,12 @@ public class StageInfo : MonoBehaviour
 
                     try{
                         script.Addressable(); 
+                        script.OnUpdateProgressBar = null; // イベントハンドラをリセット
                     }
                     catch(Exception)
                     {
                         Debug.Log($"エラー：{script.gameObject.name}");
+                        script.OnUpdateProgressBar = null; // イベントハンドラをリセット
                         continue;
                     }
                     // 各 StageInfo インスタンスに対して処理を実行   
@@ -149,7 +172,6 @@ public class StageInfo : MonoBehaviour
                     
                     // 進捗バーを表示・更新
                     EditorUtility.DisplayProgressBar(title, info, progress);
-
                     script.StageAddressable(); 
                 }
                 // 処理が完了したら進捗バーを閉じる
