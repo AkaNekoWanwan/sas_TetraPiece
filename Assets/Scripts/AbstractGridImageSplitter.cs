@@ -467,6 +467,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     #if UNITY_EDITOR
         OnUpdateProgressBar?.Invoke(0, 100, "Addressables Settings の取得中...");
 
+        List<AddressableImageLoader> loadedImageLoaders = new List<AddressableImageLoader>();
+
         // 1. Addressables Settings の取得
         var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
         if (settings == null)
@@ -563,6 +565,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                     {
                         addressableImageLoader = image.gameObject.AddComponent<AddressableImageLoader>();
                     }
+                    loadedImageLoaders.Add(addressableImageLoader);
                     addressableImageLoader.addressName = newAssetPath;
                     image.sprite = null;
                     subIndex += 1f;
@@ -630,6 +633,20 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
         Debug.Log($"🎉 ステージ'{groupName}'と関連アセットのAddressable設定が完了しました！\n登録されたアセット数: {group.entries.Count}件");
 
+        // ImageのSpriteをnullにしてプレハブを保存した後、管理しやすいように改めて画像をロードする
+        if(true)
+        {
+            var totalLoaders = loadedImageLoaders.Count;
+            int currentLoaderIndex = 0;
+            foreach (var loader in loadedImageLoaders)
+            {
+                OnUpdateProgressBar?.Invoke(96, 100, $"AddressableImageLoaderで画像を再読み込み中... ({currentLoaderIndex + 1}/{totalLoaders})");
+                loader.LoadExternal();
+                currentLoaderIndex++;
+            }
+        }
+
+        OnUpdateProgressBar?.Invoke(100, 100, $"Addressable設定完了！");
     #else
         // エディタ外ではAddressable設定は実行できない
         Debug.LogWarning("Addressable設定はUnity Editor上でのみ実行可能です。");

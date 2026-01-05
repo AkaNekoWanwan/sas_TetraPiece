@@ -5918,6 +5918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!1 &69555317
@@ -6996,6 +6997,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &109329862
@@ -8687,7 +8689,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 0
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -11629,6 +11630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &259001450
@@ -16076,6 +16078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &368916573
@@ -30696,6 +30699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &775573673
@@ -31082,7 +31086,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 0
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -33809,7 +33812,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 0
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -43557,6 +43559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &1152073579
@@ -48225,6 +48228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &1318169799
@@ -49174,7 +49178,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 0
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -49818,7 +49821,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 0
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -51674,6 +51676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &1420475127
@@ -55689,6 +55692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &1530309782
@@ -69922,7 +69926,6 @@ MonoBehaviour:
   isOverraySeed: 1
   isSkip: 0
   isOrderSort: 1
-  PieceCreateSeed: 
   backUpPieceCreateSeed: 
   randomSeed: 0
   avoidPatternSeeds: []
@@ -71494,6 +71497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babed8014a7bc45009c0402f10f8f5fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spritter: {fileID: 0}
   stageName: trump
   isHard: 0
 --- !u!4 &1956346711
@@ -78626,6 +78630,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage005
       objectReference: {fileID: 0}
+    - target: {fileID: 1588349176914748314, guid: 187a62dae4fd041f185c3a6b2c79bbee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3672462083772576072, guid: 187a62dae4fd041f185c3a6b2c79bbee, type: 3}
       propertyPath: m_Camera
       value: 
@@ -79673,6 +79681,10 @@ PrefabInstance:
     - target: {fileID: 3030770208761358029, guid: 2ae66914771774090bdc1f6a214b4061, type: 3}
       propertyPath: m_Name
       value: DailyStage007
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030770208761358029, guid: 2ae66914771774090bdc1f6a214b4061, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5959956084391131057, guid: 2ae66914771774090bdc1f6a214b4061, type: 3}
       propertyPath: m_Camera
@@ -83388,6 +83400,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage025
       objectReference: {fileID: 0}
+    - target: {fileID: 1636358335514422381, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4009135396112181233, guid: ca1fbfa8b6fcb490a825b649b77b8053, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -85709,6 +85725,10 @@ PrefabInstance:
     - target: {fileID: 2422752160756732758, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
       propertyPath: m_Name
       value: DailyStage020
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422752160756732758, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2424889476482164367, guid: 8bbea4e2bf84746119fc4f328ec02fb6, type: 3}
       propertyPath: m_Camera
@@ -89157,6 +89177,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage013
       objectReference: {fileID: 0}
+    - target: {fileID: 4975818883135809637, guid: cd29c96b728174d4c9fae348118f1e4b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5905117587214579436, guid: cd29c96b728174d4c9fae348118f1e4b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -89442,6 +89466,10 @@ PrefabInstance:
     - target: {fileID: 6394591644769595658, guid: bff290cdf2bce450d8bff45852fa32f0, type: 3}
       propertyPath: m_Name
       value: DailyStage008
+      objectReference: {fileID: 0}
+    - target: {fileID: 6394591644769595658, guid: bff290cdf2bce450d8bff45852fa32f0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -91020,6 +91048,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage019
       objectReference: {fileID: 0}
+    - target: {fileID: 7950191674094107406, guid: decb86a1da6254c3480df22ef9611869, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -91262,6 +91294,10 @@ PrefabInstance:
     - target: {fileID: 1110828727420940002, guid: 8c7fb88f64ab24d2b907c7ab8bc624bd, type: 3}
       propertyPath: m_Name
       value: DailyStage001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1110828727420940002, guid: 8c7fb88f64ab24d2b907c7ab8bc624bd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8403517993306765388, guid: 8c7fb88f64ab24d2b907c7ab8bc624bd, type: 3}
       propertyPath: m_Camera
@@ -92231,6 +92267,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage009
       objectReference: {fileID: 0}
+    - target: {fileID: 5239070259944106475, guid: 302d78c29e9d040f29dab4d5ce2d203e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -92534,6 +92574,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage006
       objectReference: {fileID: 0}
+    - target: {fileID: 3363576815610491088, guid: 418941468647140aa958aa8afb8a065e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6965687214596977362, guid: 418941468647140aa958aa8afb8a065e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -92728,6 +92772,10 @@ PrefabInstance:
     - target: {fileID: 4722942331536282798, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
       propertyPath: m_Name
       value: DailyStage026
+      objectReference: {fileID: 0}
+    - target: {fileID: 4722942331536282798, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6579553465783234994, guid: 0ad2247ee77e845f49eebafde8fe0ee7, type: 3}
       propertyPath: m_Camera
@@ -94133,6 +94181,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stage044
       objectReference: {fileID: 0}
+    - target: {fileID: 1709545174725298439, guid: 024f2033f92404998b9f2928cf3c86c2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1814634406379947374, guid: 024f2033f92404998b9f2928cf3c86c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -94836,6 +94888,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage004
       objectReference: {fileID: 0}
+    - target: {fileID: 1398294792773233853, guid: 948e18e1226bf4bbfa64f5fb0131b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4292073342674575901, guid: 948e18e1226bf4bbfa64f5fb0131b0c5, type: 3}
       propertyPath: m_Camera
       value: 
@@ -94984,6 +95040,10 @@ PrefabInstance:
     - target: {fileID: 5296798677984542257, guid: ffa37e6c3d5b7404f90816bb523bd8c8, type: 3}
       propertyPath: m_Name
       value: DailyStage022
+      objectReference: {fileID: 0}
+    - target: {fileID: 5296798677984542257, guid: ffa37e6c3d5b7404f90816bb523bd8c8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -97004,6 +97064,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage010
       objectReference: {fileID: 0}
+    - target: {fileID: 1988684568739027771, guid: 2ce4b1628c4704de7ad13b7ec03136af, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2233209470757159306, guid: 2ce4b1628c4704de7ad13b7ec03136af, type: 3}
       propertyPath: m_Camera
       value: 
@@ -97068,6 +97132,10 @@ PrefabInstance:
     - target: {fileID: 7259006736508740706, guid: 0c498f36d91474cb192d46c181223542, type: 3}
       propertyPath: m_Name
       value: DailyStage016
+      objectReference: {fileID: 0}
+    - target: {fileID: 7259006736508740706, guid: 0c498f36d91474cb192d46c181223542, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8886059734985873050, guid: 0c498f36d91474cb192d46c181223542, type: 3}
       propertyPath: m_LocalPosition.x
@@ -97289,6 +97357,10 @@ PrefabInstance:
     - target: {fileID: 4597315471230949682, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
       propertyPath: m_Name
       value: DailyStage024
+      objectReference: {fileID: 0}
+    - target: {fileID: 4597315471230949682, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4735381491137788552, guid: fc4ceb476b416471a8a803710208f58c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -99278,6 +99350,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage023
       objectReference: {fileID: 0}
+    - target: {fileID: 1532476538417786300, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6254200410846391033, guid: 53643086c68934ffc8b8b877f8210ce6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -101052,6 +101128,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage018
       objectReference: {fileID: 0}
+    - target: {fileID: 8473855451329552059, guid: 8224aace0ff794eee8bd466b0b407535, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -102275,6 +102355,10 @@ PrefabInstance:
     - target: {fileID: 4294346356140162974, guid: f3cb5952e75024931b5a341d4983aa3f, type: 3}
       propertyPath: m_Name
       value: DailyStage003
+      objectReference: {fileID: 0}
+    - target: {fileID: 4294346356140162974, guid: f3cb5952e75024931b5a341d4983aa3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6742080687418464672, guid: f3cb5952e75024931b5a341d4983aa3f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -106353,6 +106437,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage021
       objectReference: {fileID: 0}
+    - target: {fileID: 3417040917611521205, guid: 1e830d261583044c090efdfd64a81482, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7485162405517098292, guid: 1e830d261583044c090efdfd64a81482, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -106724,6 +106812,10 @@ PrefabInstance:
     - target: {fileID: 1090990764131489011, guid: d5f26661740d84f21b4518a3af6e238c, type: 3}
       propertyPath: m_Name
       value: DailyStage002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1090990764131489011, guid: d5f26661740d84f21b4518a3af6e238c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3948549523024055610, guid: d5f26661740d84f21b4518a3af6e238c, type: 3}
       propertyPath: m_Camera
@@ -108613,6 +108705,10 @@ PrefabInstance:
     - target: {fileID: 6492160435315428174, guid: 59f97dd4eabfb454abfc153314b5b93b, type: 3}
       propertyPath: m_Name
       value: DailyStage017
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492160435315428174, guid: 59f97dd4eabfb454abfc153314b5b93b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -110544,7 +110640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6921692587899435188, guid: 04e8884d266c941598a93ea6e6952407, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -114895,6 +114991,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage014
       objectReference: {fileID: 0}
+    - target: {fileID: 1927828171528903306, guid: ae56e51dff02245df8e4428c212aac3c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2116045441896274890, guid: ae56e51dff02245df8e4428c212aac3c, type: 3}
       propertyPath: m_Camera
       value: 
@@ -117827,6 +117927,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DailyStage012
       objectReference: {fileID: 0}
+    - target: {fileID: 1521612659954071811, guid: fef668d37ff7c4a818e49411fa0a41cf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4473647876981810361, guid: fef668d37ff7c4a818e49411fa0a41cf, type: 3}
       propertyPath: m_Camera
       value: 
@@ -119573,6 +119677,10 @@ PrefabInstance:
     - target: {fileID: 8291916494654689723, guid: e68c057c0e4f64371aad2f73ac9ec6eb, type: 3}
       propertyPath: m_Name
       value: DailyStage011
+      objectReference: {fileID: 0}
+    - target: {fileID: 8291916494654689723, guid: e68c057c0e4f64371aad2f73ac9ec6eb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -122833,6 +122941,10 @@ PrefabInstance:
     - target: {fileID: 1042378444643582881, guid: ed3dad59038b34b76b448a019e0cdc5c, type: 3}
       propertyPath: m_Name
       value: DailyStage015
+      objectReference: {fileID: 0}
+    - target: {fileID: 1042378444643582881, guid: ed3dad59038b34b76b448a019e0cdc5c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8131548793999226090, guid: ed3dad59038b34b76b448a019e0cdc5c, type: 3}
       propertyPath: m_LocalPosition.x

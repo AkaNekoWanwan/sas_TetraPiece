@@ -6,147 +6,120 @@ public static class PieceSorter
 {
     public enum SortDirection { Left, Right, Up, Down }
 
-    public static bool prioritizeMultiCellPieces = true;
+    public static bool prioritizeMultiCellPieces = false;
 
-    /// <summary>
-    /// 子オブジェクト数の降順で並び替え、その後、最も子オブジェクト数の多い外周ピースの方向を起点に
-    /// 固定の上下左右サイクルでソートを行う。シード値によるランダム化は行わない。
-    /// </summary>
-    /// <param name="source">PieceDragControllerのリスト</param>
-    /// <param name="seedString">使用しないが引数は維持</param>
-    /// <param name="prioritizeMultiCellPieces">セル数2以上のピースをセル数1のピースより優先するか</param>
-    /// <returns>並び替えられた新しいリスト</returns>
     public static List<PieceDragController> SortBySeededAlternatingDirections(
         this List<PieceDragController> source, 
-        string seedString // ★ 変更点1: bool変数を追加し、デフォルトをtrueに設定
+        int seed
     )
     {
-        if (source == null || source.Count == 0)
-        {
-            return new List<PieceDragController>();
-        }
-        Debug.Log($"PieceSorter:1:{source.Count}");
+        if (source == null || source.Count == 0) return new List<PieceDragController>();
 
-        // 1. コピーを作成し、初期ソートを行う
-        
-        IEnumerable<PieceDragController> sortedInitial;
+        // seedを使用してランダムインスタンスを作成
+        var rng = new System.Random(seed);
 
-        if (prioritizeMultiCellPieces)
-        {
-            // ★ 変更点2: prioritizeMultiCellPiecesがtrueの場合のソートロジック
-            // セル数が2以上のピースを優先し、その後子オブジェクト数の降順で並び替える
-            // GetSortPriority: セル数 > 1 なら 1、セル数 = 1 なら 0 を返す
-            sortedInitial = source
-                .OrderByDescending(p => GetSortPriority(p)) // 優先度順 (2以上が先、1が後)
-                .ThenByDescending(p => p.transform.childCount) // 同じ優先度内で、子オブジェクト数の降順
-                .ToList();
-        }
-        else
-        {
-            // 変更前の元のロジック：子オブジェクト数の降順のみ
-            sortedInitial = source
-                .OrderByDescending(p => p.transform.childCount)
-                .ToList();
-        }
+        // 1. 初期ソート（優先度とセル数順）
+        IEnumerable<PieceDragController> sortedInitial = prioritizeMultiCellPieces
+            ? source.OrderByDescending(p => GetSortPriority(p)).ThenByDescending(p => p.transform.childCount)
+            : source.OrderByDescending(p => p.transform.childCount);
 
         var remainingPieces = sortedInitial.ToList();
-            
         var sortedQueue = new List<PieceDragController>();
         
-        // 2. 最初の抽出方向を決定
-        SortDirection initialDirection = DetermineInitialDirection(remainingPieces);
-
-        // 3. 固定の方向サイクルを定義
-        List<SortDirection> fullCycle = new List<SortDirection> 
-        { 
-            SortDirection.Up, 
-            SortDirection.Right, 
-            SortDirection.Down, 
-            SortDirection.Left 
-        };
-        
-        // 最初の方向がサイクル内のどこから始まるかを特定し、サイクルを再構築
-        int startIndex = fullCycle.IndexOf(initialDirection);
-        List<SortDirection> directions = new List<SortDirection>();
-        for (int i = 0; i < fullCycle.Count; i++)
-        {
-            directions.Add(fullCycle[(startIndex + i) % fullCycle.Count]);
-        }
+        // 2. 動的な方向サイクル（1位〜4位）を決定
+        List<SortDirection> dynamicCycle = DetermineDirectionCycle(remainingPieces);
 
         int directionIndex = 0;
 
+        // 3. 決定したサイクルに従って抽出
         while (remainingPieces.Count > 0)
         {
-            SortDirection nextDirection = directions[directionIndex % directions.Count];
+            SortDirection nextDirection = dynamicCycle[directionIndex % dynamicCycle.Count];
             PieceDragController nextPiece = null;
-            
-            // 4. 決定した方向に従って、まだソートされていないピースの中から外周のピースを取得
-            // remainingPiecesは既に初期ソートされているため、First()で選ばれるピースは、
-            // **その方向で最も優先度の高い（セル数が多い）ピース**になります。
-            
+
+            bool isRandomCellCount = true;
+            if(directionIndex < 3)
+                isRandomCellCount = false; // 最初の3つはランダムにしない
+
             switch (nextDirection)
             {
                 case SortDirection.Left:
-                    // 左端のピースの中から、remainingPiecesの現在のソート順（優先度順）で一番最初のものを取得
-                    nextPiece = remainingPieces.OrderBy(p => p.transform.position.x).First();
+                    if (!isRandomCellCount)
+                    {
+                        nextPiece = remainingPieces.OrderBy(p => GetMinGridX(p)).First();
+                    }
+                    else
+                    {
+                        int minX = remainingPieces.Min(p => GetMinGridX(p));
+                        nextPiece = remainingPieces
+                            .Where(p => GetMinGridX(p) == minX) // 物理的に一番端にあるやつらだけ集める
+                            .OrderBy(_ => rng.Next())           // その中ならセル数無視でランダムに選ぶ
+                            .First();
+                    }
                     break;
                 case SortDirection.Right:
-                    nextPiece = remainingPieces.OrderByDescending(p => p.transform.position.x).First();
+                    if (!isRandomCellCount)
+                    {
+                        nextPiece = remainingPieces.OrderByDescending(p => GetMaxGridX(p)).First();
+                    }
+                    else
+                    {
+                        int maxX = remainingPieces.Max(p => GetMaxGridX(p));
+                        nextPiece = remainingPieces
+                            .Where(p => GetMaxGridX(p) == maxX) // 物理的に一番端にあるやつらだけ集める
+                            .OrderBy(_ => rng.Next())           // その中ならセル数無視でランダムに選ぶ
+                            .First();
+                    }
                     break;
                 case SortDirection.Up:
-                    nextPiece = remainingPieces.OrderByDescending(p => p.transform.position.y).First();
+                    if(!isRandomCellCount)
+                    {
+                        nextPiece = remainingPieces.OrderByDescending(p => GetMaxGridY(p)).First();
+                    }
+                    else
+                    {
+                        int maxY = remainingPieces.Max(p => GetMaxGridY(p));
+                        nextPiece = remainingPieces
+                            .Where(p => GetMaxGridY(p) == maxY)
+                            .OrderBy(_ => rng.Next())
+                            .First();
+                    }
                     break;
                 case SortDirection.Down:
-                    nextPiece = remainingPieces.OrderBy(p => p.transform.position.y).First();
+                    if(!isRandomCellCount)
+                    {
+                        nextPiece = remainingPieces.OrderBy(p => GetMinGridY(p)).First();
+                    }
+                    else
+                    {
+                        int minY = remainingPieces.Min(p => GetMinGridY(p));
+                        nextPiece = remainingPieces
+                            .Where(p => GetMinGridY(p) == minY)
+                            .OrderBy(_ => rng.Next())
+                            .First();
+                    }
                     break;
             }
 
-            // 見つけたピースを結果に追加し、元のリストから削除する
             if (nextPiece != null)
             {
                 sortedQueue.Add(nextPiece);
                 remainingPieces.Remove(nextPiece);
             }
-            // 次の方向へ進む
             directionIndex++;
         }
 
-        // 最後にセル数が１のピースを最後に
-        // if(prioritizeMultiCellPieces)
-        // {
-        //     sortedQueue = sortedQueue.OrderByDescending(p => GetSortPriority(p)).ToList();
-        // }
-
-        // 今の若い順に３ピースごとに外周以外のピースも混ぜるようにする。
-        // ３ピースのうち何個目が外周以外のピースかは一見ランダムなようにする（seedStringを使う？）
-        for(int i = 0; i < sortedQueue.Count; i += 3)
-        {
-            // 最後のピースをターゲットにする
+        // 混ぜ込み処理
+        if (sortedQueue.Count >= 3)
+        {   
+            // 0, 1, 2 のいずれかのインデックスを決定
+            int insertIndex = rng.Next(0, 3); 
+            
             int insertTargetIndex = sortedQueue.Count - 1; 
-            
-            // ループの外側でCountチェックを行う
-            if( sortedQueue.Count <= i )
-                break;
-            // 追加分：最初の1個分だけ処理する。残りは動的にする
-            if( 3 <= i )
-                break;
-            
-            // 挿入インデックスを計算
-            int calculatedIndex = i + (int)directions[i / 2 % directions.Count] % 3;
-            
-            // 挿入インデックスが現在のリストサイズを超えないように制限
-            int insertIndex = Mathf.Min(calculatedIndex, sortedQueue.Count - 1);
-            
             PieceDragController piece = sortedQueue[insertTargetIndex];
             piece.IsRandomPiece = true;
             
-            // 削除と挿入を同一ループ内で行うことで、必ずピースがリスト内に残るようにする
-            sortedQueue.RemoveAt(insertTargetIndex); 
-            
-            // 削除後のCountに基づいてインデックスを再チェックするのではなく、
-            // 削除前のCount-1を最大値とする。
-            // insertTargetIndex は削除後に無効になるため、RemoveAtを使用。
-            
+            sortedQueue.RemoveAt(insertTargetIndex);
             sortedQueue.Insert(insertIndex, piece);
         }
         
@@ -154,70 +127,65 @@ public static class PieceSorter
     }
 
     /// <summary>
-    /// セル数 > 1 のピースに高い優先度を付与するヘルパーメソッド。
+    /// 各方向で「最も外周を支配しているピース」のセル数を比較し、1位〜4位の方向順序を返す
     /// </summary>
-    private static int GetSortPriority(PieceDragController piece)
+    private static List<SortDirection> DetermineDirectionCycle(List<PieceDragController> pieces)
     {
-        return piece.transform.childCount > 1 ? 1 : 0;
-    }
+        var allCells = pieces.SelectMany(p => p.GetComponentsInChildren<AnswerGridPos>()).ToList();
+        if (allCells.Count == 0) return new List<SortDirection> { SortDirection.Up, SortDirection.Right, SortDirection.Down, SortDirection.Left };
 
-    /// <summary>
-    /// リストの中で「外周の最も子オブジェクト数が多いピース」を見つけ、その方向を返す
-    /// </summary>
-    private static SortDirection DetermineInitialDirection(List<PieceDragController> pieces)
-    {
-        if (pieces == null || pieces.Count == 0)
+        int gMinX = allCells.Min(c => c.x);
+        int gMaxX = allCells.Max(c => c.x);
+        int gMinY = allCells.Min(c => c.y);
+        int gMaxY = allCells.Max(c => c.y);
+
+        // 各方向の「最大支配数（単一ピースによる最大接触数）」を格納するリスト
+        var directionStrengths = new List<(SortDirection dir, int maxCount)>();
+
+        var directions = new[] { SortDirection.Up, SortDirection.Down, SortDirection.Right, SortDirection.Left };
+
+        foreach (var dir in directions)
         {
-            return SortDirection.Up; // デフォルト
+            int maxContactForThisDir = 0;
+            foreach (var p in pieces)
+            {
+                var cells = p.GetComponentsInChildren<AnswerGridPos>();
+                int contact = 0;
+                switch (dir)
+                {
+                    case SortDirection.Up:    contact = cells.Count(c => c.y == gMaxY); break;
+                    case SortDirection.Down:  contact = cells.Count(c => c.y == gMinY); break;
+                    case SortDirection.Right: contact = cells.Count(c => c.x == gMaxX); break;
+                    case SortDirection.Left:  contact = cells.Count(c => c.x == gMinX); break;
+                }
+                if (contact > maxContactForThisDir) maxContactForThisDir = contact;
+            }
+            directionStrengths.Add((dir, maxContactForThisDir));
         }
 
-        // 1. 最も優先度の高いピース群を取得 (子オブジェクト数 >= 2 のピース、または全ピース)
-        // pieces は既に優先度順でソートされているため、先頭のピースと同じ優先度のグループを取得
-        
-        // 優先度が最大のグループを取得
-        int maxPriority = GetSortPriority(pieces.First());
-        int maxCount = pieces.First().transform.childCount;
-
-        var maxPriorityPieces = pieces
-            .Where(p => GetSortPriority(p) == maxPriority)
-            .Where(p => p.transform.childCount == maxCount) // その中でさらに子オブジェクト数最大のグループ
+        // 支配セル数で降順ソート。同数の場合は Up > Right > Down > Left の優先順位で安定させる
+        return directionStrengths
+            .OrderByDescending(x => x.maxCount)
+            .ThenBy(x => GetDirectionPriority(x.dir)) 
+            .Select(x => x.dir)
             .ToList();
-        
-        // 2. 取得したピース群の中で、最も外周にあるものを探す
-        
-        // 外周の端座標を計算
-        float minX = maxPriorityPieces.Min(p => p.transform.position.x);
-        float maxX = maxPriorityPieces.Max(p => p.transform.position.x);
-        float minY = maxPriorityPieces.Min(p => p.transform.position.y);
-        float maxY = maxPriorityPieces.Max(p => p.transform.position.y);
-        
-        // 3. 最初に抽出される方向を決定 (上→右→下→左 の優先度)
-        
-        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.y - maxY) < 0.001f))
-        {
-            return SortDirection.Up;
-        }
-        
-        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.x - maxX) < 0.001f))
-        {
-            return SortDirection.Right;
-        }
-        
-        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.y - minY) < 0.001f))
-        {
-            return SortDirection.Down;
-        }
-        
-        if (maxPriorityPieces.Any(p => Mathf.Abs(p.transform.position.x - minX) < 0.001f))
-        {
-            return SortDirection.Left;
-        }
-        
-        return SortDirection.Up;
     }
-    
-    // ... (Shuffle と StringToSeed メソッドは使用しないため削除または維持) ...
-    // ShuffleとStringToSeedは元のコードにはありましたが、新しいロジックでは不要です。
-    // メソッドの定義は省略します。
-    
+
+    private static int GetDirectionPriority(SortDirection dir)
+    {
+        switch (dir)
+        {
+            case SortDirection.Up:    return 0;
+            case SortDirection.Right: return 1;
+            case SortDirection.Down:  return 2;
+            case SortDirection.Left:  return 3;
+            default: return 4;
+        }
+    }
+
+    private static int GetSortPriority(PieceDragController piece) => piece.transform.childCount > 1 ? 1 : 0;
+    private static int GetMinGridX(PieceDragController p) => p.GetComponentsInChildren<AnswerGridPos>().Min(c => c.x);
+    private static int GetMaxGridX(PieceDragController p) => p.GetComponentsInChildren<AnswerGridPos>().Max(c => c.x);
+    private static int GetMinGridY(PieceDragController p) => p.GetComponentsInChildren<AnswerGridPos>().Min(c => c.y);
+    private static int GetMaxGridY(PieceDragController p) => p.GetComponentsInChildren<AnswerGridPos>().Max(c => c.y);
 }

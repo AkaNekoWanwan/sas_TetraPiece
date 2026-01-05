@@ -19,7 +19,6 @@ public class GridPieceListController : MonoBehaviour
     public bool isOverraySeed = true;   // ピースのランダム配置のシード値を更新するか
     public bool isSkip = false;   // 全更新時にスキップするか
     public bool isOrderSort = false;   // ピースの並びを手動で指定するか
-    public string PieceCreateSeed = ""; // ピース作成のシード値
     public string backUpPieceCreateSeed = ""; // ピース作成のシード値のバックアップ
     public int randomSeed = 0;
     public List<string> avoidPatternSeeds = default;
@@ -100,7 +99,7 @@ public class GridPieceListController : MonoBehaviour
         // queue.AddRange(pcs.OrderBy(p => p.transform.position.x));
         if(!isOrderSort)
         {
-            queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(pcs.ToList(), PieceCreateSeed)); 
+            queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(pcs.ToList(), randomSeed)); 
         }
         else
         {
@@ -448,7 +447,6 @@ public class GridPieceListController : MonoBehaviour
                 var tempQueue = new List<PieceDragController>(visiblePieces);
                 tempQueue.Add(piece);
                 queue.AddRange(tempQueue.OrderBy(p => p.transform.position.x));
-                // queue.AddRange(PieceSorter.SortBySeededAlternatingDirections(tempQueue, PieceCreateSeed));
                 queue.Add(otherPieces[selectableCount - 1]);
                 Debug.Log($"queueDebug7:{queue.Count}");
             }
