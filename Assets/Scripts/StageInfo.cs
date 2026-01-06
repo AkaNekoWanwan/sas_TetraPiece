@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.IO;
+using UnityEngine.UI;
 
 #if UNITY_EDITOR
 using UnityEngine.SceneManagement; // SceneManagerを使用するために必要
@@ -31,6 +32,55 @@ public class StageInfo : MonoBehaviour
     }
 
 #if UNITY_EDITOR
+    private void OnValidate() {
+        // プレハブインスタンスまたはプレハブアセット内では変更できないのでスキップ
+        if (PrefabUtility.IsPartOfPrefabInstance(this) || PrefabUtility.IsPartOfPrefabAsset(this))
+        {
+            return;
+        }
+
+        // 下の階層にScrollRectコンポーネントがあったらそのコンポーネントを削除する(そのオブジェクト自体は消さない)
+        ScrollRect scrollRectComponent = this.GetComponentInChildren<ScrollRect>();
+        if(scrollRectComponent != null)
+        {
+            // OnValidate内ではDestroyImmediateが使えないため、次のフレームで削除
+            EditorApplication.delayCall += () => 
+            {
+                if (scrollRectComponent != null)
+                {
+                    DestroyImmediate(scrollRectComponent);
+                }
+            };
+        }
+        
+        // 下の階層に「ScrollRect」という名前のオブジェクトがある場合、その中の「PieceList」オブジェクトの親を「ScrollRect」の親にしたのち、「ScrollRect」オブジェクトを削除する
+        Transform scrollRectTransform = this.transform.Find("Canvas/ScrollRect");
+        if(scrollRectTransform != null)
+        {
+            Transform pieceListTransform = scrollRectTransform.Find("PieceList");  
+            if(pieceListTransform == null)
+            {
+                pieceListTransform = this.transform.Find("Canvas/PieceList");
+            }
+            if(pieceListTransform != null)
+            {
+                Transform parentTransform = scrollRectTransform.parent;
+                GameObject scrollRectObj = scrollRectTransform.gameObject;
+                
+                pieceListTransform.SetParent(parentTransform);
+                
+                // OnValidate内ではDestroyImmediateが使えないため、次のフレームで削除
+                EditorApplication.delayCall += () =>
+                {
+                    if (scrollRectObj != null)
+                    {
+                        DestroyImmediate(scrollRectObj);
+                    }
+                };
+            }
+        }
+    }
+
     public void SetUpStage()
     {
         Spritter.OnUpdateProgressBar = OnUpdateProgressBar;
@@ -158,25 +208,25 @@ public class StageInfo : MonoBehaviour
                 Debug.Log($"Addressable設定が完了しました。対象数: {totalCount} 件");
             }
 
-            if(GUILayout.Button("StageのAddressable化(選択全体に適用)"))
-            {
-                // 処理をUndo可能にするための記述（推奨）
-                Undo.RecordObjects(scripts, "Addressable Stage Stages"); 
+            // if(GUILayout.Button("StageのAddressable化(選択全体に適用)"))
+            // {
+            //     // 処理をUndo可能にするための記述（推奨）
+            //     Undo.RecordObjects(scripts, "Addressable Stage Stages"); 
 
-                for (int i = 0; i < totalCount; i++)
-                {
-                    StageInfo script = scripts[i];
-                    string title = $"Addressable設定中 ({i + 1}/{totalCount})";
-                    string info = $"ステージ: {script.gameObject.name} をStageグループに登録中...";
-                    float progress = (float)i / totalCount;
+            //     for (int i = 0; i < totalCount; i++)
+            //     {
+            //         StageInfo script = scripts[i];
+            //         string title = $"Addressable設定中 ({i + 1}/{totalCount})";
+            //         string info = $"ステージ: {script.gameObject.name} をStageグループに登録中...";
+            //         float progress = (float)i / totalCount;
                     
-                    // 進捗バーを表示・更新
-                    EditorUtility.DisplayProgressBar(title, info, progress);
-                    script.StageAddressable(); 
-                }
-                // 処理が完了したら進捗バーを閉じる
-                EditorUtility.ClearProgressBar();
-            }
+            //         // 進捗バーを表示・更新
+            //         EditorUtility.DisplayProgressBar(title, info, progress);
+            //         script.StageAddressable(); 
+            //     }
+            //     // 処理が完了したら進捗バーを閉じる
+            //     EditorUtility.ClearProgressBar();
+            // }
 
             if (GUILayout.Button("画像分割"))
             {

@@ -225,6 +225,8 @@ public class StageManager : MonoBehaviour
             stage.transform.localScale = Vector3.one;
             stage.transform.localPosition = Vector3.zero;
             stage.gameObject.SetActive(true);
+            if(GuidReturn.instance != null)
+                GuidReturn.instance.transform.GetChild(0).parent = stage.transform.GetChild(0);
             isHard = stage.isHard;
         }
         // Addressableからステージを読み込む場合

@@ -769,11 +769,11 @@ public class AbstractGridImageSplitterEditor : Editor
             EditorUtility.ClearProgressBar();
             script.OnUpdateProgressBar = null;
         }
-        if (GUILayout.Button("ステージのAddressable化"))
-        {
-            script.AddressableStage();
-            script.Addressable(false);  // AddressableStageとAddressableの共通処理をまとめる場合はこの行を削除してください
-        }
+        // if (GUILayout.Button("ステージのAddressable化"))
+        // {
+        //     script.AddressableStage();
+        //     script.Addressable(false);  // AddressableStageとAddressableの共通処理をまとめる場合はこの行を削除してください
+        // }
     }
 }
 #endif

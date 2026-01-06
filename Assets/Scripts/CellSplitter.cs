@@ -313,9 +313,24 @@ public static class CellSplitter
         // ピース生成のパラメーターセット
         GridX = cols;
         GridY = rows;
-        TargetPieceCount = orderPieceNum;
         CurrentShapeType = type; // ★ ここでShapeTypeを保持する
         PatternSeed = patternSeed; // パターンシードを保持
+
+        // パターンシードから取得したピース数を一時保存
+        int seedPieceCount = -1;
+        
+        // パターンシードがある場合は解析
+        if (!string.IsNullOrEmpty(patternSeed))
+        {
+            AnalysisPatternSeed(patternSeed);
+            seedPieceCount = TargetPieceCount; // シードから取得した値を保存
+        }
+
+        // orderPieceNumを優先して使用
+        TargetPieceCount = orderPieceNum;
+        
+        // パターンシードのピース数とorderPieceNumが異なるかチェック
+        bool forceFlexibleCount = (seedPieceCount > 0 && seedPieceCount != orderPieceNum);
 
         // 乱数生成器の数値シードを決定 (ランダム探索の再現性用。パターン再現とは別)
         _randomSeed = GetRandomIntSeed(); // 新しい乱数シード生成関数を使用
@@ -326,10 +341,9 @@ public static class CellSplitter
         // 1. ピース形状の定義を取得
         SetAvailableShapes();
         GroupShapesByCellCount();
-        // 2. シード値の決定と解析 (PatternSeedのデコード)
-        AnalysisPatternSeed(patternSeed);
+        
         // ピース情報の生成
-        CreatePiecePlacements(patternSeed, avoidPatternSeeds);
+        CreatePiecePlacements(patternSeed, avoidPatternSeeds, forceFlexibleCount);
 
         // 作成したピース情報をもとにピースオブジェクトに反映させる
         // コントローラーの前準備
@@ -416,11 +430,17 @@ public static class CellSplitter
         }
     }
 
-    private static void CreatePiecePlacements(string patternSeed = null, List<string> avoidPatternSeeds = null)
+    private static void CreatePiecePlacements(string patternSeed = null, List<string> avoidPatternSeeds = null, bool forceFlexibleCount = false)
     {
         bool success = false;
         bool isRandom = true;
         bool enforceCount = false;
+        
+        // パターンシードのピース数とorderPieceNumが異なる場合は強制的にenforceCount=falseにする
+        if (forceFlexibleCount)
+        {
+            enforceCount = false;
+        }
 
         // =========================================================
         // 第1パス: 受け取ったパターンシードのデコードと強制再現
@@ -497,7 +517,7 @@ public static class CellSplitter
                 bool currentAttemptSuccess = false;
                 
                 // 試行1: ターゲットピース数厳守・形状ユニーク
-                if( 0 < TargetPieceCount )
+                if( 0 < TargetPieceCount && !forceFlexibleCount )
                 {
                     enforceCount = true;
                     for(int attempt2 = 0; attempt2 < MAX_UNIQUE_ATTEMPTS; attempt2++)
@@ -987,7 +1007,30 @@ public static class CellSplitter
                 _isPatternSeedActive = true;
                 _pieceNameSequence = new List<string>();
                 _originCoordSequence = new List<GridCoord>();
-                // ... (既存のピースパース処理)
+                
+                // TargetPieceCountをシードから復元
+                if (int.TryParse(headerParts[2], out int pieceCount))
+                {
+                    TargetPieceCount = pieceCount;
+                }
+                
+                // データ部からピース情報をパース
+                for (int i = 1; i < headerAndData.Length; i++)
+                {
+                    string[] nameAndCoord = headerAndData[i].Split(':');
+                    if (nameAndCoord.Length == 2)
+                    {
+                        string name = nameAndCoord[0];
+                        string[] coords = nameAndCoord[1].Split(',');
+                        if (coords.Length == 2 && 
+                            int.TryParse(coords[0], out int x) && 
+                            int.TryParse(coords[1], out int y))
+                        {
+                            _pieceNameSequence.Add(name);
+                            _originCoordSequence.Add(new GridCoord(x, y));
+                        }
+                    }
+                }
             }
         }
         else

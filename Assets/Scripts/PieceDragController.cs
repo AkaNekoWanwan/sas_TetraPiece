@@ -6,12 +6,17 @@ using UnityEngine.UI;
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
+#endif 
 
 public class PieceDragController : MonoBehaviour,
     IPointerDownHandler, IPointerUpHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    // スナップされていない状態を表す位置
+    private static readonly Vector3 UNSNAPPED_POSITION = new Vector3(-9999, -9999, -9999);
+    // スナップ可能な最大距離（この距離を超えるとスナップしない）
+    private const float MAX_SNAP_DISTANCE = 100f;
+    
     [Header("Snap Settings")]
     public Transform gridParent;
     public Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
@@ -111,7 +116,7 @@ public class PieceDragController : MonoBehaviour,
     public bool IsRandomPiece = false;  // 選択肢３個のうち１つのランダム枠か
     private Vector2Int workPos = Vector2Int.zero;
     private Vector2Int workPos2 = Vector2Int.zero;
-    private Vector3 lastSnappedPos = Vector3.zero;
+    private Vector3 lastSnappedPos = UNSNAPPED_POSITION;
     private int addQueue = 0;
     private StageManager _stageManager = default;
     private bool _isMove = false;
@@ -309,7 +314,7 @@ public class PieceDragController : MonoBehaviour,
                 addY = 0f;
 
             // 盤面上にあるなら少し上に移動させる
-            if (lastSnappedPos != Vector3.zero)
+            if (lastSnappedPos != UNSNAPPED_POSITION)
             {
                 addY += GameConst.ADD_Y_OFFSET;
             }
@@ -374,7 +379,7 @@ public class PieceDragController : MonoBehaviour,
             Vector3 targetPos = FixZ(worldPoint + dragOffset);
 
             // 盤面上にあるなら少し上に移動させる
-            if (lastSnappedPos != Vector3.zero)
+            if (lastSnappedPos != UNSNAPPED_POSITION)
             {
                 targetPos.y += GameConst.ADD_Y_OFFSET;
             }
@@ -386,6 +391,9 @@ public class PieceDragController : MonoBehaviour,
 
         AudioManager.Instance.PlayHoldSound();
         SetActiveShadow(false);
+
+        if(GuidReturn.instance != null)
+            GuidReturn.instance.ShowGuidReturn();
     }
 
     public void SetActiveShadow(bool isActive)
@@ -427,12 +435,12 @@ public class PieceDragController : MonoBehaviour,
             SetOutlineAlpha(1f, 0.2f);
             
             // ★ 分岐ロジック: 最後にスナップされた位置があるか？
-            if (lastSnappedPos != Vector3.zero) 
-            {
-                // 1. 盤面に一度置かれたことがある場合
-                ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
-            }
-            else
+            // if (lastSnappedPos != UNSNAPPED_POSITION) 
+            // {
+            //     // 1. 盤面に一度置かれたことがある場合
+            //     ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
+            // }
+            // else
             {
                 // 2. リストから初めてドラッグされた場合
                 // リストに戻す (シェイクなし)
@@ -444,6 +452,7 @@ public class PieceDragController : MonoBehaviour,
                 // Debug.Log("サイズ不具合チェック：５");
                 rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
                 SetActiveShadow(true);
+                GuidReturn.instance.AddReturnCount();
             }
             
             return;
@@ -499,6 +508,8 @@ public class PieceDragController : MonoBehaviour,
         OnPointerUpExecute();
         if(!isDragging || GameDataManager.IsCreativeMode)
             OnEndDragExecute();
+
+        GuidReturn.instance.HideGuidReturn();
     }
 
     public void OnPointerUpExecute()
@@ -514,7 +525,7 @@ public class PieceDragController : MonoBehaviour,
             
             // ReturnToOrigin();
         }
-        if(lastSnappedPos == Vector3.zero && !isDragging)
+        if(lastSnappedPos == UNSNAPPED_POSITION && !isDragging)
         {
             rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         }
@@ -779,6 +790,13 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             }
         }
     }
+    
+    // 最寄りのグリッドが閾値を超える距離にある場合はnullを返す（盤面外判定）
+    if (nearest != null && minDist > MAX_SNAP_DISTANCE)
+    {
+        return null;
+    }
+    
     return nearest;
 }
     void ApplyCellsAfterMaterial()
