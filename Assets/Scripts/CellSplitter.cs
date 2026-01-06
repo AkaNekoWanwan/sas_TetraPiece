@@ -558,6 +558,10 @@ public static class CellSplitter
             // Debug.Log($"<color=green>敷き詰め完了！</color> 最終ピース数: {_pieceIdCounter - 1}, 使用パターンシード: {PatternSeed}");
             if (!enforceCount)
                 MergeSmallPieces();
+            else
+            {
+                RebalancePieces();
+            }
             
             if(isRandom)
             {
@@ -1334,6 +1338,410 @@ public static class CellSplitter
         }
     }
 
+    // ========= ピース数維持モードの再分配ロジック ==========
+    // ピース数を維持しつつ、1セルピースを減らすための再分配処理
+    // 優先順位1: 1セル統合(-1) + 4セル以上を2分割(+1) = ピース数維持
+    // 優先順位2: 1セル統合(-1) + 3セル以上2つを3分割(-2+3=+1) = ピース数維持
+    private static void RebalancePieces()
+    {
+        // ピース数指定がない、または統合が必要な1セルピースがない場合は、
+        // 従来の高速な統合処理だけを行って終了
+        if (TargetPieceCount <= 0)
+        {
+            MergeSmallPieces();
+            return;
+        }
+        Debug.Log($"<color=orange>ピース数維持モードでの再分配処理を開始します。現在の1セルピース数: {_successfulPlacements.Count(p => p.Shape.Cells.Count == 1)}</color>");
+        // --- ピース数維持モード ---
+        
+        int maxIterations = 5; // 無限ループ防止
+        int iteration = 0;
+        
+        while (iteration < maxIterations)
+        {
+            iteration++;
+            
+            // 1. 1セルピースをリストアップ
+            var oneCellPieces = _successfulPlacements.Where(p => p.Shape.Cells.Count == 1).ToList();
+            if (oneCellPieces.Count == 0) 
+            {
+                Debug.Log($"<color=green>再分配完了: 1セルピースが0個になりました</color>");
+                return; // 1セルがなければ完了
+            }
+
+            // 2. 1セルピースを1つ選択
+            var oneCell = oneCellPieces[0];
+            
+            // 3. 隣接する1セル以上のピースを探す（統合相手、1セル同士の統合も許容）
+            var adjacentPieces = GetAdjacentPieceRecords(oneCell)
+                .Where(r => r.Shape.Cells.Count >= 1)
+                .OrderBy(r => r.Shape.Cells.Count) // 小さい方から試す（1セル同士を優先）
+                .ToList();
+            
+            bool success = false;
+            
+            foreach (var adjacent in adjacentPieces)
+            {
+                // 4. 1セルピース + 隣接ピースの統合形状を探す
+                List<GridCoord> oneCellCells = GetAbsoluteCells(oneCell);
+                List<GridCoord> adjacentCells = GetAbsoluteCells(adjacent);
+                List<GridCoord> mergedCells = new List<GridCoord>(oneCellCells);
+                mergedCells.AddRange(adjacentCells);
+                
+                PieceShape mergedShape = FindMatchingShape(mergedCells);
+                if (mergedShape == null)
+                { 
+                    Debug.Log($"<color=gray>再分配候補スキップ: [{oneCell.Shape.Name}+{adjacent.Shape.Name}]の統合形状が見つかりません</color>");
+                    continue;
+                }
+                else
+                {
+                    Debug.Log($"<color=gray>再分配候補発見: [{oneCell.Shape.Name}+{adjacent.Shape.Name}]の統合形状 [{mergedShape.Name}] を発見</color>");
+                }
+                
+                // 5. 別の場所で分割可能な大きなピース（4セル以上）を探す
+                // ※3セルは2つの2セル以上に分割できないため除外
+                var splittablePieces = _successfulPlacements
+                    .Where(p => p.Shape.Cells.Count >= 4 && 
+                                p.PieceId != oneCell.PieceId && 
+                                p.PieceId != adjacent.PieceId)
+                    .OrderByDescending(p => p.Shape.Cells.Count) // 大きい方から試す
+                    .ToList();
+                
+                Debug.Log($"<color=cyan>再分配: 1セル[{oneCell.PieceId}]+隣接[{adjacent.PieceId}({adjacent.Shape.Cells.Count}セル)]の統合候補。4セル以上のピース数: {splittablePieces.Count}</color>");
+                 
+                foreach (var splittable in splittablePieces)
+                {
+                    // 6. 分割を試みる（2つの2セル以上のピースに分割）
+                    var splitResult = TrySplitPieceIntoTwo(splittable);
+                    Debug.Log($"<color=gray>再分配候補分割試行: [{splittable.Shape.Name}({splittable.PieceId})]の分割を試行</color>: splitResult={(splitResult != null ? "成功" : "失敗")}");
+                    if (splitResult != null)
+                    {
+                        // 7. 両方の操作を実行
+                        var (shape1, shape2, cells1, cells2) = splitResult.Value;
+                        
+                        // 7-1. 1セルピース + 隣接ピースを統合
+                        ReplacePieces(oneCell, adjacent, mergedShape, mergedCells);
+                        
+                        // 7-2. 別のピースを2つに分割
+                        ReplacePieceWithSplit(splittable, shape1, shape2, cells1, cells2);
+                        
+                        Debug.Log($"<color=green>再分配成功(分割): [{oneCell.Shape.Name}+{adjacent.Shape.Name}→{mergedShape.Name}] & [{splittable.Shape.Name}→{shape1.Name}+{shape2.Name}]</color>");
+                        success = true;
+                        break;
+                    }
+                }
+                
+                if (success) break;
+                
+                // フォールバック: 4セル以上のピースが見つからない場合、3セル以上のピース2つを3つに再分割してピース数維持
+                // 1セル統合(-1) + 2つのピース→3つのピース(-2+3=+1) = ピース数維持
+                if (!success)
+                {
+                    // 3セル以上のピースのペアを探す（隣接している必要はない）
+                    var redistributablePieces = _successfulPlacements
+                        .Where(p => p.Shape.Cells.Count >= 3 && 
+                                    p.PieceId != oneCell.PieceId && 
+                                    p.PieceId != adjacent.PieceId)
+                        .OrderByDescending(p => p.Shape.Cells.Count)
+                        .ToList();
+                    
+                    for (int i = 0; i < redistributablePieces.Count && !success; i++)
+                    {
+                        for (int j = i + 1; j < redistributablePieces.Count && !success; j++)
+                        {
+                            var piece1 = redistributablePieces[i];
+                            var piece2 = redistributablePieces[j];
+                            
+                            // 2つのピースを統合→ちょうど3つに分割（ピース数維持のため）
+                            var redistributeResult = TryMergeAndSplitIntoThree(piece1, piece2);
+                            if (redistributeResult != null)
+                            {
+                                // 8. 全ての操作を実行
+                                // 8-1. 1セルピース + 隣接ピースを統合
+                                ReplacePieces(oneCell, adjacent, mergedShape, mergedCells);
+                                
+                                // 8-2. 2つのピースを削除して、3つの新しいピースに置き換え
+                                ReplaceTwoPiecesWithMultiple(piece1, piece2, redistributeResult);
+                                
+                                Debug.Log($"<color=green>再分配成功(3分割): [{oneCell.Shape.Name}+{adjacent.Shape.Name}→{mergedShape.Name}] & [{piece1.Shape.Name}+{piece2.Shape.Name}→3個のピース]</color>");
+                                success = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (success) break;
+            }
+            
+            if (!success)
+            {
+                Debug.Log($"<color=yellow>再分配失敗: 残り1セルピース {oneCellPieces.Count}個を処理できませんでした</color>");
+                // break; // これ以上処理できないので終了
+            }
+        }
+        
+        if (iteration >= maxIterations)
+        {
+            Debug.LogWarning("RebalancePieces: 最大反復回数に達しました");
+        }
+    }
+    
+    /// <summary>
+    /// 2つのピースを統合してちょうど3つの2セル以上のピースに分割できるか試行する（ピース数維持のため）
+    /// 成功した場合: (Shape, Cells)のリスト（要素数3）を返す
+    /// 失敗した場合: null を返す
+    /// </summary>
+    private static List<(PieceShape, List<GridCoord>)> TryMergeAndSplitIntoThree(PieceRecord piece1, PieceRecord piece2)
+    {
+        // 2つのピースを統合
+        List<GridCoord> allCells = new List<GridCoord>();
+        allCells.AddRange(GetAbsoluteCells(piece1));
+        allCells.AddRange(GetAbsoluteCells(piece2));
+        
+        int totalCells = allCells.Count;
+        
+        // 最低でも6セル必要（2+2+2）
+        if (totalCells < 6) return null;
+        
+        // 3つ以上のグループに分割する全パターンを試す
+        // まず3分割を試行
+        for (int pattern1 = 1; pattern1 < (1 << totalCells) - 1; pattern1++)
+        {
+            for (int pattern2 = 1; pattern2 < (1 << totalCells) - 1; pattern2++)
+            {
+                // pattern1とpattern2が重複しないか、かつ全てのセルをカバーするかチェック
+                if ((pattern1 & pattern2) != 0) continue; // 重複あり
+                int pattern3 = ((1 << totalCells) - 1) ^ pattern1 ^ pattern2;
+                if (pattern3 == 0) continue; // グループ3が空
+                
+                List<GridCoord> group1 = new List<GridCoord>();
+                List<GridCoord> group2 = new List<GridCoord>();
+                List<GridCoord> group3 = new List<GridCoord>();
+                
+                for (int i = 0; i < totalCells; i++)
+                {
+                    if ((pattern1 & (1 << i)) != 0)
+                        group1.Add(allCells[i]);
+                    else if ((pattern2 & (1 << i)) != 0)
+                        group2.Add(allCells[i]);
+                    else
+                        group3.Add(allCells[i]);
+                }
+                
+                // 各グループが2セル以上必要
+                if (group1.Count < 2 || group2.Count < 2 || group3.Count < 2) continue;
+                
+                // 各グループが連結しているか確認
+                if (!IsConnected(group1) || !IsConnected(group2) || !IsConnected(group3)) continue;
+                
+                // 各グループが利用可能な形状と一致するか確認
+                PieceShape shape1 = FindMatchingShape(group1);
+                PieceShape shape2 = FindMatchingShape(group2);
+                PieceShape shape3 = FindMatchingShape(group3);
+                
+                if (shape1 != null && shape2 != null && shape3 != null)
+                {
+                    return new List<(PieceShape, List<GridCoord>)>
+                    {
+                        (shape1, group1),
+                        (shape2, group2),
+                        (shape3, group3)
+                    };
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// 2つのピースを削除して、複数の新しいピースに置き換える
+    /// </summary>
+    private static void ReplaceTwoPiecesWithMultiple(PieceRecord piece1, PieceRecord piece2, 
+                                                     List<(PieceShape, List<GridCoord>)> newPieces)
+    {
+        // 1. 古い2つのピースをグリッドから削除
+        List<GridCoord> oldCells1 = GetAbsoluteCells(piece1);
+        List<GridCoord> oldCells2 = GetAbsoluteCells(piece2);
+        
+        foreach (var cell in oldCells1)
+        {
+            _grid[cell.X, cell.Y] = 0;
+        }
+        foreach (var cell in oldCells2)
+        {
+            _grid[cell.X, cell.Y] = 0;
+        }
+        
+        // 2. _successfulPlacementsから古いピースを削除
+        _successfulPlacements.RemoveAll(p => p.PieceId == piece1.PieceId || p.PieceId == piece2.PieceId);
+        
+        // 3. 新しいピースを全て配置
+        foreach (var (shape, cells) in newPieces)
+        {
+            _pieceIdCounter++;
+            GridCoord origin = GetOriginCoord(cells);
+            
+            foreach (var cell in cells)
+            {
+                _grid[cell.X, cell.Y] = _pieceIdCounter;
+            }
+            
+            _successfulPlacements.Add(new PieceRecord 
+            { 
+                Shape = shape, 
+                Origin = origin, 
+                PieceId = _pieceIdCounter 
+            });
+            shape.UseCount++;
+        }
+    }
+    
+    /// <summary>
+    /// ピースを2つの2セル以上のピースに分割できるか試行する
+    /// 成功した場合: (Shape1, Shape2, Cells1, Cells2) のタプルを返す
+    /// 失敗した場合: null を返す
+    /// </summary>
+    private static (PieceShape, PieceShape, List<GridCoord>, List<GridCoord>)? TrySplitPieceIntoTwo(PieceRecord piece)
+    {
+        List<GridCoord> allCells = GetAbsoluteCells(piece);
+        int totalCells = allCells.Count;
+        
+        // 最低でも4セル必要（2+2）
+        if (totalCells < 4) return null;
+        
+        // 全ての可能な分割パターンを試す
+        // ビット演算で全パターンを生成（0以外かつ全てのセルを含まないパターン）
+        int maxPattern = (1 << totalCells) - 1;
+        
+        for (int pattern = 1; pattern < maxPattern; pattern++)
+        {
+            List<GridCoord> group1 = new List<GridCoord>();
+            List<GridCoord> group2 = new List<GridCoord>();
+            
+            for (int i = 0; i < totalCells; i++)
+            {
+                if ((pattern & (1 << i)) != 0)
+                    group1.Add(allCells[i]);
+                else
+                    group2.Add(allCells[i]);
+            }
+            
+            // 各グループが2セル以上必要
+            if (group1.Count < 2 || group2.Count < 2) continue;
+            
+            // 各グループが連結しているか確認
+            if (!IsConnected(group1) || !IsConnected(group2)) continue;
+            
+            // 各グループが利用可能な形状と一致するか確認
+            PieceShape shape1 = FindMatchingShape(group1);
+            PieceShape shape2 = FindMatchingShape(group2);
+            
+            if (shape1 != null && shape2 != null)
+            {
+                return (shape1, shape2, group1, group2);
+            }
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// セルのリストが連結しているか確認（BFS）
+    /// </summary>
+    private static bool IsConnected(List<GridCoord> cells)
+    {
+        if (cells.Count == 0) return false;
+        if (cells.Count == 1) return true;
+        
+        HashSet<GridCoord> cellSet = new HashSet<GridCoord>(cells);
+        HashSet<GridCoord> visited = new HashSet<GridCoord>();
+        Queue<GridCoord> queue = new Queue<GridCoord>();
+        
+        // 最初のセルから開始
+        queue.Enqueue(cells[0]);
+        visited.Add(cells[0]);
+        
+        while (queue.Count > 0)
+        {
+            GridCoord current = queue.Dequeue();
+            
+            // 隣接セルを探索
+            GridCoord[] neighbors = GetNeighborOffsets(CurrentShapeType, current.X, current.Y);
+            foreach (var offset in neighbors)
+            {
+                GridCoord neighbor = new GridCoord(current.X + offset.X, current.Y + offset.Y);
+                
+                if (cellSet.Contains(neighbor) && !visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+        
+        return visited.Count == cells.Count;
+    }
+    
+    /// <summary>
+    /// ピースを2つの新しいピースで置き換える
+    /// </summary>
+    private static void ReplacePieceWithSplit(PieceRecord oldPiece, 
+                                              PieceShape shape1, PieceShape shape2,
+                                              List<GridCoord> cells1, List<GridCoord> cells2)
+    {
+        // 1. 古いピースをグリッドから削除
+        List<GridCoord> oldCells = GetAbsoluteCells(oldPiece);
+        foreach (var cell in oldCells)
+        {
+            _grid[cell.X, cell.Y] = 0;
+        }
+        
+        // 2. _successfulPlacementsから古いピースを削除
+        _successfulPlacements.RemoveAll(p => p.PieceId == oldPiece.PieceId);
+        
+        // 3. 新しいピース1を配置
+        _pieceIdCounter++;
+        GridCoord origin1 = GetOriginCoord(cells1);
+        foreach (var cell in cells1)
+        {
+            _grid[cell.X, cell.Y] = _pieceIdCounter;
+        }
+        _successfulPlacements.Add(new PieceRecord 
+        { 
+            Shape = shape1, 
+            Origin = origin1, 
+            PieceId = _pieceIdCounter 
+        });
+        shape1.UseCount++;
+        
+        // 4. 新しいピース2を配置
+        _pieceIdCounter++;
+        GridCoord origin2 = GetOriginCoord(cells2);
+        foreach (var cell in cells2)
+        {
+            _grid[cell.X, cell.Y] = _pieceIdCounter;
+        }
+        _successfulPlacements.Add(new PieceRecord 
+        { 
+            Shape = shape2, 
+            Origin = origin2, 
+            PieceId = _pieceIdCounter 
+        });
+        shape2.UseCount++;
+    }
+    
+    /// <summary>
+    /// セルリストの原点座標（最小X、最小Y）を取得
+    /// </summary>
+    private static GridCoord GetOriginCoord(List<GridCoord> cells)
+    {
+        int minX = cells.Min(c => c.X);
+        int minY = cells.Min(c => c.Y);
+        return new GridCoord(minX, minY);
+    }
     // ========== ユーティリティ (GetAdjacentPieceRecords, GetAbsoluteCells, FindMatchingShape が必要) ==========
 
     // ターゲットピースレコードに隣接するピースレコードを取得
