@@ -92,7 +92,11 @@ public class CSVLoader : MonoBehaviour
                 data.stageId = $"Stage_{i - 1}";
                 data.gridXString = values[6];
                 data.gridYString = values[7];
-                data.pieceNumString = "-1";
+                var pieceNum = values[10];
+                if(!string.IsNullOrEmpty(pieceNum))
+                    data.pieceNumString = pieceNum;
+                else
+                    data.pieceNumString = "-1";
                 data.shapeTypeString = values[1];
                 data.gridIds = values[5];
 
