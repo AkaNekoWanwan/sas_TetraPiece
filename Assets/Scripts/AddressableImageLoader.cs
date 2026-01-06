@@ -27,6 +27,28 @@ public class AddressableImageLoader : MonoBehaviour
         {
             _imageComponent = GetComponent<Image>();
         }
+
+#if UNITY_EDITOR
+        if(!UnityEditor.EditorApplication.isPlaying)
+        {
+            Debug.Log($"[Loader: {gameObject.name}] Editor Mode: Loading image from AssetDatabase: {addressName}");
+            // addressNameから直接取得するエディター用の簡易ロード
+            // Texture2D editorTex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(addressName);
+            // if(editorTex != null)
+            // {
+            //     // Texture2D から Sprite をその場で生成する
+            //     Sprite sp = Sprite.Create(
+            //         editorTex, 
+            //         new Rect(0, 0, editorTex.width, editorTex.height), 
+            //         new Vector2(0.5f, 0.5f)
+            //     );  
+            //     _imageComponent.sprite = sp;
+            // }
+            Sprite sp = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(addressName);
+            _imageComponent.sprite = sp;
+            return default;
+        }
+#endif
         
         // ガード句のチェック (Image Componentはここで null でないことが期待される)
         if (string.IsNullOrEmpty(addressName) || _isLoaded || _imageComponent == null)
@@ -57,9 +79,9 @@ public class AddressableImageLoader : MonoBehaviour
                 {
                     Texture2D tex = handle.Result;
                       // ★ここを追加してもいい（安全策）
-// 念のためここでも統一（Importer 側で設定していれば基本同じになるはず）
-tex.filterMode = FilterMode.Point;
-tex.wrapMode   = TextureWrapMode.Clamp;
+                    // 念のためここでも統一（Importer 側で設定していれば基本同じになるはず）
+                    tex.filterMode = FilterMode.Point;
+                    tex.wrapMode   = TextureWrapMode.Clamp;
                     // Texture2D から Sprite をその場で生成する
                     Sprite sp = Sprite.Create(
                         tex, 

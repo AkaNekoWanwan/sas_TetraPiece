@@ -61,8 +61,8 @@ public class HomeManager : MonoBehaviour
         // _backButton.onClick += OnHomeButton;
         
         int totalLevel = PlayerPrefs.GetInt("totalLevel", 1);
-        // 初回プレイ時はホーム画面を表示しない
-        if(totalLevel == 1 || GameDataManager.IsCreativeMode)
+        // 指定ステージクリアまではホーム画面を表示しない
+        if(totalLevel <= GameConst.FIRST_HOME_STAGE_AFTER_CLEAR || GameDataManager.IsCreativeMode)
         {
             HideView();
             return;

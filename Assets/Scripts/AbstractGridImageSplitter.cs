@@ -367,7 +367,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     private void Split(bool isStatic)
     {
         List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
-        _pieceNum = -1;
+        // _pieceNum = -1;
         if(isStatic)
         {
             // ピースセルをいい感じにピースリストに配置

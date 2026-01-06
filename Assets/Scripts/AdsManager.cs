@@ -78,7 +78,7 @@ public class AdsManager : MonoBehaviour
        
       
     }
-       public void InitializeInterstitialAds()
+    public void InitializeInterstitialAds()
     {
         // Attach callback
         MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += OnInterstitialLoadedEvent;

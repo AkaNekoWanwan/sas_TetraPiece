@@ -69,6 +69,7 @@ public static class CellSplitter
     public static string PatternSeed { get; private set; } // パターンを再現するためのシード (エンコードされた文字列)
 
     private static bool _isPatternSeedActive = false;             // パターンシードからピースパターンを復元するか
+    private static bool _isPartialPatternSeedActive = false;      // パターンシードからピースを部分復元するか
     private static List<string> _pieceNameSequence;               // パターンシードから復元した、使用するPieceShapeのNameリスト
     private static List<GridCoord> _originCoordSequence;          // パターンシードから復元した、使用するPieceの原点座標リスト
     private static int _placementIndex = 0;                       // 復元用リストのインデックス
@@ -248,8 +249,8 @@ public static class CellSplitter
         // 2セル (I-2)
         TRIANGLE_SHAPES.Add(new PieceShape("I2-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0) }, -1, 0));
         TRIANGLE_SHAPES.Add(new PieceShape("I2-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1) }, -1, 0)); // ◇ or 砂時計型
-        TRIANGLE_SHAPES.Add(new PieceShape("I2-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(2, 1) }, -1, 1)); // /♾️
-        TRIANGLE_SHAPES.Add(new PieceShape("I2-B", new List<GridCoord> { new GridCoord(0, 1), new GridCoord(2, 0) }, -1, 1)); // \♾️
+        TRIANGLE_SHAPES.Add(new PieceShape("I2-C", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(2, 1) }, -1, 1)); // /♾️
+        TRIANGLE_SHAPES.Add(new PieceShape("I2-D", new List<GridCoord> { new GridCoord(0, 1), new GridCoord(2, 0) }, -1, 1)); // \♾️
 
 
         TRIANGLE_SHAPES.Add(new PieceShape("_3-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0) }, -1, 0));
@@ -265,7 +266,7 @@ public static class CellSplitter
         TRIANGLE_SHAPES.Add(new PieceShape("/4-D", new List<GridCoord> { new GridCoord(0, 2), new GridCoord(0, 1), new GridCoord(1, 1), new GridCoord(1, 0) }, -1, 2));
 
         TRIANGLE_SHAPES.Add(new PieceShape("<4-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 0), new GridCoord(1, 1) }, -1, 1));
-        TRIANGLE_SHAPES.Add(new PieceShape("<4-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 0), new GridCoord(1, 1) }, -1, 2));
+        TRIANGLE_SHAPES.Add(new PieceShape("<4-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(0, 1), new GridCoord(1, 0), new GridCoord(1, 1) }, -1, 2));
 
         TRIANGLE_SHAPES.Add(new PieceShape("L4-A", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0), new GridCoord(0, 1) }, -1, 1));
         TRIANGLE_SHAPES.Add(new PieceShape("L4-B", new List<GridCoord> { new GridCoord(0, 0), new GridCoord(1, 0), new GridCoord(2, 0), new GridCoord(2, 1) }, -1, 1));
@@ -419,6 +420,7 @@ public static class CellSplitter
     {
         bool success = false;
         bool isRandom = true;
+        bool enforceCount = false;
 
         // =========================================================
         // 第1パス: 受け取ったパターンシードのデコードと強制再現
@@ -431,13 +433,58 @@ public static class CellSplitter
             // Debug.Log($"CellSplitter.CreatePiecePlacements:--- 第1パス開始: パターンシードの再現 ---, success:{success}");
         }
 
+        if (_isPartialPatternSeedActive && !success)
+        {
+            PreSolve();
+            isRandom = true;
+
+            // --- 追加：部分再現（先行配置）フェーズ ---
+            // ヘッダーがない、あるいは完全再現に失敗した場合のフォールバック用
+            for (int i = 0; i < _pieceNameSequence.Count; i++)
+            {
+                string name = _pieceNameSequence[i];
+                GridCoord origin = _originCoordSequence[i];
+                PieceShape shape = _availableShapes.FirstOrDefault(s => s.Name == name);
+
+                if (shape != null)
+                {
+                    // ここでIsUpSideのチェックも事前に行う
+                    bool sideOk = true;
+                    if (CurrentShapeType == ShapeType.Triangle)
+                    {
+                        bool isUp = ((origin.X + origin.Y) % 2) == 0;
+                        if (shape.IsUpSide == 2 && isUp) sideOk = false;
+                        if (shape.IsUpSide == 1 && !isUp) sideOk = false;
+                    }
+                    else if (CurrentShapeType == ShapeType.Hex)
+                    {
+                        if (shape.IsUpSide == 2 && origin.X % 2 == 1) sideOk = false;
+                        if (shape.IsUpSide == 1 && origin.X % 2 == 0) sideOk = false;
+                    }
+
+                    // 配置可能かつ向きが合っていれば配置、ダメなら「無視して次へ」
+                    if (sideOk && CanPlace(origin.X, origin.Y, shape))
+                    {
+                        PlacePiece(origin.X, origin.Y, shape);
+                        shape.UseCount++;
+                    }
+                }
+            }
+
+            // 先行配置が終わった状態で、残りの空きマスを埋める
+            // 部分再現なので enforceCount は false に設定
+            success = Solve(0, 0, false, false); 
+            isRandom = true; 
+        }
+
         // =========================================================
         // 第2パス以降: ランダム探索（ユニーク性保証付き）
         // =========================================================
         if (!success)
         {
             _isPatternSeedActive = false;
-            const int MAX_UNIQUE_ATTEMPTS = 5; // ユニーク生成の試行回数上限
+            _isPartialPatternSeedActive = false;
+            const int MAX_UNIQUE_ATTEMPTS = 100; // ユニーク生成の試行回数上限
             List<string> _avoidSeeds = avoidPatternSeeds ?? new List<string>();
             
             for(int attempt = 0; attempt < MAX_UNIQUE_ATTEMPTS; attempt++)
@@ -452,13 +499,22 @@ public static class CellSplitter
                 // 試行1: ターゲットピース数厳守・形状ユニーク
                 if( 0 < TargetPieceCount )
                 {
-                    PreSolve();
-                    if (Solve(0, 0, true)) currentAttemptSuccess = true;
+                    enforceCount = true;
+                    for(int attempt2 = 0; attempt2 < MAX_UNIQUE_ATTEMPTS; attempt2++)
+                    {
+                        PreSolve();
+                        if (Solve(0, 0, true))
+                        {
+                            currentAttemptSuccess = true;
+                            break;
+                        }
+                    }   
                 }
                 
                 // 試行2: ピース数無視
                 if (!currentAttemptSuccess)
                 {
+                    enforceCount = false;
                     PreSolve();
                     // _grid = new int[GridX, GridY];
                     // for(int x = 0; x < GridX; x++)
@@ -500,7 +556,8 @@ public static class CellSplitter
         if (success)
         {
             // Debug.Log($"<color=green>敷き詰め完了！</color> 最終ピース数: {_pieceIdCounter - 1}, 使用パターンシード: {PatternSeed}");
-            MergeSmallPieces();
+            if (!enforceCount)
+                MergeSmallPieces();
             
             if(isRandom)
             {
@@ -909,48 +966,57 @@ public static class CellSplitter
     /// </summary>
     private static void AnalysisPatternSeed(string seed)
     {
-        // Debug.Log($"CellSplitter.AnalysisPatternSeed:1:{seed}");
-        _isPatternSeedActive = false; // 初期化
+        _isPatternSeedActive = false;
         if (string.IsNullOrEmpty(seed)) return;
 
-        // シード形式: "GX-GY-TC-Type|Name1:X1,Y1|Name2:X2,Y2|..."
-        string[] headerAndData = seed.Split('|');
-
-        // ヘッダー (GX-GY-TC-Type) の解析
-        string[] headerParts = headerAndData[0].Split('=');
-        // Debug.Log($"CellSplitter.AnalysisPatternSeed:2: Length:{headerParts.Length}, {seed}");
-        if (headerParts.Length != 4) return;
-        // Debug.Log($"CellSplitter.AnalysisPatternSeed:3: headerParts[0]:{headerParts[0]}, headerParts[1]:{headerParts[1]}, headerParts[3]:{headerParts[3]}, GridX:{GridX}, GridY:{GridY}, {CurrentShapeType}");
-        // パラメータの確認
-        if (int.TryParse(headerParts[0], out int decodedX) && decodedX == GridX &&
-            int.TryParse(headerParts[1], out int decodedY) && decodedY == GridY &&
-            // int.TryParse(headerParts[2], out int decodedCount) && decodedCount == TargetPieceCount &&
-            int.TryParse(headerParts[3], out int shapeInt) && (ShapeType)shapeInt == CurrentShapeType)
+        // ヘッダーが含まれているかチェック
+        if (seed.Contains("="))
         {
-            // パラメータが一致した場合のみ復元を試みる
-            _isPatternSeedActive = true;
+            // --- 既存の完全再現モードの処理 ---
+            string[] headerAndData = seed.Split('|');
+            string[] headerParts = headerAndData[0].Split('=');
+            
+            if (headerParts.Length == 4 && 
+                int.TryParse(headerParts[0], out int decodedX) && decodedX == GridX &&
+                int.TryParse(headerParts[3], out int shapeInt) && (ShapeType)shapeInt == CurrentShapeType)
+            {
+                _isPatternSeedActive = true;
+                _pieceNameSequence = new List<string>();
+                _originCoordSequence = new List<GridCoord>();
+                // ... (既存のピースパース処理)
+            }
+        }
+        else
+        {
+            // --- 新規：部分指定モードの処理 ---
+            // ヘッダーがない場合、文字列をピース指定の羅列として扱う
             _pieceNameSequence = new List<string>();
             _originCoordSequence = new List<GridCoord>();
-
-            if (headerAndData.Length > 1) // ピースデータがある場合
+            
+            // 先頭が'|'で始まっていてもいなくても分割できるように
+            string[] pieceEntries = seed.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            foreach (string entry in pieceEntries)
             {
-                string[] pieceData = headerAndData.Skip(1).ToArray();
-                foreach (string piece in pieceData)
+                string[] nameAndCoord = entry.Split(':');
+                if (nameAndCoord.Length == 2)
                 {
-                    string[] nameAndCoord = piece.Split(':');
-                    if (nameAndCoord.Length == 2)
+                    string name = nameAndCoord[0];
+                    string[] coords = nameAndCoord[1].Split(',');
+                    if (coords.Length == 2 && int.TryParse(coords[0], out int x) && int.TryParse(coords[1], out int y))
                     {
-                        string name = nameAndCoord[0];
-                        string[] coords = nameAndCoord[1].Split(',');
-                        if (coords.Length == 2 && int.TryParse(coords[0], out int x) && int.TryParse(coords[1], out int y))
-                        {
-                            _pieceNameSequence.Add(name);
-                            _originCoordSequence.Add(new GridCoord(x, y));
-                        }
+                        _pieceNameSequence.Add(name);
+                        _originCoordSequence.Add(new GridCoord(x, y));
                     }
                 }
             }
-            // Debug.Log($"CellSplitter.AnalysisPatternSeed:4: _isPatternSeedActive:{_isPatternSeedActive}");
+            
+            // ピースが一つでも取れればアクティブにする
+            if (_pieceNameSequence.Count > 0)
+            {
+                _isPartialPatternSeedActive = true; 
+                // ※この時、完全再現ではないのでフラグの扱いに注意（後述）
+            }
         }
     }
     

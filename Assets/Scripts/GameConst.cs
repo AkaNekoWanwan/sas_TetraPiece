@@ -15,6 +15,8 @@ public static class GameConst
 
     public const float ADD_Y_OFFSET = 3.5f;
 
+    public const int FIRST_HOME_STAGE_AFTER_CLEAR = 5;   // クリア後初めてホームに戻るステージ番号
+
     public static bool IsCreativeMode()
     {
         // if(!Debug.isDebugBuild)

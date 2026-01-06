@@ -32,7 +32,6 @@ public class GridCell : MonoBehaviour
     private bool _isActive = true;
 
     private void OnValidate() {
-        return;
         if(!_isActive)
             return;
         Debug.Log("ああああああああああ:1");
@@ -41,24 +40,53 @@ public class GridCell : MonoBehaviour
         Debug.Log("ああああああああああ:2");
         // SetUpGridPos();
         outLines = GetComponents<UnityEngine.UI.Outline>().ToList();
-        if(outLines == null)
-            return;
-        AbstractGridImageSplitter spritter = transform.parent.GetComponentInParent<AbstractGridImageSplitter>();
-    
-        if(spritter != null )
+        GridPieceListController pieceListController = transform.parent.parent.GetComponentInChildren<GridPieceListController>();
+        if(outLines != null)
         {
-            if(spritter.GetShapeType() == ShapeType.Square)
-                return;
-            if(spritter.isPrefs || spritter.isCreative)
-                return;
+            foreach(var outline in outLines)
+            {
+                if(outline != null)
+                {
+                    outline.enabled = false;
+                }
+            }
         }
+
+        // AbstractGridImageSplitter spritter = transform.parent.GetComponentInParent<AbstractGridImageSplitter>();
+    
+        // if(spritter != null )
+        // {
+        //     if(spritter.GetShapeType() == ShapeType.Triangle)
+        //     {
+        //         // this.transform.localScale = Vector3.one * 0.9f;
+        //         this.transform.localScale = Vector3.one;
+        //     }
+        //     else
+        //     {
+        //         this.transform.localScale = Vector3.one;
+        //     }
+        // }
 
         Debug.Log($"ああああああああああ:3,{outLines.Count}, {this.gameObject.name}, {this.transform.parent.parent.parent.name}");
 
         // if(outLines.Count == 0)
         //     outLines.Add(GetComponent<UnityEngine.UI.Outline>());
 
-        // GridPieceListController pieceListController = transform.parent.parent.GetComponentInChildren<GridPieceListController>();
+        // if(outLines.Count == 0)
+        //     return;
+
+        // アウトラインを1本に戻す処理
+        // for(int i = outLines.Count - 1; i >= 1; i--)
+        // {
+        //     var outLine = outLines[i];
+        //     DestroyImmediate(outLine);
+        //     outLines.RemoveAt(i);
+        // }
+        // if(outLines.Count == 0)
+        //     return;
+        // outLines[0].effectDistance = Vector2.one * 5f;
+
+        // アウトラインを2本にする処理
         // if(pieceListController == null || pieceListController.ShapeType != ShapeType.Square)
         // {
         //     if(outLines.Count == 1)
@@ -67,56 +95,40 @@ public class GridCell : MonoBehaviour
         //         outLines.Add(newOutLine);
         //     }
         // }
-
-        if(outLines.Count == 0)
-            return;
-
-        // アウトラインを1本に戻す処理
-        for(int i = outLines.Count - 1; i >= 1; i--)
+        for(int i = 0; i < outLines.Count; i++)
         {
             var outLine = outLines[i];
-            DestroyImmediate(outLine);
-            outLines.RemoveAt(i);
-        }
-        if(outLines.Count == 0)
-            return;
-        outLines[0].effectDistance = Vector2.one * 5f;
+            AbstractGridImageSplitter spritter = GetComponentInParent<AbstractGridImageSplitter>();
+            if(spritter == null)
+                return;
+            SpritterParam param = spritter._param;
 
-        // アウトラインを2本にする処理
-        // for(int i = 0; i < outLines.Count; i++)
-        // {
-        //     var outLine = outLines[i];
-        //     AbstractGridImageSplitter spritter = GetComponentInParent<AbstractGridImageSplitter>();
-        //     if(spritter == null)
-        //         return;
-        //     SpritterParam param = spritter._param;
-
-        //     if(!IsEqualsColor(param.OutLineColor, outLine.effectColor))
-        //     {
-        //         if(IsEqualsColor(param.OutLineColor, currentOutLineColor) && i == 0)
-        //         {
-        //             currentOutLineColor = outLine.effectColor;
-        //             param.OutLineColor = outLine.effectColor;
-        //         }
-        //         else
-        //         {
-        //             currentOutLineColor = param.OutLineColor;
-        //             outLine.effectColor = param.OutLineColor;
-        //         }
-        //     }
-        //     if(i == 0)
-        //     {
-        //         if(pieceListController == null || pieceListController.ShapeType == ShapeType.Square)
-        //         {
-        //             outLine.effectDistance = Vector2.one * 5f;
-        //         }
-        //         else
-        //             outLine.effectDistance = Vector2.one * 2f;
-        //     }
-        //     else
-        //         outLine.effectDistance = Vector2.one * 3f;
+            if(!IsEqualsColor(param.OutLineColor, outLine.effectColor))
+            {
+                if(IsEqualsColor(param.OutLineColor, currentOutLineColor) && i == 0)
+                {
+                    currentOutLineColor = outLine.effectColor;
+                    param.OutLineColor = outLine.effectColor;
+                }
+                else
+                {
+                    currentOutLineColor = param.OutLineColor;
+                    outLine.effectColor = param.OutLineColor;
+                }
+            }
+            if(i == 0)
+            {
+                if(pieceListController == null || pieceListController.ShapeType == ShapeType.Square)
+                {
+                    outLine.effectDistance = Vector2.one * 2f;
+                }
+                else
+                    outLine.effectDistance = Vector2.one * 1f;
+            }
+            else
+                outLine.effectDistance = Vector2.one * 1f;
                 
-        // }
+        }
     }
 
     // アウトラインの色合わせよう

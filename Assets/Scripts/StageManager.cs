@@ -303,11 +303,11 @@ public class StageManager : MonoBehaviour
         _clearNextButton.onClick += OnClearNext;
 
         await Task.Yield();
-        // 初回ステージならステージの読み込みを待ってからフェードアウト
-        if(PlayerPrefs.GetInt("totalLevel", 1) == 1 || GameDataManager.IsCreativeMode)
+        // ホーム画面を介さず直接ステージが始まるなら、ステージの読み込みを待ってからフェードアウト
+        if(PlayerPrefs.GetInt("totalLevel", 1) <= GameConst.FIRST_HOME_STAGE_AFTER_CLEAR || GameDataManager.IsCreativeMode)
         {
             FadeManager.Instance.FadeOut(0.5f);
-            if(Guidance.Instance != null && GameDataManager.IsCreativeMode == false)
+            if(Guidance.Instance != null && GameDataManager.IsCreativeMode == false && PlayerPrefs.GetInt("totalLevel", 1) == 1)
                 Guidance.Instance.ShowGuidance();   // ガイダンスの表示
             FirebaseManager.instance.StageStart();
             GameDataManager.IsStageStarted = true;
@@ -515,7 +515,8 @@ public class StageManager : MonoBehaviour
             GameDataManager.isPlayHomePieceAnimation = true; // ホームのステージ進行アニメーション実行
         // 広告再生の判定
         Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
-        if( 60 <= AdsTimerManager.instance.ElapsedTime && 4 <= PlayerPrefs.GetInt("totalLevel", 1) && !GameDataManager.IsCreativeMode)
+        // 60秒以上かつ6ステージ以上クリアでインタースティシャル広告を表示(指定ステージ+1の値を入れる)
+        if( 60 <= AdsTimerManager.instance.ElapsedTime && 7 <= PlayerPrefs.GetInt("totalLevel", 1) && !GameDataManager.IsCreativeMode)
         {
             AdsTimerManager.instance.ElapsedTime = 0f;
             AdsTimerManager.instance.IsCounter = false;

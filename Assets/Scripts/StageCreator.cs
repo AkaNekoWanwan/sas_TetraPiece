@@ -476,8 +476,8 @@ public class StageCreator : MonoBehaviour
         {
             cols = stageData.gridX; 
             rows = stageData.gridY;
-            // pieceNum = stageData.pieceNum;
-            pieceNum = -1;
+            pieceNum = stageData.pieceNum;
+            // pieceNum = -1;
             bool isSetToId = false;
             if(!string.IsNullOrEmpty(stageData.gridIds))
             {
