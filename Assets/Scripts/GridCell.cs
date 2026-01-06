@@ -45,9 +45,17 @@ public class GridCell : MonoBehaviour
         {
             foreach(var outline in outLines)
             {
+                int activeOutlineCount = 0;
                 if(outline != null)
                 {
-                    outline.enabled = false;
+                    if(activeOutlineCount == 0)
+                    {
+                        outline.enabled = true;
+                        activeOutlineCount++;
+                        outline.effectDistance = Vector2.one * 1f;
+                    }
+                    else
+                        outline.enabled = false;
                 }
             }
         }
