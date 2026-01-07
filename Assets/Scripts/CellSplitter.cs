@@ -627,7 +627,7 @@ public static class CellSplitter
     private static bool Solve(int startX, int startY, bool enforceCount, bool isPatternSeedActive = false) // 引数を追加
     {
         // 探索に使用するピースのリストを決定
-        Debug.Log($"CellSplitter.Solve:1:{_availableShapes.Count}, startX:{startX}, startY:{startY}, isPatternSeedActive:{isPatternSeedActive}");
+        // Debug.Log($"CellSplitter.Solve:1:{_availableShapes.Count}, startX:{startX}, startY:{startY}, isPatternSeedActive:{isPatternSeedActive}");
         // Count厳守モードで、ピース数が上限を超えた場合は失敗 (早期終了)
         // 終了条件: すべてのセルが埋まった
         if (!FindNextEmptyCell(out startX, out startY))
@@ -639,6 +639,33 @@ public static class CellSplitter
             // ランダム探索で成功した場合、CreatePiecePlacementsでPatternSeedを更新する
             return true;
         }
+        // FindNextEmptyCell の直後あたりに追加
+if (enforceCount && TargetPieceCount > 0)
+{
+    int currentPieces = _pieceIdCounter - 1;
+
+    // ① 既に上限超えてたら即死
+    if (currentPieces > TargetPieceCount) return false;
+
+    // ② 残りセル数を数える
+    int remaining = 0;
+    for (int y = 0; y < GridY; y++)
+        for (int x = 0; x < GridX; x++)
+            if (_grid[x, y] == 0) remaining++;
+
+    // ③ これ以上「少なく」できない最小ピース数（最大サイズで埋めたとして）
+    // ceil(remaining / _maxCellCount)
+    int minMorePieces = (remaining + _maxCellCount - 1) / _maxCellCount;
+
+    // ④ これ以上「多く」できない最大ピース数（最小サイズで埋めたとして）
+    int minSize = GetMinPieceSize(); // だいたい1のはずだけど一応
+    int maxMorePieces = remaining / minSize;
+
+    // ⑤ 目標個数に届かない/必ず超えるなら切る
+    if (currentPieces + minMorePieces > TargetPieceCount) return false;
+    if (currentPieces + maxMorePieces < TargetPieceCount) return false;
+}
+
         // Debug.Log($"CellSplitter.Solve:2, startX:{startX}, startY:{startY}");
         // ★ ここで次の探索原点として origin を定義
         GridCoord origin = new GridCoord(startX, startY);
