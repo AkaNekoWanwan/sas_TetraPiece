@@ -283,6 +283,7 @@ public class GridImageSplitter : AbstractGridImageSplitter
                     ansPos.answerGrid = answerObj;
                     ansPos.x = x;
                     ansPos.y = y;
+                    ansPos.InitPos = cellObj.transform.position;
                 }
                 else
                     continue;

@@ -55,6 +55,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     public string PrefabSavePath = "Assets/Prefabs/Stages"; // プレハブ保存先ディレクトリ
 
+    [SerializeField, Tooltip("生成したセルのリスト")] List<AnswerGridPos> _cells = null;
+
     protected Image _splitImage;
 
 #if UNITY_EDITOR
@@ -150,7 +152,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         return false;
     }
 
-    public void DeleteChilden()
+    public void DeleteChildren()
     {
         for (int j = this.transform.childCount - 1; j >= 0; j--)
         {
@@ -165,11 +167,28 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     // 【新規追加】自身のCellSplitterインスタンスを保持
     private CellSplitter2 _myCellSplitter;
     // ステージ作成に必要な一連の流れを実行
-    public void CreatePiece()
+    public void CreatePiece(bool isReSetPiecesOnly = false)
     {
+        // if(isReSetPiecesOnly)
+        // {
+        //     // ピースセルの再生成をせずに、既存のセルからピースを再生成する場合
+        //     OnUpdateProgressBar?.Invoke(0, 100, "piece setup and saving...");
+        //     _gridPieceListController = GetGridPieceListController();
+        //     if(_gridPieceListController != null)
+        //     {
+        //         _gridPieceListController.isCreative = isCreative;
+        //         _gridPieceListController.gridParent = this.transform;
+        //         _gridPieceListController.ShapeType = GetShapeType();
+        //         _gridPieceListController.IsSetShapeType = true;
+        //     }
+        //     AfterSplit();
+        //     return;
+        // }
         // 画像からピースのセルを生成
-        OnUpdateProgressBar?.Invoke(0, 100, "piece cell creating...");
-        BeforeSplit();
+        // OnUpdateProgressBar?.Invoke(0, 100, "piece cell creating...");
+        OnUpdateProgressBar?.Invoke(0, 100, "SplitImageProcess wait...");
+        if(!isReSetPiecesOnly)
+            SplitImageProcess();
         // ピースセルをいい感じに組み合わせてピースとしてまとめる
         OnUpdateProgressBar?.Invoke(33, 100, "piece creating...");
         Split(true);
@@ -181,10 +200,10 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public async Task CreatePieceAsync()
     {
         // 1. メインスレッドで実行する必要がある前処理 (Unity APIを含む)
-        BeforeSplit(); 
+        SplitImageProcess(); 
         
         // 2. ピース配置計算に必要なデータを取得 (これもメインスレッドで行う)
-        List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
+        // List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
         
         // 3. 重い計算処理を別スレッドで実行
         await Task.Run(() => 
@@ -194,7 +213,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             // CellSplit(純粋計算)に、Unity APIの結果である cells を渡す
             _myCellSplitter.CellSplit( cols, rows, ref _pieceNum, PieceCreateSeed, avoidPatternSeeds );
         });
-        _myCellSplitter.SetUpSplitPieceData( ref _pieceNum, cells, _gridPieceListController);
+        _myCellSplitter.SetUpSplitPieceData( ref _pieceNum, _cells, _gridPieceListController);
         PieceCreateSeed = _myCellSplitter.PatternSeed;
         isSkip = true;
 
@@ -209,7 +228,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     public IEnumerator CreatePieceCoroutine()
     {
         yield return null;
-        BeforeSplit();
+        SplitImageProcess();
         yield return null;
         Split(false);
         yield return null;
@@ -217,8 +236,8 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         yield break;
     }
 
-    // メイン処理の前処理
-    private void BeforeSplit()
+    // セル(再)生成
+    public void SplitImageProcess()
     {
         // 設定されているピース数が大き過ぎたら修正
         int maxPieceNum = rows * cols;
@@ -226,21 +245,12 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         // 設定されているピース数がちいさすぎたら修正
         _pieceNum = Mathf.Max(_pieceNum, 2);
 
+        OnUpdateProgressBar?.Invoke(0, 100, "DeleteChildren...");
+
         // 子オブジェクトを全削除
-        DeleteChilden();
-        // ピースセル生成
-        SplitImage();
+        DeleteChildren();
 
-        // 同じ階層のGridPieceListControllerを取得
-        _gridPieceListController = GetGridPieceListController();
-        if(_gridPieceListController != null)
-        {
-            _gridPieceListController.isCreative = isCreative;
-            _gridPieceListController.gridParent = this.transform;
-            _gridPieceListController.ShapeType = GetShapeType();
-            _gridPieceListController.IsSetShapeType = true;
-        }
-
+        OnUpdateProgressBar?.Invoke(5, 100, "image split pre setup...");
         _trimShift = new Vector2(0f, 0f);
         // 各ステージごとの微調整
         // できれば調整が不要になるようCreatePieceを改善したい
@@ -363,22 +373,38 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         {
             _trimShift = new Vector2(324f, 87f);
         }
+
+        OnUpdateProgressBar?.Invoke(8, 100, "Image splitting...");
+        // ピースセル生成のコア処理
+        SplitImage();
+        _cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
+        OnUpdateProgressBar?.Invoke(28, 100, "setup gridPieceListController...");
+
+        // 同じ階層のGridPieceListControllerを取得
+        _gridPieceListController = GetGridPieceListController();
+        if(_gridPieceListController != null)
+        {
+            _gridPieceListController.isCreative = isCreative;
+            _gridPieceListController.gridParent = this.transform;
+            _gridPieceListController.ShapeType = GetShapeType();
+            _gridPieceListController.IsSetShapeType = true;
+        }
     }
     private void Split(bool isStatic)
     {
-        List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
+        _cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
         // _pieceNum = -1;
         if(isStatic)
         {
             // ピースセルをいい感じにピースリストに配置
-            CellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, _gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
+            CellSplitter.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
             PieceCreateSeed = CellSplitter.PatternSeed;
         }
         else
         {
             // ピースセルをいい感じにピースリストに配置
             _myCellSplitter = new CellSplitter2(GetShapeType());
-            _myCellSplitter.CellSplit( cols, rows, ref _pieceNum, cells, _gridPieceListController, PieceCreateSeed, avoidPatternSeeds );
+            _myCellSplitter.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, PieceCreateSeed, avoidPatternSeeds );
             PieceCreateSeed = _myCellSplitter.PatternSeed;
         }
     }
@@ -396,7 +422,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
 
     public void Deletepiece()
     {
-        DeleteChilden();
+        DeleteChildren();
         _gridPieceListController = GetGridPieceListController();
         if(_gridPieceListController != null)
             _gridPieceListController.PreSetPieceDragControllers();
@@ -730,8 +756,8 @@ public class AbstractGridImageSplitterEditor : Editor
 
         if (GUILayout.Button("Split Image"))
         {
-            script.Deletepiece();
-            script.SplitImage();
+            // script.Deletepiece();
+            script.SplitImageProcess();
             script.isSkip = false;
         }
         if (GUILayout.Button("Delete piece"))
@@ -741,33 +767,65 @@ public class AbstractGridImageSplitterEditor : Editor
         }
         if (GUILayout.Button("Auto Create piece"))
         {
-            script.OnUpdateProgressBar = null;
+            script.OnUpdateProgressBar = null; 
             script.OnUpdateProgressBar += (current, total, message) =>
             {
-                EditorUtility.DisplayProgressBar("ステージ生成中", message, (float)current / total);
+                bool cancelled = EditorUtility.DisplayCancelableProgressBar("ステージ生成中", message, (float)current / total);
+                if (cancelled)
+                {
+                    EditorUtility.ClearProgressBar();
+                    throw new OperationCanceledException("ユーザーによってステージ生成がキャンセルされました。");
+                }
                 if (current >= total)
                 {
                     EditorUtility.ClearProgressBar();
                 }
             };
-            script.CreatePiece();
-            EditorUtility.ClearProgressBar();
-            script.OnUpdateProgressBar = null;
+            
+            try
+            {
+                script.CreatePiece();
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("ステージ生成がキャンセルされました。");
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+                script.OnUpdateProgressBar = null;
+            }
         }
         if (GUILayout.Button("画像のみAddressable化"))
         {
             script.OnUpdateProgressBar = null;
             script.OnUpdateProgressBar += (current, total, message) =>
             {
-                EditorUtility.DisplayProgressBar("Addressable化 実行中", message, (float)current / total);
+                bool cancelled = EditorUtility.DisplayCancelableProgressBar("Addressable化 実行中", message, (float)current / total);
+                if (cancelled)
+                {
+                    EditorUtility.ClearProgressBar();
+                    throw new OperationCanceledException("ユーザーによってAddressable化がキャンセルされました。");
+                }
                 if (current >= total)
                 {
                     EditorUtility.ClearProgressBar();
                 }
             };
-            script.Addressable(true);
-            EditorUtility.ClearProgressBar();
-            script.OnUpdateProgressBar = null;
+            
+            try
+            {
+                script.Addressable(true);
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("Addressable化がキャンセルされました。");
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+                script.OnUpdateProgressBar = null;
+            }
         }
         // if (GUILayout.Button("ステージのAddressable化"))
         // {

@@ -179,6 +179,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 ansPos.x = x;
                 ansPos.y = y;
                 ansPos.isUpSide = pointingUp;
+                ansPos.InitPos = cellObj.transform.position;
 
                 // === パラメーター付与 ===
                 if(_param != null)
@@ -195,14 +196,15 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 copyHnandler.CellPos = new Vector2Int(x, y);
 
                 UnityEngine.UI.Outline outline = answerObj.GetComponent<UnityEngine.UI.Outline>();
-                UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
+                // UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
+                UnityEngine.UI.Outline outline2 = null;
                 if((outline != null || outline2 != null ) && _param != null)
                 {
                     outline.effectColor = _param.OutLineColor;
-                    outline2.effectColor = _param.OutLineColor;
+                    // outline2.effectColor = _param.OutLineColor;
                 }
-                outline.effectDistance = Vector2.one * 2f;
-                outline2.effectDistance = Vector2.one * 3f;
+                outline.effectDistance = Vector2.one * 1f;
+                // outline2.effectDistance = Vector2.one * 3f;
             }
         }
         

@@ -170,12 +170,13 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
 
                 // === コンポーネント付与 ===
                 GridCell gridCell = answerObj.AddComponent<GridCell>();
+                gridCell.gridX = x;
+                gridCell.gridY = y;
                 AnswerGridPos ansPos = cellObj.AddComponent<AnswerGridPos>();
                 ansPos.answerGrid = answerObj;
                 ansPos.x = x;
                 ansPos.y = y;
-                gridCell.gridX = x;
-                gridCell.gridY = y;
+                ansPos.InitPos = cellObj.transform.position;
 
                 // === パラメーター付与 ===
                 if(_param != null)
@@ -187,13 +188,14 @@ public class GridImageSplitterHex : AbstractGridImageSplitter
                     cellImg.material = _param.CellsMaterial;
                 }
                 UnityEngine.UI.Outline outline = answerObj.GetComponent<UnityEngine.UI.Outline>();
-                UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
-                outline.effectDistance = Vector2.one * 2f;
-                outline2.effectDistance = Vector2.one * 3f;
+                // UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
+                UnityEngine.UI.Outline outline2 = null;
+                outline.effectDistance = Vector2.one * 1f;
+                // outline2.effectDistance = Vector2.one * 3f;
                 if((outline != null || outline2 != null ) && _param != null)
                 {
                     outline.effectColor = _param.OutLineColor;
-                    outline2.effectColor = _param.OutLineColor;
+                    // outline2.effectColor = _param.OutLineColor;
                 }
 
                 Vector3 setPos = answerObj.transform.position;

@@ -80,16 +80,24 @@ public class StageInfo : MonoBehaviour
             }
         }
     }
-
-    public void SetUpStage()
+ 
+    // 引数：セルの再生成をせずに既存のセルからピースを再生成するかどうか
+    public void SetUpStage(bool isReSetPiecesOnly = false)
     {
+        OnUpdateProgressBar?.Invoke(0, 100, "Spritter取得中...");
+        if(Spritter == null)
+        {
+            Debug.LogError("Spritterが設定されていません。");
+            return;
+        }
         Spritter.OnUpdateProgressBar = OnUpdateProgressBar;
-        Spritter.CreatePiece();
+        Spritter.CreatePiece(isReSetPiecesOnly);
     }
     public void SplitImage()
     {
-        Spritter.Deletepiece();
-        Spritter.SplitImage();
+        // Spritter.Deletepiece();
+        // Spritter.SplitImage();
+        Spritter.SplitImageProcess();
     }   
     public void Addressable()
     {
@@ -119,12 +127,59 @@ public class StageInfo : MonoBehaviour
 
             StageInfo generator = (StageInfo)target;
 
+            // Spritter設定の表示・編集
+            if (generator.Spritter != null) 
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Spritter Settings", EditorStyles.boldLabel);
+                
+                int newCols = EditorGUILayout.IntField("Cols", generator.Spritter.cols);
+                if (newCols != generator.Spritter.cols)
+                {
+                    Undo.RecordObject(generator.Spritter, "Change Cols");
+                    generator.Spritter.cols = newCols;
+                    EditorUtility.SetDirty(generator.Spritter);
+                }
+                int newRows = EditorGUILayout.IntField("Rows", generator.Spritter.rows);
+                if (newRows != generator.Spritter.rows)
+                {
+                    Undo.RecordObject(generator.Spritter, "Change Rows");
+                    generator.Spritter.rows = newRows;
+                    EditorUtility.SetDirty(generator.Spritter);
+                }
+                // _pieceNumを編集可能に
+                int newPieceNum = EditorGUILayout.IntField("Piece Num", generator.Spritter._pieceNum);
+                if (newPieceNum != generator.Spritter._pieceNum)
+                {
+                    Undo.RecordObject(generator.Spritter, "Change Piece Num");
+                    generator.Spritter._pieceNum = newPieceNum;
+                    EditorUtility.SetDirty(generator.Spritter);
+                }
+                bool newIsSkip = EditorGUILayout.Toggle("Is Skip StageReSetProcess", generator.Spritter.isSkip);
+                if (newIsSkip != generator.Spritter.isSkip)
+                {
+                    Undo.RecordObject(generator.Spritter, "Change Is Skip StageReSetProcess");
+                    generator.Spritter.isSkip = newIsSkip;
+                    EditorUtility.SetDirty(generator.Spritter);
+                }  
+
+                string newSeed = EditorGUILayout.TextField("Piece Create Seed", generator.Spritter.PieceCreateSeed);
+                if (newSeed != generator.Spritter.PieceCreateSeed)
+                {
+                    Undo.RecordObject(generator.Spritter, "Change Piece Create Seed");
+                    generator.Spritter.PieceCreateSeed = newSeed;
+                    EditorUtility.SetDirty(generator.Spritter);
+                }              
+                
+                EditorGUILayout.Space();
+            }
+
             // シーンのルートにあるオブジェクトを取得する
             GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
 
             foreach (GameObject obj in rootObjects)
             {
-                Debug.Log("オブジェクト名: " + obj.name);
+                // Debug.Log("オブジェクト名: " + obj.name);
                 StageInfo wordGenerator = obj.GetComponent<StageInfo>();
                 // オブジェクトがWordGeneratorコンポーネントを持っているかチェック
                 if (wordGenerator != null && wordGenerator != generator)
@@ -154,13 +209,46 @@ public class StageInfo : MonoBehaviour
                     script.OnUpdateProgressBar += (current, total, subInfo) =>
                     {
                         float subProgress = (float)current / total;
-                        EditorUtility.DisplayProgressBar(title, info + " " + subInfo, progress + subProgress / totalCount);
+                        EditorUtility.DisplayCancelableProgressBar(title, info + " " + subInfo, progress + subProgress / totalCount);
                     };
                     
                     // 進捗バーを表示・更新
-                    EditorUtility.DisplayProgressBar(title, info, progress);
+                    if(EditorUtility.DisplayCancelableProgressBar(title, info, progress))
+                    {
+                        Debug.Log("ステージ生成がユーザーによって中断されました。");
+                        break; // ループを抜ける
+                    }
 
                     script.SetUpStage(); 
+                    script.OnUpdateProgressBar = null; // イベントハンドラをリセット
+                }
+                EditorUtility.ClearProgressBar();
+            }
+            if (GUILayout.Button("ピースの再配置 (選択全体に適用)"))
+            {
+                // 処理をUndo可能にするための記述（推奨）
+                Undo.RecordObjects(scripts, "SetUp Stages"); 
+
+                for (int i = 0; i < totalCount; i++)
+                {
+                    StageInfo script = scripts[i];
+                    string title = $"ステージ生成中 ({i + 1}/{totalCount})";
+                    string info = $"ステージ: {script.gameObject.name} をセットアップ中...";
+                    float progress = (float)i / totalCount;
+                    script.OnUpdateProgressBar += (current, total, subInfo) =>
+                    {
+                        float subProgress = (float)current / total;
+                        EditorUtility.DisplayCancelableProgressBar(title, info + " " + subInfo, progress + subProgress / totalCount);
+                    };
+                    
+                    // 進捗バーを表示・更新
+                    if(EditorUtility.DisplayCancelableProgressBar(title, info, progress))
+                    {
+                        Debug.Log("ピース再配置がユーザーによって中断されました。");
+                        break; // ループを抜ける
+                    }
+    
+                    script.SetUpStage(true); 
                     script.OnUpdateProgressBar = null; // イベントハンドラをリセット
                 }
                 EditorUtility.ClearProgressBar();
@@ -240,7 +328,11 @@ public class StageInfo : MonoBehaviour
                     float progress = (float)i / totalCount;
                     
                     // 進捗バーを表示・更新
-                    EditorUtility.DisplayProgressBar(title, info, progress);
+                    if(EditorUtility.DisplayCancelableProgressBar(title, info, progress))   
+                    {
+                        Debug.Log("画像分割がユーザーによって中断されました。");
+                        break; // ループを抜ける
+                    }
 
                     script.SplitImage(); 
                 }

@@ -32,6 +32,7 @@ public class GridCell : MonoBehaviour
     private bool _isActive = true;
 
     private void OnValidate() {
+        // return;
         if(!_isActive)
             return;
         Debug.Log("ああああああああああ:1");
@@ -43,21 +44,14 @@ public class GridCell : MonoBehaviour
         GridPieceListController pieceListController = transform.parent.parent.GetComponentInChildren<GridPieceListController>();
         if(outLines != null)
         {
-            foreach(var outline in outLines)
+            // アウトラインを1本に戻す処理
+            for(int i = outLines.Count - 1; i >= 1; i--)
             {
-                int activeOutlineCount = 0;
-                if(outline != null)
-                {
-                    if(activeOutlineCount == 0)
-                    {
-                        outline.enabled = true;
-                        activeOutlineCount++;
-                        outline.effectDistance = Vector2.one * 1f;
-                    }
-                    else
-                        outline.enabled = false;
-                }
+                var outLine = outLines[i];
+                DestroyImmediate(outLine);
+                outLines.RemoveAt(i);
             }
+            outLines[0].effectDistance = Vector2.one * 1f;
         }
 
         // AbstractGridImageSplitter spritter = transform.parent.GetComponentInParent<AbstractGridImageSplitter>();

@@ -8,4 +8,5 @@ public class AnswerGridPos : MonoBehaviour
     public int y = 0;
     public Transform shadowTransform;
     public RectTransform outLine = null;
+    public Vector3 InitPos = Vector3.zero;  // 生成された時点での初期ワールド座標
 }
