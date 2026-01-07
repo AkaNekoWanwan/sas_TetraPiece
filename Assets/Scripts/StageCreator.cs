@@ -338,8 +338,56 @@ public class StageCreator : MonoBehaviour
     {
         UpdateSetSprites(); // スプライトリストを更新
         
-        string prefix = IsDailyStage ? "Daily" : "";
+        // まず重複した番号プレフィックスを削除
+        CleanupDuplicateNumberPrefixes(_setSplites);
+        
+        string prefix = IsDailyStage ? "Daily" : "Stage";
         SpriteFileNameUtil.UpdateSpriteFileNames(_setSplites, prefix, startNumber: 1, enableLog: true);
+    }
+    
+    /// <summary>
+    /// スプライトのファイル名から重複した番号プレフィックス（例：001_001_Hoge）を削除します
+    /// </summary>
+    private void CleanupDuplicateNumberPrefixes(List<Sprite> sprites)
+    {
+        foreach (var sprite in sprites)
+        {
+            if (sprite == null) continue;
+            
+            string assetPath = AssetDatabase.GetAssetPath(sprite);
+            if (string.IsNullOrEmpty(assetPath)) continue;
+            
+            string fileName = Path.GetFileNameWithoutExtension(assetPath);
+            string directory = Path.GetDirectoryName(assetPath);
+            string extension = Path.GetExtension(assetPath);
+            
+            // 重複した番号プレフィックスを検出して削除（例：001_042_Hoge -> Hoge）
+            // パターン: 先頭の数字3桁+アンダースコアが複数回繰り返される
+            string cleanedName = System.Text.RegularExpressions.Regex.Replace(
+                fileName, 
+                @"^(\d{3}_)+", // 先頭の「数字3桁_」を1回以上マッチ
+                "" // 全て削除
+            );
+            
+            // ファイル名が変更された場合のみリネーム
+            if (cleanedName != fileName)
+            {
+                string newPath = Path.Combine(directory, cleanedName + extension);
+                string result = AssetDatabase.RenameAsset(assetPath, cleanedName + extension);
+                
+                if (string.IsNullOrEmpty(result))
+                {
+                    Debug.Log($"<color=cyan>[Cleanup]</color> {fileName}{extension} -> {cleanedName}{extension}");
+                }
+                else
+                {
+                    Debug.LogWarning($"<color=yellow>[Cleanup Failed]</color> {fileName}: {result}");
+                }
+            }
+        }
+        
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     // --- 【追加 3】プレハブ保存処理メソッド ---

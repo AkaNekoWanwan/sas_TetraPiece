@@ -15,11 +15,15 @@ public class PieceDragController : MonoBehaviour,
     // スナップされていない状態を表す位置
     private static readonly Vector3 UNSNAPPED_POSITION = new Vector3(-9999, -9999, -9999);
     // スナップ可能な最大距離（この距離を超えるとスナップしない）
-    private const float MAX_SNAP_DISTANCE = 100f;
+    private const float MAX_SNAP_DISTANCE = 6f;
+    private const float RETURN_LIST_POS_Y = -14f; // リストに戻すドラッグ位置のY座標閾値(アンカーポジション)
     
     [Header("Snap Settings")]
     public Transform gridParent;
     public Dictionary<Transform, Material> originalMaterials = new Dictionary<Transform, Material>();
+
+    [SerializeField, Tooltip("このピースのRectTransform")]
+    private RectTransform _rt;
 
     [Header("Outline Settings")]
     [Tooltip("アウトライン用子オブジェクトの名前 (部分一致)")]
@@ -32,8 +36,6 @@ public class PieceDragController : MonoBehaviour,
 
     private Vector3 initialScale;
     private float initialZ;
-
-    private RectTransform rt;
     private Vector3 originalPos;
     public Vector3 originalScale;
     public bool isSetOriginalScale = false;
@@ -76,9 +78,9 @@ public class PieceDragController : MonoBehaviour,
         // よって worldPoint.y = originalPos.y - dragOffset.y
         
         Vector3 requiredWorldPoint = new Vector3(
-            rt.position.x - dragOffset.x,
+            _rt.position.x - dragOffset.x,
             originalPos.y - dragOffset.y,
-            rt.position.z - dragOffset.z
+            _rt.position.z - dragOffset.z
         );
         
         // ワールド座標をスクリーン座標に変換
@@ -116,20 +118,29 @@ public class PieceDragController : MonoBehaviour,
     public bool IsRandomPiece = false;  // 選択肢３個のうち１つのランダム枠か
     private Vector2Int workPos = Vector2Int.zero;
     private Vector2Int workPos2 = Vector2Int.zero;
-    private Vector3 lastSnappedPos = UNSNAPPED_POSITION;
+    private Vector3 _lastSnappedPos = UNSNAPPED_POSITION;
     private int addQueue = 0;
     private StageManager _stageManager = default;
     private bool _isMove = false;
     private bool _isTaping = false;
 
+    private void OnValidate()
+    {
+        // if( 1 <= CellCopyHandlers.Count )
+        //     CellCopyHandlers[0].UpdateAllCellCopyTransform(CellCopyHandlers);
+        if(_rt == null)
+            _rt = GetComponent<RectTransform>();
+    }
+
     void Awake()
     {
-        rt = GetComponent<RectTransform>();
+        if(_rt == null)
+            _rt = GetComponent<RectTransform>();
         if(!isSetOriginalScale)
-            originalScale = rt.localScale;
-        originalPos = rt.position;
-        initialScale = rt.localScale;
-        initialZ = rt.position.z;
+            originalScale = _rt.localScale;
+        originalPos = _rt.position;
+        initialScale = _rt.localScale;
+        initialZ = _rt.position.z;
 
         CacheOriginalMaterials();
         _listCtrl = GetComponentInParent<GridPieceListController>();
@@ -154,18 +165,12 @@ public class PieceDragController : MonoBehaviour,
         DragStateManager.UnregisterDrag(this);
     }
 
-    // private void OnValidate()
-    // {
-    //     if( 1 <= CellCopyHandlers.Count )
-    //         CellCopyHandlers[0].UpdateAllCellCopyTransform(CellCopyHandlers);
-    // }
-
     void Update()
     {
         // ドラッグ中は滑らかに補間した位置を使用
         if (isDragging && !isLocked)
         {
-            rt.position = smoothedPosition;
+            _rt.position = smoothedPosition;
             // lastEventData
         }
         if(GameDataManager.IsCreativeMode)
@@ -272,11 +277,11 @@ public class PieceDragController : MonoBehaviour,
         DragStateManager.RegisterDrag(this);
         
         // DOTweenのアニメーションを停止して、直接制御に切り替え
-        // DOTween.Kill(rt);
+        // DOTween.Kill(_rt);
         _moveTween?.Kill();
         
         // 現在位置から開始
-        smoothedPosition = rt.position;
+        smoothedPosition = _rt.position;
         
         ReleaseOccupiedCells();
     }
@@ -300,10 +305,8 @@ public class PieceDragController : MonoBehaviour,
         currentDragScreenPosition = GameDataManager.GetMousePosition();
         
         Vector3 worldPoint;
-        // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-        //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
+            _rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
         {
             // 目標位置を計算
             Vector3 targetPosition = FixZ(worldPoint + dragOffset);
@@ -314,7 +317,7 @@ public class PieceDragController : MonoBehaviour,
                 addY = 0f;
 
             // 盤面上にあるなら少し上に移動させる
-            if (lastSnappedPos != UNSNAPPED_POSITION)
+            if (_lastSnappedPos != UNSNAPPED_POSITION)
             {
                 addY += GameConst.ADD_Y_OFFSET;
             }
@@ -344,19 +347,19 @@ public class PieceDragController : MonoBehaviour,
         draggingPiece = this;
         transform.SetAsLastSibling();
         var hand = FindAnyObjectByType<HandCursorController>();
-        originalPos = rt.position;
+        originalPos = _rt.position;
         if(!isSetOriginalScale)
             originalScale = initialScale;
         wasDragged = false;
         _tapMousePos = GameDataManager.GetMousePosition();
 
-        if(rt.localScale == Vector3.one)
+        if(_rt.localScale == Vector3.one)
         {
-            rt.localScale = Vector3.one * 0.90f;
-            rt.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+            _rt.localScale = Vector3.one * 0.90f;
+            _rt.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
         }
         else
-            rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+            _rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
         RestoreChildrenMaterials();
         SetOutlineAlpha(1f, 0f);
 
@@ -371,22 +374,22 @@ public class PieceDragController : MonoBehaviour,
 
         Vector3 worldPoint;
         // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-        //     rt, eventData.position, eventData.pressEventCamera, out worldPoint))
+        //     _rt, eventData.position, eventData.pressEventCamera, out worldPoint))
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
+            _rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
         {
-            dragOffset = rt.position - worldPoint;
+            dragOffset = _rt.position - worldPoint;
             Vector3 targetPos = FixZ(worldPoint + dragOffset);
 
             // 盤面上にあるなら少し上に移動させる
-            if (lastSnappedPos != UNSNAPPED_POSITION)
+            if (_lastSnappedPos != UNSNAPPED_POSITION)
             {
                 targetPos.y += GameConst.ADD_Y_OFFSET;
             }
 
             smoothedPosition = targetPos;
             _moveTween?.Kill();
-            _moveTween = rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
+            _moveTween = _rt.DOMove(targetPos, 0.2f).SetDelay(0.13f).SetEase(Ease.OutQuad);
         }
 
         AudioManager.Instance.PlayHoldSound();
@@ -421,13 +424,13 @@ public class PieceDragController : MonoBehaviour,
         // ドラッグ状態を解除
         DragStateManager.UnregisterDrag(this);
 
-        // rt.transform.localScale = Vector3.one;
-        rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
+        // _rt.transform.localScale = Vector3.one;
+        _rt.DOScale(Vector3.one, 0.1f).SetDelay(0.06f).SetEase(Ease.OutBack);
         AudioManager.Instance.PlayPlaceSound();
         isDragging = false;
 
         bool snapStarted = SnapChildrenToGridsAndRecenterParent();
-        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted}");
+        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted},{_lastSnappedPos}");
         if (!snapStarted)
         {
             ReleaseOccupiedCells();
@@ -435,13 +438,14 @@ public class PieceDragController : MonoBehaviour,
             SetOutlineAlpha(1f, 0.2f);
             
             // ★ 分岐ロジック: 最後にスナップされた位置があるか？
-            // if (lastSnappedPos != UNSNAPPED_POSITION) 
-            // {
-            //     // 1. 盤面に一度置かれたことがある場合
-            //     ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
-            // }
-            // else
+            if (_lastSnappedPos != UNSNAPPED_POSITION && _rt.position.y > RETURN_LIST_POS_Y) 
             {
+                // 1. 盤面に一度置かれたことがある場合
+                ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
+            }
+            else
+            {
+                // 盤面に置かれたことがあっても画面下にドラッグしたらリストに戻せるよう変更
                 // 2. リストから初めてドラッグされた場合
                 // リストに戻す (シェイクなし)
                 if (_listCtrl != null) 
@@ -450,9 +454,16 @@ public class PieceDragController : MonoBehaviour,
                     _listCtrl.NotifyReturned(this, shouldShake: false); 
                 }
                 // Debug.Log("サイズ不具合チェック：５");
-                rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+                _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
                 SetActiveShadow(true);
                 GuidReturn.instance.AddReturnCount();
+
+                // 盤面からリストに戻る場合、最後にスナップされた位置をリセットしてMoveカウントする
+                if(_lastSnappedPos != UNSNAPPED_POSITION)
+                {
+                    _stageManager.CountDownMove();
+                    _lastSnappedPos = UNSNAPPED_POSITION;
+                }
             }
             
             return;
@@ -525,9 +536,9 @@ public class PieceDragController : MonoBehaviour,
             
             // ReturnToOrigin();
         }
-        if(lastSnappedPos == UNSNAPPED_POSITION && !isDragging)
+        if(_lastSnappedPos == UNSNAPPED_POSITION && !isDragging)
         {
-            rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+            _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
         }
 
         draggingPiece = null;
@@ -581,16 +592,16 @@ public class PieceDragController : MonoBehaviour,
         // Debug.Log("サイズ不具合チェック：１");
         _moveTween?.Kill();
         if(!isCreative)
-            _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(rt.gameObject);
+            _moveTween = _rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(_rt.gameObject);
+        _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(_rt.gameObject);
     }
 
     void ReturnToOriginWithOccupancy()
     {
         // Debug.Log("サイズ不具合チェック：２");
         _moveTween?.Kill();
-        _moveTween = rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(rt.gameObject);
+        _moveTween = _rt.DOMove(FixZ(originalPos), 0.2f).SetEase(Ease.OutQuad).SetLink(_rt.gameObject);
+        _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack).SetLink(_rt.gameObject);
 
         List<Transform> children = new List<Transform>();
         List<GridCell> cells = new List<GridCell>();
@@ -713,14 +724,14 @@ bool SnapChildrenToGridsAndRecenterParent()
     }
 
     // ★ 親を瞬時に新しい中心に移動
-    rt.position = newParentCenter;
+    _rt.position = newParentCenter;
     // ★ 追加: スナップ成功時の位置を記録
-    if(lastSnappedPos == newParentCenter)
+    if(_lastSnappedPos == newParentCenter)
         _isMove = false;
     else
         _isMove = true;
 
-    lastSnappedPos = newParentCenter;
+    _lastSnappedPos = newParentCenter;
 
     // ★ 子のワールド座標を元の位置に戻す（親が動いたのでローカル座標が変わっているため）
     for (int i = 0; i < children.Count; i++)
@@ -823,8 +834,8 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     void ResetChildren(List<Transform> children, List<Vector3> savedWorldPos, Vector3 parentBefore)
     {
         // Debug.Log("サイズ不具合チェック：３");
-        rt.position = FixZ(parentBefore);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+        _rt.position = FixZ(parentBefore);
+        _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
 
         for (int i = 0; i < children.Count; i++)
         {
@@ -838,8 +849,8 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         Debug.Log($"[ResetChildrenPartial] {gameObject.name} を復元開始 (処理中のインデックス: {processedIndex})");
 
         // Debug.Log("サイズ不具合チェック：４");
-        rt.position = FixZ(parentBefore);
-        rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
+        _rt.position = FixZ(parentBefore);
+        _rt.DOScale(originalScale, 0.15f).SetEase(Ease.OutBack);
 
         for (int i = 0; i <= processedIndex && i < children.Count; i++)
         {
@@ -852,7 +863,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     public Tween ReturnToList()
     {
         // Debug.Log("サイズ不具合チェック：５");
-        return rt.DOScale(initialScale, 0.15f).SetEase(Ease.OutBack);
+        return _rt.DOScale(initialScale, 0.15f).SetEase(Ease.OutBack);
     }
 
     void MarkCells(List<Transform> children, List<GridCell> cells, bool occupied)
@@ -952,7 +963,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
     //         if (other == this) continue;
     //         if (other.isLocked || this.isLocked) continue;
 
-    //         float dist = Vector3.Distance(rt.position, other.transform.position);
+    //         float dist = Vector3.Distance(_rt.position, other.transform.position);
     //         if (dist < 20f && CanMerge(other))
     //         {
     //             DoMerge(other);
@@ -1116,7 +1127,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
 
     void DoMerge(PieceDragController other)
     {
-        DOTween.Kill(this.rt);
+        DOTween.Kill(this._rt);
         CellCopyHandlers.AddRange(other.CellCopyHandlers);
 
         this.ReleaseOccupiedCells();
@@ -1392,7 +1403,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
         _moveTween?.Kill();
         
         // ターゲット位置
-        Vector3 targetPos = FixZ(lastSnappedPos);
+        Vector3 targetPos = FixZ(_lastSnappedPos);
 
         // 1. シェイクアニメーション
         // 2. ターゲット位置への移動アニメーション
@@ -1415,7 +1426,7 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             {
                 // lastOccupiedMapの情報を使ってセルを再占有する
                 RestoreOccupiedCellsFromMap(); // 新しく作成するヘルパーメソッド
-                Debug.Log($"[ReturnToLastSnappedPosition] ピースが {lastSnappedPos} に戻り、セルを再占有しました。");
+                Debug.Log($"[ReturnToLastSnappedPosition] ピースが {_lastSnappedPos} に戻り、セルを再占有しました。");
             });
         }
     }
