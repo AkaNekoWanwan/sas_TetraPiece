@@ -1475,3 +1475,23 @@ public static class ShadowExtensions
         }
     }
 }
+
+#if UNITY_EDITOR
+
+[CustomEditor(typeof(PieceDragController))]
+[CanEditMultipleObjects]
+public class PieceDragControllerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        PieceDragController controller = (PieceDragController)target;
+
+        if (GUILayout.Button("Recenter Parent To Children"))
+        {
+            controller.RecenterParentToChildren(true);
+        }
+    }
+}
+#endif
