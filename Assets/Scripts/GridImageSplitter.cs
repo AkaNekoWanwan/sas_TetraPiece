@@ -10,15 +10,56 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Image))]
 public class GridImageSplitter : AbstractGridImageSplitter
 {
+    // ★ ShapeTypeをインスペクターで選択可能に
+    [Header("Shape Configuration")]
+    [SerializeField, Tooltip("形状タイプを選択")]
+    private ShapeType _shapeType = ShapeType.Square;
+
+    // ★ Strategyパターンでの処理委譲用
+    private IShapeStrategy _currentStrategy;
+
 #if UNITY_EDITOR
+
+    private void OnValidate()
+    {
+        // Strategy初期化
+        _currentStrategy = ShapeStrategyFactory.GetStrategy(_shapeType);
+        
+        // targetPercentを自動調整
+        targetPercent = _currentStrategy.GetTargetPercent();
+    }
 
     public override ShapeType GetShapeType()
     {
-        return ShapeType.Square;
+        return _shapeType;
+    }
+
+    /// <summary>
+    /// ShapeTypeを設定（移行ツール用）
+    /// </summary>
+    public void SetShapeType(ShapeType shapeType)
+    {
+        _shapeType = shapeType;
+        _currentStrategy = ShapeStrategyFactory.GetStrategy(_shapeType);
+        targetPercent = _currentStrategy.GetTargetPercent();
     }
 
     public override void SplitImage()
     {
+        // ★ ShapeTypeに応じて適切なSplitImage処理を実行
+        // Triangle/Hexの場合は、一時的に対応するコンポーネントを追加して処理を委譲
+        if (_shapeType == ShapeType.Triangle)
+        {
+            ExecuteTriangleSplitImage();
+            return;
+        }
+        else if (_shapeType == ShapeType.Hex)
+        {
+            ExecuteHexSplitImage();
+            return;
+        }
+
+        // Square用の処理（デフォルト）
         base.SplitImage();
         
         // 既存の子オブジェクトを全て破棄 (EditorUtilityを使う)
@@ -329,6 +370,74 @@ public class GridImageSplitter : AbstractGridImageSplitter
         AssetDatabase.SaveAssets();
 
         Debug.Log($"正方形分割が完了！保存先: {saveFolder}");
+    }
+
+    /// <summary>
+    /// Triangle用の画像分割処理を実行
+    /// 既存のGridImageSplitterTriangleクラスの処理を利用
+    /// </summary>
+    private void ExecuteTriangleSplitImage()
+    {
+        // 一時的にGridImageSplitterTriangleコンポーネントを追加
+        var tempTriangle = gameObject.AddComponent<GridImageSplitterTriangle>();
+        
+        // 現在の設定をコピー
+        CopySettingsTo(tempTriangle);
+        
+        // Triangle用のSplitImageを実行
+        tempTriangle.SplitImage();
+        
+        // 一時コンポーネントを削除
+        DestroyImmediate(tempTriangle);
+        
+        Debug.Log("Triangle用の画像分割が完了しました");
+    }
+
+    /// <summary>
+    /// Hex用の画像分割処理を実行
+    /// 既存のGridImageSplitterHexクラスの処理を利用
+    /// </summary>
+    private void ExecuteHexSplitImage()
+    {
+        // 一時的にGridImageSplitterHexコンポーネントを追加
+        var tempHex = gameObject.AddComponent<GridImageSplitterHex>();
+        
+        // 現在の設定をコピー
+        CopySettingsTo(tempHex);
+        
+        // Hex用のSplitImageを実行
+        tempHex.SplitImage();
+        
+        // 一時コンポーネントを削除
+        DestroyImmediate(tempHex);
+        
+        Debug.Log("Hex用の画像分割が完了しました");
+    }
+
+    /// <summary>
+    /// 現在の設定を他のSplitterにコピー
+    /// </summary>
+    private void CopySettingsTo(AbstractGridImageSplitter target)
+    {
+        target.cols = this.cols;
+        target.rows = this.rows;
+        target._pieceNum = this._pieceNum;
+        target.targetPercent = this.targetPercent;
+        target.fixTargetPercentCellSize = this.fixTargetPercentCellSize;
+        target.outputFolder = this.outputFolder;
+        target.cellCopyMaterial = this.cellCopyMaterial;
+        target._param = this._param;
+        target.isSkip = this.isSkip;
+        target.isPrefs = this.isPrefs;
+        target.isCreative = this.isCreative;
+        target.PieceCreateSeed = this.PieceCreateSeed;
+        target.backUpPieceCreateSeed = this.backUpPieceCreateSeed;
+        target.avoidPatternSeeds = this.avoidPatternSeeds;
+        target._shadowSprite = this._shadowSprite;
+        target._trimShift = this._trimShift;
+        target.uniqueId = this.uniqueId;
+        target.index = this.index;
+        target.PrefabSavePath = this.PrefabSavePath;
     }
 #endif
 }

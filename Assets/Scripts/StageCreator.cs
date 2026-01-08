@@ -95,176 +95,130 @@ public class StageCreator : MonoBehaviour
     {
         UpdateSetSprites();
 
-        // 2. 初期化処理の抽象化
         // 全ステージ取得 (AbstractGridImageSplitterを継承した全てを取得)
         List<AbstractGridImageSplitter> allSplitters = GetAllSplitters();
-        // _seeds = new HashSet<string>();
         AllSplitters = new List<AbstractGridImageSplitter>();
 
-        // スプリッターを種類ごとに分類し、参照用ステージを弾き、シード値を取得する処理を統一
-        // フィルタリング後のリストを、種類ごとに保持
-        List<AbstractGridImageSplitter> squareSplitters = new List<AbstractGridImageSplitter>();
-        List<AbstractGridImageSplitter> triSplitters = new List<AbstractGridImageSplitter>();
-        List<AbstractGridImageSplitter> hexSplitters = new List<AbstractGridImageSplitter>();
+        // ★ 簡略化: 型による分類は不要、全てAbstractGridImageSplitterとして統一処理
         _createPieceplitterList = new List<AbstractGridImageSplitter>();
         
         int index = 0;
         foreach (var splitter in allSplitters)
         {
-            // 参考用のステージは弾く
-            Debug.Log($"StageCreator:splitter:{splitter.GetType().Name}:{splitter.transform.parent.parent.name}, {splitter.isPrefs}, {splitter.PieceCreateSeed}");
             GameObject stageObject = splitter.transform.parent.parent.gameObject;
             stageObject.SetActive(false);
+            
+            // 参考用のステージは弾く
             if (splitter.isPrefs || splitter.isCreative)
             {
                 stageObject.name = splitter.isPrefs ? "Prefs" : "Creative";
-                continue; // 参照用ステージはリストに追加しない
+                continue;
             }
-            stageObject.name = $"Stage{index + 1:D3} SetWait";
             
+            stageObject.name = $"Stage{index + 1:D3} SetWait";
             index++;
 
-            // 種類ごとに分類 (ここではGetType()やis演算子で判断)
-            if (splitter is GridImageSplitter)
-                squareSplitters.Add(splitter);
-            else if (splitter is GridImageSplitterTriangle)
-                triSplitters.Add(splitter);
-            else if (splitter is GridImageSplitterHex)
-                hexSplitters.Add(splitter);
-            else
-                Debug.LogError($"未定義のSplitter型が検出されました: {splitter.GetType().Name}");
+            // AllSplittersに追加（型関係なく統一処理）
+            AllSplitters.Add(splitter);
         }
 
-        Debug.Log($"StageCreator:全ステージセットアップ開始！:Square:{squareSplitters.Count}, Triangle:{triSplitters.Count}, Hex:{hexSplitters.Count}");
+        Debug.Log($"StageCreator:全ステージセットアップ開始！:合計 {AllSplitters.Count}個");
 
-        // 3. ステージ設定処理の統一と並び替えロジック
-        int sumCount = squareSplitters.Count + hexSplitters.Count + triSplitters.Count;
-        int indexSquare = 0;
-        int indexTri = 0;
-        int indexHex = 0;
-
-        for (int i = 0; i < sumCount; i++)
+        // ステージ設定処理
+        for (int i = 0; i < AllSplitters.Count; i++)
         {
+            AbstractGridImageSplitter currentSplitter = AllSplitters[i];
+            
             bool isHard = (i + 1) % 3 == 0;
             if(IsDailyStage)
                 isHard = false;
-            ShapeType shapeType = ShapeType.Square;
-            int typeInt = (i / 3) % 3; // ３ステージ毎に切り替わる
-            // IsDailyStageならShapeType.Square(0) と ShapeType.Hex(2) のみで
-            if(IsDailyStage)
+            
+            // ShapeTypeを決定（ステージデータから、またはデフォルトパターン）
+            ShapeType shapeType = DetermineShapeType(i);
+            
+            // ★ ShapeTypeを設定（GridImageSplitterのみ対応）
+            if (currentSplitter is GridImageSplitter gridSplitter)
             {
-                typeInt = i % 2;
-                if(typeInt == 1)
-                    typeInt = 2;
+                gridSplitter.SetShapeType(shapeType);
             }
+            
+            // Strategyから推奨値を取得
+            IShapeStrategy strategy = ShapeStrategyFactory.GetStrategy(shapeType);
+            currentSplitter.targetPercent = strategy.GetTargetPercent();
+            
+            // Shadow spriteを設定
+            currentSplitter._shadowSprite = GetShadowSpriteForShape(shapeType);
 
-            // 交互にステージタイプを決定
-            if (typeInt == 0)
-                shapeType = ShapeType.Square;
-            else if (typeInt == 1)
-                shapeType = ShapeType.Triangle;
-            else if (typeInt == 2)
-                shapeType = ShapeType.Hex;
-
-            StageData stageData = GetStageData(i);
-            if(stageData != null && !IsDailyStage)
-            {
-                Debug.Log($"StageCreator:StageCreator:shapeType:{i}, {stageData.shapeType}");
-                shapeType = stageData.shapeType;
-            }
-
-            int cols = 3;
-            int rows = 3;
-            int pieceNum = 4;
-            // ステージの進捗に応じて難易度調整
-            AbstractGridImageSplitter currentSplitter = null;
-
-            // 3. SetUpStageを直接ループ内に組み込み、単一リストのインデックス操作を統一
-            switch (shapeType)
-            {
-                case ShapeType.Square:
-                    if (indexSquare < squareSplitters.Count)
-                    {
-                        currentSplitter = squareSplitters[indexSquare];
-                        currentSplitter.targetPercent = 100;
-                        indexSquare++;
-                        currentSplitter._shadowSprite = _shadowSpriteSquare;
-                    }
-                    break;
-                case ShapeType.Triangle:
-                    if (indexTri < triSplitters.Count)
-                    {
-                        currentSplitter = triSplitters[indexTri];
-                        currentSplitter.targetPercent = 120;
-                        indexTri++;
-                        currentSplitter._shadowSprite = _shadowSpriteTriangle;
-                    }
-                    break;
-                case ShapeType.Hex:
-                    if (indexHex < hexSplitters.Count)
-                    {
-                        currentSplitter = hexSplitters[indexHex];
-                        currentSplitter.targetPercent = 120;
-                        indexHex++;
-                        currentSplitter._shadowSprite = _shadowSpriteHex;
-                    }
-                    break;
-            }
-
-            // 該当するスプリッターが枯渇していたらスキップ（現状のコードのロジックを維持）
-            if (currentSplitter == null)
-            {
-                continue;
-            }
-
-            GetStageParam(i, isHard, out cols, out rows, out pieceNum, currentSplitter, shapeType);
+            // ステージパラメータ取得と設定
+            GetStageParam(i, isHard, out int cols, out int rows, out int pieceNum, currentSplitter, shapeType);
             SetImage(currentSplitter, i); 
 
             GameObject stageObject = currentSplitter.transform.parent.parent.gameObject;
             stageObject.GetComponent<StageInfo>().isHard = isHard;
 
-            // 抽出したスプリッターを、ステージ順に並べた AllSplitters に格納
-            AllSplitters.Add(currentSplitter);
-
-            // SetUpStage内のロジックをここに移動し、抽象化された currentSplitter に対して処理
+            // 共通処理
             CommonSplitterProcces(currentSplitter.gameObject, i, ref currentSplitter.isSkip);
             
-            if (string.IsNullOrEmpty(currentSplitter.PieceCreateSeed))
+            // スキップ判定
+            if (string.IsNullOrEmpty(currentSplitter.PieceCreateSeed) ||
+                currentSplitter.cols != cols ||
+                currentSplitter.rows != rows ||
+                currentSplitter._pieceNum != pieceNum ||
+                IsForce)
             {
-                Debug.Log($"StageCreator:更新対象！{stageObject.name}, シード値未設定");
                 currentSplitter.isSkip = false;
             }
-            if (currentSplitter.cols != cols)
-            {
-                Debug.Log($"StageCreator:更新対象！{stageObject.name}, cols {currentSplitter.cols} -> {cols}");
-                currentSplitter.isSkip = false;
-            }
-            if (currentSplitter.rows != rows)
-            {
-                Debug.Log($"StageCreator:更新対象！{stageObject.name}, rows {currentSplitter.rows} -> {rows}");
-                currentSplitter.isSkip = false;
-            }
-            if (currentSplitter._pieceNum != pieceNum)
-            {
-                Debug.Log($"StageCreator:更新対象！{stageObject.name}, pieceNum {currentSplitter._pieceNum} -> {pieceNum}");
-                currentSplitter.isSkip = false;
-            }
-            if(IsForce)
-                currentSplitter.isSkip = false;
-            // if (!currentSplitter.avoidPatternSeeds.SequenceEqual(_seeds))
-            // {
-            //     currentSplitter.isSkip = false;
-            // }
 
             if (!currentSplitter.isSkip)
             {
                 currentSplitter.cols = cols;
                 currentSplitter.rows = rows;
                 currentSplitter._pieceNum = pieceNum;
-                // currentSplitter.CreatePiece();
                 _createPieceplitterList.Add(currentSplitter);
             }
         }
+    }
+
+    /// <summary>
+    /// ステージインデックスからShapeTypeを決定
+    /// </summary>
+    private ShapeType DetermineShapeType(int stageIndex)
+    {
+        StageData stageData = GetStageData(stageIndex);
+        if (stageData != null && !IsDailyStage)
+        {
+            return stageData.shapeType;
+        }
+
+        // デフォルトパターン
+        int typeInt = (stageIndex / 3) % 3;
+        if (IsDailyStage)
+        {
+            typeInt = stageIndex % 2;
+            if (typeInt == 1) typeInt = 2;
+        }
+
+        return typeInt switch
+        {
+            0 => ShapeType.Square,
+            1 => ShapeType.Triangle,
+            2 => ShapeType.Hex,
+            _ => ShapeType.Square
+        };
+    }
+
+    /// <summary>
+    /// ShapeTypeに応じたShadowSpriteを取得
+    /// </summary>
+    private Sprite GetShadowSpriteForShape(ShapeType shapeType)
+    {
+        return shapeType switch
+        {
+            ShapeType.Square => _shadowSpriteSquare,
+            ShapeType.Triangle => _shadowSpriteTriangle,
+            ShapeType.Hex => _shadowSpriteHex,
+            _ => _shadowSpriteSquare
+        };
     }
 
     private void SetTargetSplitters()
