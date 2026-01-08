@@ -16,7 +16,7 @@ public class PieceDragController : MonoBehaviour,
     private static readonly Vector3 UNSNAPPED_POSITION = new Vector3(-9999, -9999, -9999);
     // スナップ可能な最大距離（この距離を超えるとスナップしない）
     private const float MAX_SNAP_DISTANCE = 6f;
-    private const float RETURN_LIST_POS_Y = -14f; // リストに戻すドラッグ位置のY座標閾値(アンカーポジション)
+    private const float RETURN_LIST_POS_Y = 640f; // リストに戻すドラッグ位置のY座標閾値
     
     [Header("Snap Settings")]
     public Transform gridParent;
@@ -436,9 +436,11 @@ public class PieceDragController : MonoBehaviour,
             ReleaseOccupiedCells();
             RestoreRenderQueue();
             SetOutlineAlpha(1f, 0.2f);
-            
+
+            // RETURN_LIST_POS_Yによる判定を、_rt.position.yからマウス位置を使った判定に変更
+            Debug.Log($"マウス位置チェック：{GameDataManager.GetMousePosition().y} , RETURN_LIST_POS_Y:{RETURN_LIST_POS_Y}");
             // ★ 分岐ロジック: 最後にスナップされた位置があるか？
-            if (_lastSnappedPos != UNSNAPPED_POSITION && _rt.position.y > RETURN_LIST_POS_Y) 
+            if (_lastSnappedPos != UNSNAPPED_POSITION && GameDataManager.GetMousePosition().y > RETURN_LIST_POS_Y) 
             {
                 // 1. 盤面に一度置かれたことがある場合
                 ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
