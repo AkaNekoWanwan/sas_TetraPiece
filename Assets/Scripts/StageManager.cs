@@ -603,29 +603,33 @@ public class StageManager : MonoBehaviour
             Camera cam = Camera.main;
             if (cam != null )
             {
-                if(!GameDataManager.IsCreativeMode)
+                // 0.5秒まつ
+                DOVirtual.DelayedCall(0.5f, () =>
                 {
-                    // Y座標 +2.5f に移動
-                    cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
-                        .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
-                    cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
-                        .SetEase(Ease.InOutSine).OnComplete(() =>
-                        {    // Orthographic Size を 17 に
-                
-                            // パーティクル再生
-                            if (ps != null)
-                            {
-                                ps.Play();
-                            }
-                        }).SetLink(cam.gameObject);
-                }
-                else
-                {
-                    cam.DOOrthoSize(cam.orthographicSize-1.5f, 0.8f)
-                        .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
-                    cam.transform.DOMoveY(cam.transform.position.y + 1.5f, 0.7f)
-                        .SetEase(Ease.InOutSine).SetLink(cam.gameObject);
-                }
+                    if(!GameDataManager.IsCreativeMode)
+                    {
+                        // Y座標 +2.5f に移動
+                        cam.DOOrthoSize(cam.orthographicSize+1.5f, 0.8f)
+                            .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
+                        cam.transform.DOMoveY(cam.transform.position.y - 1.5f, 0.7f)
+                            .SetEase(Ease.InOutSine).OnComplete(() =>
+                            {    // Orthographic Size を 17 に
+                    
+                                // パーティクル再生
+                                if (ps != null)
+                                {
+                                    ps.Play();
+                                }
+                            }).SetLink(cam.gameObject);
+                    }
+                    else
+                    {
+                        cam.DOOrthoSize(cam.orthographicSize-1.5f, 0.8f)
+                            .SetEase(Ease.InOutSine).SetDelay(0.1f).SetLink(cam.gameObject);
+                        cam.transform.DOMoveY(cam.transform.position.y + 1.5f, 0.7f)
+                            .SetEase(Ease.InOutSine).SetLink(cam.gameObject);
+                    }
+                }).SetLink(cam.gameObject);
             }
         }
     }
