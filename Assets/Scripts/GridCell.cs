@@ -30,12 +30,13 @@ public class GridCell : MonoBehaviour
 
     private void OnValidate()
     {
+        // return;
         // ★追加（最小）：生成中は止める
         if (SuppressValidate) return;
 
         // 既存のガード（そのまま）
-        // if(!_isActive)
-        //     return;
+        if(!_isActive)
+            return;
 
         Debug.Log("ああああああああああ:1");
         if(UnityEditor.EditorApplication.isPlaying)

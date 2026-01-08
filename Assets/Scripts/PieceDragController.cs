@@ -430,7 +430,7 @@ public class PieceDragController : MonoBehaviour,
         isDragging = false;
 
         bool snapStarted = SnapChildrenToGridsAndRecenterParent();
-        Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted},{_lastSnappedPos}");
+        // Debug.Log($"OnEndDrag.snapStarted:配置チェック:{snapStarted},{_lastSnappedPos}");
         if (!snapStarted)
         {
             ReleaseOccupiedCells();
@@ -438,7 +438,7 @@ public class PieceDragController : MonoBehaviour,
             SetOutlineAlpha(1f, 0.2f);
 
             // RETURN_LIST_POS_Yによる判定を、_rt.position.yからマウス位置を使った判定に変更
-            Debug.Log($"マウス位置チェック：{GameDataManager.GetMousePosition().y} , RETURN_LIST_POS_Y:{RETURN_LIST_POS_Y}");
+            // Debug.Log($"マウス位置チェック：{GameDataManager.GetMousePosition().y} , RETURN_LIST_POS_Y:{RETURN_LIST_POS_Y}");
             // ★ 分岐ロジック: 最後にスナップされた位置があるか？
             if (_lastSnappedPos != UNSNAPPED_POSITION && GameDataManager.GetMousePosition().y > RETURN_LIST_POS_Y) 
             {

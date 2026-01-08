@@ -55,15 +55,18 @@ public class DebugAddressableImageLoader
         foreach (var loader in loaders)
         {
             // 進捗バー表示
-            EditorUtility.DisplayProgressBar("Addressable Image Loading", $"Loading Image for {loader.gameObject.name}", count / total);
+            // EditorUtility.DisplayProgressBar("Addressable Image Loading", $"Loading Image for {loader.gameObject.name}", count / total);
             var image = loader.GetComponent<UnityEngine.UI.Image>();
             if (image != null)
             {
                 image.sprite = null;
             }
+            Debug.Log($"[DebugAddressableImageLoader] clear image for {loader.gameObject.name}, isImage:{image != null},  ({count + 1}/{total})");
             count += 1f;
         }
         EditorUtility.ClearProgressBar();
     }
+
+    
 }
 #endif

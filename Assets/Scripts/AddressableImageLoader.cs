@@ -31,7 +31,7 @@ public class AddressableImageLoader : MonoBehaviour
 #if UNITY_EDITOR
         if(!UnityEditor.EditorApplication.isPlaying)
         {
-            Debug.Log($"[Loader: {gameObject.name}] Editor Mode: Loading image from AssetDatabase: {addressName}");
+            // Debug.Log($"[Loader: {gameObject.name}] Editor Mode: Loading image from AssetDatabase: {addressName}");
             // addressNameから直接取得するエディター用の簡易ロード
             // Texture2D editorTex = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(addressName);
             // if(editorTex != null)
@@ -46,6 +46,59 @@ public class AddressableImageLoader : MonoBehaviour
             // }
             Sprite sp = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(addressName);
             _imageComponent.sprite = sp;
+            
+            // Addressable化されているか確認 
+            if(sp != null)
+            {
+                var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+                if (settings != null)
+                {
+                    string guid = UnityEditor.AssetDatabase.AssetPathToGUID(addressName);
+                    var entry = settings.FindAssetEntry(guid);
+                    
+                    if (entry != null)
+                    {
+                        // Debug.Log($"<color=green>✅ Addressable化確認:OK:</color> {gameObject.name} → {entry.address}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"<color=yellow>⚠️ Addressable化されていません。自動的にAddressable化します:</color> {gameObject.name} → {addressName}", this);
+
+                        // グループ名を抽出（addressNameの親フォルダ名）
+                        string directoryPath = System.IO.Path.GetDirectoryName(addressName);
+                        string groupName = System.IO.Path.GetFileName(directoryPath);
+                        
+                        // グループを取得または作成
+                        var group = settings.FindGroup(groupName);
+                        if (group == null)
+                        {
+                            Debug.Log($"<color=cyan>グループ '{groupName}' を新規作成します</color>");
+                            var groupTemplate = settings.GetGroupTemplateObject(0) as UnityEditor.AddressableAssets.Settings.AddressableAssetGroupTemplate;
+                            group = settings.CreateGroup(groupName, false, false, true, null, groupTemplate.GetTypes());
+                            groupTemplate.ApplyToAddressableAssetGroup(group);
+                        }
+                        
+                        // アセットをグループに追加
+                        entry = settings.CreateOrMoveEntry(guid, group);
+                        
+                        if (entry != null)
+                        {
+                            Debug.Log($"<color=green>✅ Addressable化完了:</color> {gameObject.name} → グループ '{groupName}'", this);
+                            UnityEditor.EditorUtility.SetDirty(settings);
+                            UnityEditor.AssetDatabase.SaveAssets();
+                        }
+                        else
+                        {
+                            Debug.LogError($"<color=red>❌ Addressable化失敗:</color> {gameObject.name} → {addressName}", this);
+                        }
+                    }
+                }
+                else
+                {
+                    // Debug.LogWarning($"<color=red>❌ Addressable化確認:Addressable Settingsが見つかりません:</color> {gameObject.name}", this);
+                }
+            }
+
             return default;
         }
 #endif
