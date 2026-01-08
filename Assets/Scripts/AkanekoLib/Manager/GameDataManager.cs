@@ -12,6 +12,7 @@ public static class GameDataManager
 
     public static int InitMoveCount = -1;
     public static int DailyInitMoveCount = -1;
+    public static int piecePutComboCount = 0;
 
     public static bool IsClear = false;
     public static bool IsBlockTouch = false;

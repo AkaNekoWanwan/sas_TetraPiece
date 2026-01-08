@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement; // SceneManagerを使用するために必要
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement; // 忘れずに using 宣言を追加
-using System.Linq;
+// using System.Linq;
 #endif
 
 public class HomePanelsManager : MonoBehaviour

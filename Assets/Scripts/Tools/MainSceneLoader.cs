@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 
 public class MainSceneLoader : MonoBehaviour
 {
+    private void Awake()
+    {
+        Application.targetFrameRate = 60; // フレームレートを60に設定
+    }
     async void Start()
     {
         StartLoading();

@@ -131,7 +131,6 @@ public class StageManager : MonoBehaviour
 
     public void Awake()
     {
-        Application.targetFrameRate = 60; // フレームレートを60に設定
         if(!Debug.isDebugBuild)
         {
             isTest = false;
@@ -146,6 +145,7 @@ public class StageManager : MonoBehaviour
         // PlayerPrefs.SetInt("totalLevel", 306); // デバッグ用に総レベル数を306に設定
         // PlayerPrefs.SetInt("Stage", 305); // デバッグ用に総レベル数を306に設定
         InitlializeColoutine();
+        GameDataManager.piecePutComboCount = 0;
     }
 
     private async Task InitlializeColoutine()
@@ -170,14 +170,12 @@ public class StageManager : MonoBehaviour
         
         if(!GameDataManager.IsInit)
         {
-            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameDataManager.IsCreativeMode && !GameConst.IsScreenShotMode();
+            // GameDataManager.IsDebugView = _debugUIManager._view.activeSelf && Debug.isDebugBuild && !GameDataManager.IsCreativeMode && !GameConst.IsScreenShotMode();
             GameDataManager.Initialize();
-            GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
+            GameDataManager.IsDebugView = false;
+            // GameDataManager.IsDebugView = _debugUIManager._view.activeSelf;
         }
-        else
-        {
-            _debugUIManager._view.SetActive(GameDataManager.IsDebugView);
-        }
+        _debugUIManager.Initialize();
         // _creativeCanvas.SetActive(Debug.isDebugBuild && GameDataManager.IsCreativeMode);
         _creativeCanvas.SetActive(GameDataManager.IsCreativeMode);
         _defaultCanvas.SetActive(!Debug.isDebugBuild || !GameDataManager.IsCreativeMode);
@@ -595,8 +593,8 @@ public class StageManager : MonoBehaviour
                 PlayerPrefs.SetInt("beforeDailyClear", 1);
             }
             PlayerPrefs.Save();
-            if(!GameDataManager.IsCreativeMode)
-                _clearViewManager.PosText();
+            // if(!GameDataManager.IsCreativeMode)
+            //     _clearViewManager.PosText();
          
             reloadButtonImage.DOFade(0f, 0.5f).SetEase(Ease.InOutSine).SetLink(reloadButtonImage.gameObject);
             reloadButtonImage.transform.DOScale(Vector3.zero, 0.5f).SetLink(reloadButtonImage.gameObject);

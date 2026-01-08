@@ -49,13 +49,12 @@ public class DebugCanvasController : MonoBehaviour
         {
             DebugCanvas.transform.localScale = iniScaCanvas;
             
-   
             DebugCanvas.SetActive(true);
         }
         else
         {
             DebugCanvas.transform.localScale = Vector3.zero;
-               DebugCanvas.SetActive(false);
+            DebugCanvas.SetActive(false);
         }
 
         // if (PlayerPrefs.GetInt("LevelChanger") == 1)
@@ -115,8 +114,6 @@ public class DebugCanvasController : MonoBehaviour
 
     public void CloseCanvas()
     {
-      
-
         DebugCanvas.transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
         {
             DebugCanvas.SetActive(false);
@@ -202,19 +199,19 @@ public class DebugCanvasController : MonoBehaviour
     }
 
     void Update()
-{
-    if (Input.GetMouseButtonDown(0)) // タップを検知
     {
-        // Debug.Log("Tapped");
-        // Vector2 tapPosition = Input.mousePosition; // 画面上のタップ座標
-        // int tappedRegion = GetTappedRegion(tapPosition); // タップ位置からエリアを計算
-        // Debug.Log("Tapped Region: " + tappedRegion);
-        // if (tappedRegion != -1) // 無効なエリアでなければ
+        // if (Input.GetMouseButtonDown(0)) // タップを検知
         // {
-        //     ProcessInput(tappedRegion);
+        //     // Debug.Log("Tapped");
+        //     // Vector2 tapPosition = Input.mousePosition; // 画面上のタップ座標
+        //     // int tappedRegion = GetTappedRegion(tapPosition); // タップ位置からエリアを計算
+        //     // Debug.Log("Tapped Region: " + tappedRegion);
+        //     // if (tappedRegion != -1) // 無効なエリアでなければ
+        //     // {
+        //     //     ProcessInput(tappedRegion);
+        //     // }
         // }
     }
-}
 
 // **タップされたエリアを計算**
 private int GetTappedRegion(Vector2 tapPosition)

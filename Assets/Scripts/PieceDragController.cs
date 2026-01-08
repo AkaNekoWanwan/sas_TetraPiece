@@ -465,7 +465,6 @@ public class PieceDragController : MonoBehaviour,
                     _lastSnappedPos = UNSNAPPED_POSITION;
                 }
             }
-            
             return;
         }
         DOVirtual.DelayedCall(0.4f, () =>
@@ -492,13 +491,15 @@ public class PieceDragController : MonoBehaviour,
                         agp.answerGrid.SetActive(false);
                     }
                 }
-                AudioManager.Instance.PlayMergeSound();
+                AudioManager.Instance.PlayMergeSound(GameDataManager.piecePutComboCount);
+                GameDataManager.piecePutComboCount++;
                 var iniscax = this.gameObject.GetComponent<RectTransform>().localScale;
                 seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax * 1.03f, 0.12f).SetEase(Ease.Linear));
                 seq.Append(this.gameObject.GetComponent<RectTransform>().DOScale(iniscax, 0.15f).SetEase(Ease.Linear));
             }
             else
             {
+                GameDataManager.piecePutComboCount = 0;
                 RestoreChildrenMaterials();
                 SetOutlineAlpha(1f, 0f);
             }

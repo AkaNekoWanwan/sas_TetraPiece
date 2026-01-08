@@ -12,10 +12,12 @@ public class DebugUIManager : MonoBehaviour
 
     public Text _buttonText = default;
     public InputField _inputField = default;
+    public TMPro.TextMeshProUGUI _textFrameRate = null;
 
     public List<int> _currentCommand = default;
 
     public event System.Action<bool> onDebugViewToggled;
+    private bool _isShowTextFrameRate = true;  // デバッグビューを閉じてもFPS表示を維持するためのフラグ
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -39,6 +41,19 @@ public class DebugUIManager : MonoBehaviour
                 TryTapCommandButton(0);
             }
         }
+         // フレームレート表示の更新
+        float fps = 1.0f / Time.unscaledDeltaTime;
+        if(fps < 50f)
+            _textFrameRate.color = new Color32(128, 0, 0, 255);
+        else
+            _textFrameRate.color = Color.black;
+        _textFrameRate.text = "FPS: " + fps.ToString("F2");
+    }
+
+    public void Initialize()
+    {
+        _view.SetActive(GameDataManager.IsDebugView);
+        _textFrameRate.gameObject.SetActive(GameDataManager.IsDebugView);
     }
 
     public void OnSwitchCreativeMode()
@@ -47,6 +62,13 @@ public class DebugUIManager : MonoBehaviour
         GameDataManager.IsCreativeMode = isCreativeMode;
         GameDataManager.IsDebugView = false;
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.3f);
+    }
+
+    public void ToggleFrameRateText(bool value)
+    {
+        _isShowTextFrameRate = value;
+        Debug.Log($"DebugUIManager: ToggleFrameRateText: {_isShowTextFrameRate}");
+        // _textFrameRate.gameObject.SetActive(_isShowTextFrameRate);
     }
 
     // _inputFieldの値が変更されたときに呼ばれる
@@ -60,6 +82,8 @@ public class DebugUIManager : MonoBehaviour
         _view.SetActive(false);
         GameDataManager.IsDebugView = false;
         onDebugViewToggled?.Invoke(false);
+        if(!_isShowTextFrameRate)
+            _textFrameRate.gameObject.SetActive(false);
     }
 
     public void OnSetTotalLevel()
@@ -93,6 +117,15 @@ public class DebugUIManager : MonoBehaviour
                 _view.SetActive(isActive);
                 onDebugViewToggled?.Invoke(isActive);
                 GameDataManager.IsDebugView = isActive;
+                if(isActive)
+                {
+                    _textFrameRate.gameObject.SetActive(true);
+                }
+                else
+                {
+                    if(!_isShowTextFrameRate)
+                        _textFrameRate.gameObject.SetActive(false);
+                }
             }
             return true;
         }

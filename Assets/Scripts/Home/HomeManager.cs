@@ -222,7 +222,7 @@ public class HomeManager : MonoBehaviour
     public void OnPlayButton()
     {
         FedeGoStage();
-        AudioManager.Instance.PlayMergeSound();
+        AudioManager.Instance.PlayDiscSound();
     }
     public void OnHomeButton()
     {
