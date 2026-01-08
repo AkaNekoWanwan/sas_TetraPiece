@@ -51,7 +51,8 @@ public class AudioManager : MonoBehaviour
     public void PlayMergeSound(int comboCount = 0)
     {
         // comboCount += 5; // 最低音高を5半音上げる
-        audioSource.pitch = Mathf.Pow(1.059463f, comboCount);
+        // audioSource.pitch = Mathf.Pow(1.059463f, comboCount); // まだ実装しない
+        audioSource.pitch = 1f;
         audioSource.PlayOneShot(mergeSound);
     }
 

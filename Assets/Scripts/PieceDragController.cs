@@ -62,6 +62,7 @@ public class PieceDragController : MonoBehaviour,
     
     // 現在のドラッグ中のマウス位置（スクリーン座標）
     private Vector2 currentDragScreenPosition;
+    private Vector2 beforeDragScreenPosition;
     public Vector2 CurrentDragScreenPosition => currentDragScreenPosition;
     private bool _isCreativeActive = false; // クリエイティブモードで「2本目の指」が押されているか
     private bool _isOnPointer = false; // ポインターがピース上にあるか
@@ -170,6 +171,30 @@ public class PieceDragController : MonoBehaviour,
         // ドラッグ中は滑らかに補間した位置を使用
         if (isDragging && !isLocked)
         {
+            Vector3 worldPoint;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                _rt, currentDragScreenPosition, Camera.main, out worldPoint))
+            {
+                // 目標位置を計算
+                Vector3 targetPosition = FixZ(worldPoint + dragOffset);
+                float addY = targetPosition.y - originalPos.y;
+                addY *= 1.0f;
+                
+                if( addY < 0f)
+                    addY = 0f;
+
+                // 盤面上にあるなら少し上に移動させる
+                if (_lastSnappedPos != UNSNAPPED_POSITION)
+                {
+                    addY += GameConst.ADD_Y_OFFSET;
+                }
+
+                targetPosition.y += addY;
+                
+                // 指の細かい動きを無視するためにスムージング
+                smoothedPosition = Vector3.Lerp(smoothedPosition, targetPosition, smoothingFactor);
+            }
+
             _rt.position = smoothedPosition;
             // lastEventData
         }
@@ -301,32 +326,17 @@ public class PieceDragController : MonoBehaviour,
 
         if (isLocked) return;
         
-        // マウス位置を保存
-        currentDragScreenPosition = GameDataManager.GetMousePosition();
-        
-        Vector3 worldPoint;
-        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            _rt, GameDataManager.GetMousePosition(), Camera.main, out worldPoint))
+        // マウス位置を取得
+        Vector2 nowMousePos = GameDataManager.GetMousePosition();
+
+        // currentDragScreenPositionとマウス位置の距離が一定以上なら更新、一定以下なら何もしない
+        float distance = Vector2.Distance(currentDragScreenPosition, nowMousePos);
+        float distance2 = Vector2.Distance(beforeDragScreenPosition, nowMousePos);
+        if (1.5f < distance && 0.5f < distance2)
         {
-            // 目標位置を計算
-            Vector3 targetPosition = FixZ(worldPoint + dragOffset);
-            float addY = targetPosition.y - originalPos.y;
-            addY *= 1.0f;
-            
-            if( addY < 0f)
-                addY = 0f;
-
-            // 盤面上にあるなら少し上に移動させる
-            if (_lastSnappedPos != UNSNAPPED_POSITION)
-            {
-                addY += GameConst.ADD_Y_OFFSET;
-            }
-
-            targetPosition.y += addY;
-            
-            // 指の細かい動きを無視するためにスムージング
-            smoothedPosition = Vector3.Lerp(smoothedPosition, targetPosition, smoothingFactor);
+            currentDragScreenPosition = nowMousePos;
         }
+        beforeDragScreenPosition = nowMousePos;
     }
 
     public void OnPointerDown(PointerEventData eventData)

@@ -50,14 +50,14 @@ public class GuidReturn : MonoBehaviour
         StartCoroutine(FadeOut(delay));
     }
 
-    private IEnumerator FadeIn(float delay = 1f)
+    private IEnumerator FadeIn(float delay = 3f)
     {
         if (delay > 0f)
         {
             yield return new WaitForSeconds(delay);
         }
 
-        float duration = 0.5f; // フェードインにかける時間（秒）
+        float duration = 1f; // フェードインにかける時間（秒）
         float elapsed = 0f;
 
         while (elapsed < duration)

@@ -560,7 +560,7 @@ public class StageManager : MonoBehaviour
             GameDataManager.DailyInitMoveCount = -1;
             _firebaseManager.StageClear(_MoveCount, pureElapsedTime); // Firebaseにステージクリアを通知
             isClear = true;
-            AudioManager.Instance.PlayClearSound();
+            // AudioManager.Instance.PlayClearSound();
             Debug.Log("🎉 ゲームクリア！:1");
             
             int _dailyStage = PlayerPrefs.GetInt("DailyStage", -1);
@@ -603,9 +603,10 @@ public class StageManager : MonoBehaviour
             Camera cam = Camera.main;
             if (cam != null )
             {
-                // 0.5秒まつ
-                DOVirtual.DelayedCall(0.5f, () =>
+                // ディレイをかける
+                DOVirtual.DelayedCall(0.3f, () =>
                 {
+                    AudioManager.Instance.PlayClearSound();
                     if(!GameDataManager.IsCreativeMode)
                     {
                         // Y座標 +2.5f に移動

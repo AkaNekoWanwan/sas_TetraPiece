@@ -30,7 +30,7 @@ public class GridCell : MonoBehaviour
 
     private void OnValidate()
     {
-        // return;
+        return;
         // ★追加（最小）：生成中は止める
         if (SuppressValidate) return;
 

@@ -97,6 +97,8 @@ public class DebugUIManager : MonoBehaviour
             inputLevel = (inputLevel - 504) % (504 - 25) + 25; // 25〜504の範囲に変換
         }
         PlayerPrefs.SetInt("Stage", inputLevel - 1);
+        GameDataManager.InitMoveCount = -1;
+        GameDataManager.DailyInitMoveCount = -1;
         GameDataManager.IsDebugView = false;
         FadeManager.Instance.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, 0.3f);
     }

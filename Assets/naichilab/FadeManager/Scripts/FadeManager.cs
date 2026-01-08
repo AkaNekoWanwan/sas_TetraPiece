@@ -14,6 +14,7 @@ public class FadeManager : MonoBehaviour
 	[SerializeField, Tooltip("ローディング画像")] private Transform _loadingImage = default;
     [SerializeField, Tooltip("透明度")] private CanvasGroup _canvasGroup = default;
     [SerializeField, Tooltip("フェード時間")] private float _fadeDuration = 0.5f;
+	[SerializeField, Tooltip("起動時用Loadingテキスト")] private GameObject _loadingText = default;
 	
 
 	#region Singleton
@@ -148,13 +149,25 @@ public class FadeManager : MonoBehaviour
 	/// </summary>
 	/// <param name='scene'>シーン名</param>
 	/// <param name='interval'>暗転にかかる時間(秒)</param>
-	public void TransScene (string scene, float interval)
+	public void TransScene (string scene, float interval, bool isShowLoadingText = false)
 	{
+		SetisShowLoadingText(isShowLoadingText);
 		StartCoroutine (TransSceneCoroutine (scene, interval, interval));
 	}
-	public void TransScene (string scene, float FadeInInterval, float FadeOutInterval)
+		
+	public void TransScene (string scene, float FadeInInterval, float FadeOutInterval, bool isShowLoadingText = false)
 	{
+		SetisShowLoadingText(isShowLoadingText);
 		StartCoroutine (TransSceneCoroutine (scene, FadeInInterval, FadeOutInterval));
+	}
+
+	private void SetisShowLoadingText(bool isShow)
+	{
+		if(_loadingText != null)
+		{
+			_loadingText.SetActive(isShow);
+			_loadingImage.gameObject.SetActive(!isShow);
+		}
 	}
 
 	public IEnumerator TransSceneCoroutine (string scene, float FadeInInterval, float FadeOutInterval)
@@ -168,6 +181,7 @@ public class FadeManager : MonoBehaviour
 		}
 		else
 		{
+			SetisShowLoadingText(false);
 			//だんだん暗く .
 			yield return StartCoroutine(FadeInCoroutine( ()=>{} , FadeInInterval, false));
 		}
@@ -203,6 +217,7 @@ public class FadeManager : MonoBehaviour
 	// フェードイン
 	public void FadeIn(UnityAction onFade, float interval, bool isCompleteOff = false)
 	{
+		SetisShowLoadingText(false);
 		StartCoroutine (FadeInCoroutine (onFade, interval, isCompleteOff));
 	}
 	private IEnumerator FadeInCoroutine (UnityAction onFade, float interval, bool isCompleteOff)
