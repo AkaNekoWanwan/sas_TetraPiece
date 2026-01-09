@@ -562,10 +562,11 @@ public class GridPieceListController : MonoBehaviour
 
 
     // ピースリストセットアップの前準備
-    public void PreSetPieceDragControllers()
+    // shouldClearCells: trueの場合は既存セルを削除、falseの場合は既存セルを保持（再利用）
+    public void PreSetPieceDragControllers(bool shouldClearCells = true)
     {
         // ピースリスト群をリセット
-        // 子オブジェクト全削除
+        // 子オブジェクト全削除（shouldClearCells=falseの場合はセルは残す）
         // スケールを1に戻す
         // ピース数の更新 ( pieceNumの値に合わせる or pieceNumの値を合わせる )
         List<PieceDragController> childPieceList = this.gameObject.GetComponentsInChildren<PieceDragController>().ToList();
@@ -579,12 +580,17 @@ public class GridPieceListController : MonoBehaviour
                 continue;
             }
             PieceDragController childPiece = childPieceList[i];
-            for (int j = childPiece.transform.childCount - 1; j >= 0; j--)
+            
+            // shouldClearCells=trueの場合のみセルを削除
+            if(shouldClearCells)
             {
-                Transform child = childPiece.transform.GetChild(j);
-                if (child != null)
+                for (int j = childPiece.transform.childCount - 1; j >= 0; j--)
                 {
-                    DestroyImmediate(child.gameObject, true);
+                    Transform child = childPiece.transform.GetChild(j);
+                    if (child != null)
+                    {
+                        DestroyImmediate(child.gameObject, true);
+                    }
                 }
             }
 

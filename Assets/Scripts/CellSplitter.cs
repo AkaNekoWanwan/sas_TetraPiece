@@ -307,8 +307,8 @@ public static class CellSplitter
         // System.Random を使ったカスタムソートは非推奨だが、乱数性を確保するにはシャッフルとの併用が必要
         return 0; // 一旦同じ順位として扱う
     };
-
-    public static void CellSplit( int cols, int rows, ref int orderPieceNum, List<AnswerGridPos> cells, GridPieceListController gridPieceListController, ShapeType type, string patternSeed = null, List<string> avoidPatternSeeds = null )
+ 
+    public static void CellSplit( int cols, int rows, ref int orderPieceNum, List<AnswerGridPos> cells, GridPieceListController gridPieceListController, ShapeType type, string patternSeed = null, List<string> avoidPatternSeeds = null, bool shouldClearCells = true )
     {
         // ピース生成のパラメーターセット
         GridX = cols;
@@ -353,7 +353,8 @@ public static class CellSplitter
             gridPieceListController.pieceNum = orderPieceNum;
             bool backupFlg = gridPieceListController.isOverrayPieceNum;
             gridPieceListController.isOverrayPieceNum = false;
-            gridPieceListController.PreSetPieceDragControllers();
+            // shouldClearCells: 新規作成時はtrue（セル削除）、再利用時はfalse（セル保持）
+            gridPieceListController.PreSetPieceDragControllers(shouldClearCells: shouldClearCells);
             gridPieceListController.isOverrayPieceNum = backupFlg;
             List<PieceDragController> pieceList = gridPieceListController.gameObject.GetComponentsInChildren<PieceDragController>().ToList();   
             // セルを対応するピースの子オブジェクトにする

@@ -1305,6 +1305,15 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             Debug.LogWarning("子オブジェクトがありません");
             return;
         }
+
+#if UNITY_EDITOR
+        // Prefabインスタンス内のオブジェクトの場合、SetParent()が使えないため処理をスキップ
+        if (UnityEditor.PrefabUtility.IsPartOfPrefabInstance(gameObject))
+        {
+            Debug.Log($"{gameObject.name} はPrefabインスタンス内のため、RecenterParentをスキップします");
+            return;
+        }
+#endif
         
         List<Transform> children = new List<Transform>();
         List<Vector3> savedWorldPos = new List<Vector3>();

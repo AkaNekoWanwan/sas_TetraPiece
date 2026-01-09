@@ -195,7 +195,7 @@ public class StageInfo : MonoBehaviour
             int totalCount = scripts.Length;
 
 
-            if (GUILayout.Button("SetUp (選択全体に適用)"))
+            if (GUILayout.Button("セル生成＋ピース配置 (選択全体に適用)"))
             {
                 // 処理をUndo可能にするための記述（推奨）
                 Undo.RecordObjects(scripts, "SetUp Stages"); 
@@ -224,16 +224,16 @@ public class StageInfo : MonoBehaviour
                 }
                 EditorUtility.ClearProgressBar();
             }
-            if (GUILayout.Button("ピースの再配置 (選択全体に適用)"))
+            if (GUILayout.Button("ピース配置更新（既存セル再利用） (選択全体に適用)"))
             {
                 // 処理をUndo可能にするための記述（推奨）
-                Undo.RecordObjects(scripts, "SetUp Stages"); 
+                Undo.RecordObjects(scripts, "Relocate Pieces"); 
 
                 for (int i = 0; i < totalCount; i++)
                 {
                     StageInfo script = scripts[i];
-                    string title = $"ステージ生成中 ({i + 1}/{totalCount})";
-                    string info = $"ステージ: {script.gameObject.name} をセットアップ中...";
+                    string title = $"ピース配置更新中 ({i + 1}/{totalCount})";
+                    string info = $"ステージ: {script.gameObject.name} のピース配置を更新中...";
                     float progress = (float)i / totalCount;
                     script.OnUpdateProgressBar += (current, total, subInfo) =>
                     {
@@ -244,7 +244,7 @@ public class StageInfo : MonoBehaviour
                     // 進捗バーを表示・更新
                     if(EditorUtility.DisplayCancelableProgressBar(title, info, progress))
                     {
-                        Debug.Log("ピース再配置がユーザーによって中断されました。");
+                        Debug.Log("ピース配置更新がユーザーによって中断されました。");
                         break; // ループを抜ける
                     }
     

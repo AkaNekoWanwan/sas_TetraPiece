@@ -167,33 +167,61 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     // 【新規追加】自身のCellSplitterインスタンスを保持
     private CellSplitter2 _myCellSplitter;
     // ステージ作成に必要な一連の流れを実行
+    // isReSetPiecesOnly: trueの場合、既存セルを再利用してピース配置のみ再生成
     public void CreatePiece(bool isReSetPiecesOnly = false)
     {
-        // if(isReSetPiecesOnly)
-        // {
-        //     // ピースセルの再生成をせずに、既存のセルからピースを再生成する場合
-        //     OnUpdateProgressBar?.Invoke(0, 100, "piece setup and saving...");
-        //     _gridPieceListController = GetGridPieceListController();
-        //     if(_gridPieceListController != null)
-        //     {
-        //         _gridPieceListController.isCreative = isCreative;
-        //         _gridPieceListController.gridParent = this.transform;
-        //         _gridPieceListController.ShapeType = GetShapeType();
-        //         _gridPieceListController.IsSetShapeType = true;
-        //     }
-        //     AfterSplit();
-        //     return;
-        // }
-        // 画像からピースのセルを生成
-        // OnUpdateProgressBar?.Invoke(0, 100, "piece cell creating...");
-        OnUpdateProgressBar?.Invoke(0, 100, "SplitImageProcess wait...");
-        if(!isReSetPiecesOnly)
+        if(isReSetPiecesOnly)
+        {
+            // 既存のセルを再利用してピース配置のみ更新
+            OnUpdateProgressBar?.Invoke(0, 100, "既存セルを収集中...");
+            
+            // GridPieceListController配下に移動済みのセルを再収集
+            _gridPieceListController = GetGridPieceListController();
+            if(_gridPieceListController != null)
+            {
+                // まずピース配下のセルを探す（Split後の状態）
+                var pieceDragControllers = _gridPieceListController.GetComponentsInChildren<PieceDragController>(true);
+                _cells = new List<AnswerGridPos>();
+                foreach (var piece in pieceDragControllers)
+                {
+                    var cellsInPiece = piece.GetComponentsInChildren<AnswerGridPos>(true);
+                    _cells.AddRange(cellsInPiece);
+                }
+                
+                // ピース配下に見つからなければ、this.gameObject配下を探す（画像分割直後の状態）
+                if(_cells.Count == 0)
+                {
+                    Debug.Log("ピース配下にセルが見つからなかったため、画像分割直後のセルを収集します");
+                    _cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>(true).ToList();
+                }
+                
+                if(_cells.Count == 0)
+                {
+                    Debug.LogError("再配置可能なセルが見つかりませんでした。先に画像分割を実行してください。");
+                    return;
+                }
+                
+                Debug.Log($"既存セル {_cells.Count}個を再利用してピース再配置を実行します");
+                
+                _gridPieceListController.isCreative = isCreative;
+                _gridPieceListController.gridParent = this.transform;
+                _gridPieceListController.ShapeType = GetShapeType();
+                _gridPieceListController.IsSetShapeType = true;
+            }
+        }
+        else
+        {
+            // 画像からピースのセルを新規生成
+            OnUpdateProgressBar?.Invoke(0, 100, "画像分割処理中...");
             SplitImageProcess();
+        }
+        
         // ピースセルをいい感じに組み合わせてピースとしてまとめる
-        OnUpdateProgressBar?.Invoke(33, 100, "piece creating...");
-        Split(true);
+        OnUpdateProgressBar?.Invoke(33, 100, "ピース生成中...");
+        Split(isStatic: true, shouldClearCells: !isReSetPiecesOnly);
+        
         // ピースのセットアップとPrefab保存
-        OnUpdateProgressBar?.Invoke(67, 100, "piece setup and saving...");
+        OnUpdateProgressBar?.Invoke(67, 100, "ピース設定とプレハブ保存中...");
         AfterSplit();
     }
 
@@ -239,6 +267,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     // セル(再)生成
     public void SplitImageProcess()
     {
+        Deletepiece();
         // 設定されているピース数が大き過ぎたら修正
         int maxPieceNum = rows * cols;
         _pieceNum = Mathf.Min(_pieceNum, maxPieceNum);
@@ -256,123 +285,123 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         // できれば調整が不要になるようCreatePieceを改善したい
         // 現仕様では1~9ステージと、12~27ステージ(3ステージごと)を確認して調整すると全パターン対応可能
         // iD:3 = 3x4　1,4,7ステージなど
-        if(cols == 3 && rows == 4)
-        {
-            if( GetShapeType() == ShapeType.Square)
-            {
-                fixTargetPercentCellSize = 0.995f;
-                _trimShift = new Vector2(0f, 1f);
-            }
-            if( GetShapeType() == ShapeType.Triangle)
-            {
-                _trimShift = new Vector2(324f, 87f);
-            }
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                targetPercent = 110;
-                _trimShift = new Vector2(0f, -1.45f);
-            }
-        }
-        // iD:4 = 4x5 2,5,8ステージなど
-        if(cols == 4 && rows == 5)
-        {
-            if( GetShapeType() == ShapeType.Square)
-            {
-                fixTargetPercentCellSize = 0.995f;
-                _trimShift = new Vector2(0f, 1f);
-            }
-            if( GetShapeType() == ShapeType.Triangle)
-            {
-                _trimShift = new Vector2(324f, 87f);
-                fixTargetPercentCellSize = 0.997f;
-            }
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                targetPercent = 115;
-                _trimShift = new Vector2(0f, -1.2f);
-            }
-        }
-        // iD:5 = 5x7(四角六角)　3,9ステージなど
-        if(cols == 5 && rows == 7)
-        {
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                targetPercent = 115;
-                _trimShift = new Vector2(0f, -0.88f);
-            }
-            if( GetShapeType() == ShapeType.Square)
-            {
-                fixTargetPercentCellSize = 0.995f;
-                _trimShift = new Vector2(0f, 1f);
-            }
-        }
-        // iD:5 = 6x6(三角) 6sテージなど
-        if(cols == 6 && rows == 6)
-        {
-            if( GetShapeType() == ShapeType.Triangle)
-                _trimShift = new Vector2(267f, 87f);
-        }
-        // iD:6 = 6x8(四角六角) 12,18ステージなど
-        if(cols == 6 && rows == 8)
-        {
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                _trimShift = new Vector2(0f, -0.78f);
-                fixTargetPercentCellSize = 0.995f;
-            }
-            // 四角は特に調整不要
-            if( GetShapeType() == ShapeType.Square)
-            {
-                _trimShift = new Vector2(0f, 0f);
-                targetPercent = 100;
-                fixTargetPercentCellSize = 1f;
-            }
-        }
-        // iD:6 = 7x7(三角) 15ステージなど
-        if(cols == 7 && rows == 7)
-        {
-            if( GetShapeType() == ShapeType.Triangle)
-                _trimShift = new Vector2(278f, 87f);
-        }
-        // iD:7 = 7x8(四角六角) 21,27ステージなど
-        if(cols == 7 && rows == 8)
-        {
-            if( GetShapeType() == ShapeType.Square)
-            {
-                targetPercent = 88;
-                fixTargetPercentCellSize = 0.995f;
-                _trimShift = new Vector2(0f, 0f);
-            }
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                targetPercent = 105;
-                _trimShift = new Vector2(0f, -0.69f);
-            }
-        }
-        // iD:7 = 8x7(三角) 24ステージなど
-        if(cols == 8 && rows == 7)
-        {
-            if( GetShapeType() == ShapeType.Triangle)
-            {
-                _trimShift = new Vector2(312f, 175f);
-                targetPercent = 131;
-                fixTargetPercentCellSize = 0.9925f;
-            }
-        }
-        // iD:8 = 7x9(四角六角) デイリーステージなど
-        if(cols == 7 && rows == 9)
-        {
-            _trimShift = new Vector2(0f, 0f);
-            if( GetShapeType() == ShapeType.Hex)
-            {
-                _trimShift = new Vector2(0f, -0.7f);
-            }
-        }
-        // iD:8 = 8x8(三角) デイリーステージなど(現在未使用)
-        if(cols == 8 && rows == 8)
-        {
-            _trimShift = new Vector2(324f, 87f);
-        }
+        // if(cols == 3 && rows == 4)
+        // {
+        //     if( GetShapeType() == ShapeType.Square)
+        //     {
+        //         fixTargetPercentCellSize = 0.995f;
+        //         _trimShift = new Vector2(0f, 1f);
+        //     }
+        //     if( GetShapeType() == ShapeType.Triangle)
+        //     {
+        //         _trimShift = new Vector2(324f, 87f);
+        //     }
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         targetPercent = 110;
+        //         _trimShift = new Vector2(0f, -1.45f);
+        //     }
+        // }
+        // // iD:4 = 4x5 2,5,8ステージなど
+        // if(cols == 4 && rows == 5)
+        // {
+        //     if( GetShapeType() == ShapeType.Square)
+        //     {
+        //         fixTargetPercentCellSize = 0.995f;
+        //         _trimShift = new Vector2(0f, 1f);
+        //     }
+        //     if( GetShapeType() == ShapeType.Triangle)
+        //     {
+        //         _trimShift = new Vector2(324f, 87f);
+        //         fixTargetPercentCellSize = 0.997f;
+        //     }
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         targetPercent = 115;
+        //         _trimShift = new Vector2(0f, -1.2f);
+        //     }
+        // }
+        // // iD:5 = 5x7(四角六角)　3,9ステージなど
+        // if(cols == 5 && rows == 7)
+        // {
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         targetPercent = 115;
+        //         _trimShift = new Vector2(0f, -0.88f);
+        //     }
+        //     if( GetShapeType() == ShapeType.Square)
+        //     {
+        //         fixTargetPercentCellSize = 0.995f;
+        //         _trimShift = new Vector2(0f, 1f);
+        //     }
+        // }
+        // // iD:5 = 6x6(三角) 6sテージなど
+        // if(cols == 6 && rows == 6)
+        // {
+        //     if( GetShapeType() == ShapeType.Triangle)
+        //         _trimShift = new Vector2(267f, 87f);
+        // }
+        // // iD:6 = 6x8(四角六角) 12,18ステージなど
+        // if(cols == 6 && rows == 8)
+        // {
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         _trimShift = new Vector2(0f, -0.78f);
+        //         fixTargetPercentCellSize = 0.995f;
+        //     }
+        //     // 四角は特に調整不要
+        //     if( GetShapeType() == ShapeType.Square)
+        //     {
+        //         _trimShift = new Vector2(0f, 0f);
+        //         targetPercent = 100;
+        //         fixTargetPercentCellSize = 1f;
+        //     }
+        // }
+        // // iD:6 = 7x7(三角) 15ステージなど
+        // if(cols == 7 && rows == 7)
+        // {
+        //     if( GetShapeType() == ShapeType.Triangle)
+        //         _trimShift = new Vector2(278f, 87f);
+        // }
+        // // iD:7 = 7x8(四角六角) 21,27ステージなど
+        // if(cols == 7 && rows == 8)
+        // {
+        //     if( GetShapeType() == ShapeType.Square)
+        //     {
+        //         targetPercent = 88;
+        //         fixTargetPercentCellSize = 0.995f;
+        //         _trimShift = new Vector2(0f, 0f);
+        //     }
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         targetPercent = 105;
+        //         _trimShift = new Vector2(0f, -0.69f);
+        //     }
+        // }
+        // // iD:7 = 8x7(三角) 24ステージなど
+        // if(cols == 8 && rows == 7)
+        // {
+        //     if( GetShapeType() == ShapeType.Triangle)
+        //     {
+        //         _trimShift = new Vector2(312f, 175f);
+        //         targetPercent = 131;
+        //         fixTargetPercentCellSize = 0.9925f;
+        //     }
+        // }
+        // // iD:8 = 7x9(四角六角) デイリーステージなど
+        // if(cols == 7 && rows == 9)
+        // {
+        //     _trimShift = new Vector2(0f, 0f);
+        //     if( GetShapeType() == ShapeType.Hex)
+        //     {
+        //         _trimShift = new Vector2(0f, -0.7f);
+        //     }
+        // }
+        // // iD:8 = 8x8(三角) デイリーステージなど(現在未使用)
+        // if(cols == 8 && rows == 8)
+        // {
+        //     _trimShift = new Vector2(324f, 87f);
+        // }
 
         OnUpdateProgressBar?.Invoke(8, 100, "Image splitting...");
         // ピースセル生成のコア処理
@@ -390,14 +419,26 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             _gridPieceListController.IsSetShapeType = true;
         }
     }
-    private void Split(bool isStatic)
+    private void Split(bool isStatic, bool shouldClearCells = true)
     {
-        _cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
+        // isReSetPiecesOnlyがtrueの場合、CreatePiece()で既に_cellsが設定されているため、再収集をスキップ
+        // それ以外の場合は通常通りthis.gameObject配下から収集
+        if(_cells == null || _cells.Count == 0)
+        {
+            _cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
+            Debug.Log($"[Split] {_cells.Count}個のセルを収集しました");
+        }
+        else
+        {
+            Debug.Log($"[Split] 既存の{_cells.Count}個のセルを使用します（再収集スキップ）");
+        }
+        
         // _pieceNum = -1;
         if(isStatic)
         {
             // ピースセルをいい感じにピースリストに配置
-            CellSplitter.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds );
+            // shouldClearCells: 新規作成時はtrue（セル削除）、再利用時はfalse（セル保持）
+            CellSplitter.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, GetShapeType(), PieceCreateSeed, avoidPatternSeeds, shouldClearCells );
             PieceCreateSeed = CellSplitter.PatternSeed;
         }
         else
@@ -415,9 +456,117 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
             backUpPieceCreateSeed = PieceCreateSeed;
 
         isSkip = true;
-        // ピースのセットアップ
+        
+        GameObject stageRoot = this.transform.parent.parent.gameObject;
+        
+        // Prefabインスタンスの場合、Unpackして通常のGameObjectに変換
+        bool isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
+        string prefabPath = null;
+        
+        if (isPrefabInstance)
+        {
+            // Prefabアセットのパスを取得
+            var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+            prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            
+            // Prefabインスタンスを通常のGameObjectに変換（親子関係変更を可能にする）
+            PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            Debug.Log($"Prefabインスタンスをアンパックしました: {prefabPath}");
+        }
+        
+        // シーン上のインスタンスのピース設定を更新（セルの親子関係変更）
         _gridPieceListController.SetUpChildrenPieceDragController();
-        SaveAsPrefab.Save(this.transform.parent.parent.gameObject, PrefabSavePath);
+        
+        // 一時的なコピーを作成して画像をクリアして保存
+        GameObject tempCopy = GameObject.Instantiate(stageRoot);
+        tempCopy.name = stageRoot.name;
+        
+        // コピーの画像をクリア（AddressableImageLoaderがついているもののみ）
+        SplitImageHelper.ClearAddressableImageSprites(tempCopy);
+        
+        if (isPrefabInstance)
+        {
+            // Prefabとして保存
+            PrefabUtility.SaveAsPrefabAsset(tempCopy, prefabPath);
+            Debug.Log($"Prefabに保存しました: {prefabPath}");
+            
+            // シーン上のオブジェクトをPrefabインスタンスとして再接続
+            GameObject newInstance = PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath)) as GameObject;
+            newInstance.transform.SetParent(stageRoot.transform.parent);
+            newInstance.transform.SetSiblingIndex(stageRoot.transform.GetSiblingIndex());
+            newInstance.transform.localPosition = stageRoot.transform.localPosition;
+            newInstance.transform.localRotation = stageRoot.transform.localRotation;
+            newInstance.transform.localScale = stageRoot.transform.localScale;
+            
+            // 古いオブジェクトを削除
+            DestroyImmediate(stageRoot);
+            
+            // 新しいインスタンスの画像を再ロード
+            ReloadAddressableImageSprites(newInstance);
+            
+            // 新しいインスタンスから_gridPieceListControllerと_cellsを再取得
+            var newSplitter = newInstance.GetComponentsInChildren<AbstractGridImageSplitter>(true)
+                .FirstOrDefault(s => s.uniqueId == this.uniqueId);
+            if (newSplitter != null)
+            {
+                newSplitter._gridPieceListController = newSplitter.GetGridPieceListController();
+                newSplitter.RecollectCellsFromPieces();
+            }
+            
+            Debug.Log($"Prefabインスタンスを再接続しました");
+        }
+        else
+        {
+            // 通常のオブジェクトの場合
+            SaveAsPrefab.Save(tempCopy, PrefabSavePath);
+            Debug.Log($"通常オブジェクトをPrefabとして保存しました");
+        }
+        
+        // コピーを削除
+        DestroyImmediate(tempCopy);
+        
+        // プレハブ保存後、GridPieceListController配下から_cellsを再収集（参照切れ対策）
+        if (!isPrefabInstance)
+        {
+            RecollectCellsFromPieces();
+        }
+    }
+    
+    // シーン上のインスタンスのAddressableImageLoaderの画像を再ロード
+    private void ReloadAddressableImageSprites(GameObject root)
+    {
+        var loaders = root.GetComponentsInChildren<AddressableImageLoader>(true);
+        foreach (var loader in loaders)
+        {
+            if (!string.IsNullOrEmpty(loader.addressName))
+            {
+                loader.LoadExternal();
+            }
+        }
+        Debug.Log($"[ReloadAddressableImageSprites] {loaders.Length}個の画像を再ロードしました");
+    }
+
+    // GridPieceListController配下のPieceDragControllerから全セルを再収集
+    private void RecollectCellsFromPieces()
+    {
+        _cells = new List<AnswerGridPos>();
+        
+        if (_gridPieceListController != null)
+        {
+            var pieceDragControllers = _gridPieceListController.GetComponentsInChildren<PieceDragController>(true);
+            
+            foreach (var piece in pieceDragControllers)
+            {
+                var cellsInPiece = piece.GetComponentsInChildren<AnswerGridPos>(true);
+                _cells.AddRange(cellsInPiece);
+            }
+            
+            Debug.Log($"[RecollectCellsFromPieces] {_cells.Count} 個のセルを再収集しました");
+        }
+        else
+        {
+            Debug.LogWarning("[RecollectCellsFromPieces] GridPieceListControllerが見つかりません");
+        }
     }
 
     public void Deletepiece()
@@ -587,13 +736,21 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 {
                     // 画像をAddressable化した各オブジェクトに代わりにAddressableImageLoaderをつける(パスを記憶してawake時にロードする機能)
                     AddressableImageLoader addressableImageLoader = image.gameObject.GetComponent<AddressableImageLoader>();
+                    bool loaderExisted = (addressableImageLoader != null);
+                    
                     if(addressableImageLoader == null)
                     {
                         addressableImageLoader = image.gameObject.AddComponent<AddressableImageLoader>();
                     }
                     loadedImageLoaders.Add(addressableImageLoader);
                     addressableImageLoader.addressName = newAssetPath;
-                    image.sprite = null;
+                    
+                    // 既にLoaderがついていた場合（セル生成時に追加済み）は画像をクリアしない
+                    if (!loaderExisted)
+                    {
+                        image.sprite = null;
+                    }
+                    
                     subIndex += 1f;
                     OnUpdateProgressBar?.Invoke((int)(50f + ((float)index / 2f + subIndex / (float)imageDic[sprite].Count) * 45f / totalSprites), 100, $"{fileName}のAddressable化中：Imageの更新中 ({subIndex}/{imageDic[sprite].Count}){index + 1}/{totalSprites} ");
                 }
@@ -754,18 +911,18 @@ public class AbstractGridImageSplitterEditor : Editor
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Split Image"))
+        if (GUILayout.Button("画像分割（セル生成）"))
         {
             // script.Deletepiece();
             script.SplitImageProcess();
             script.isSkip = false;
         }
-        if (GUILayout.Button("Delete piece"))
+        if (GUILayout.Button("セル削除"))
         {
             script.Deletepiece();
             script.isSkip = false;
         }
-        if (GUILayout.Button("Auto Create piece"))
+        if (GUILayout.Button("セル生成＋ピース配置"))
         {
             script.OnUpdateProgressBar = null; 
             script.OnUpdateProgressBar += (current, total, message) =>

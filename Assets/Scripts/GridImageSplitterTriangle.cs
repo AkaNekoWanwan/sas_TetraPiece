@@ -32,7 +32,6 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
             return;
         }
 
-        // 💡 実行モードチェック
         if (!Application.isEditor)
         {
             Debug.LogError("この処理はエディターモードでのみ実行可能です。");
@@ -43,29 +42,26 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         Texture2D srcTex = sprite.texture;
         Rect rect = sprite.rect;
         
-        // 💡 読み書き可能チェック
         if (!srcTex.isReadable)
         {
-            Debug.LogError("元のテクスチャのインポート設定で 'Read/Write Enabled' が有効になっていません。有効にして再試行してください。");
+            Debug.LogError("元のテクスチャのインポート設定で 'Read/Write Enabled' が有効になっていません。");
             return;
         }
 
-        // 画像名を取得（アセットパスから取得を試みる）
-        string imageName = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(srcTex));
-        if (string.IsNullOrEmpty(imageName))
-        {
-             imageName = Path.GetFileNameWithoutExtension(srcTex.name);
-        }
-        string saveFolder = GetUniqueFolder(outputFolder, imageName);
+        // === Addressableグループの準備 ===
+        GameObject stageRoot = transform.parent.parent.gameObject;
+        var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+        string groupName = prefabAsset != null ? prefabAsset.name : "Default";
+        
+        var group = SplitImageHelper.GetOrCreateAddressableGroup(groupName);
+        var settings = UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
 
-        if (!Directory.Exists(saveFolder))
-            Directory.CreateDirectory(saveFolder);
-
-        // 💡 パスをAssets/から始まる形に調整
-        string relativeSaveFolder = saveFolder.Replace(Application.dataPath, "Assets");
-        if (!relativeSaveFolder.StartsWith("Assets"))
+        // 保存先を統一（Addressable用のパスに直接保存）
+        string saveDirectory = $"Assets/Prefabs/Addressable/{groupName}";
+        if (!AssetDatabase.IsValidFolder(saveDirectory))
         {
-             relativeSaveFolder = "Assets/" + relativeSaveFolder;
+            Directory.CreateDirectory(saveDirectory);
+            AssetDatabase.Refresh();
         }
 
         int fullW = (int)rect.width;
@@ -82,44 +78,44 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
         float triHeight = Mathf.Sqrt(3f) / 2f * triSize;
         SetCellScale(triSize);
         
-        // すべての画像を一度ディスクに保存し、インポートを完了させるためのリスト
+        // 実際に使用される領域のサイズを計算
+        float usedWidth = (cols - 1) * (triSize / 2f) + triSize;  // 三角形は半分ずつずれる
+        float usedHeight = rows * triHeight;
+        
+        // 中央揃えのためのオフセット
+        int offsetX = startX + Mathf.RoundToInt((squareSize - usedWidth) / 2f);
+        int offsetY = startY + Mathf.RoundToInt((squareSize - usedHeight) / 2f);
+        
         List<(int x, int y, string assetPath)> importList = new List<(int x, int y, string assetPath)>();
+        List<(GameObject obj, string assetPath)> objectsToAddressable = new List<(GameObject, string)>();
 
-        // === 1️⃣ テクスチャの切り出しと保存 ===
+        // === テクスチャの切り出しと保存 ===
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
             {
                 bool pointingUp = ((x + y) % 2 == 0);
 
-                int px = startX + Mathf.RoundToInt(x * (triSize / 2f));
-                int py = startY + Mathf.RoundToInt(y * triHeight);
+                int px = offsetX + Mathf.RoundToInt(x * (triSize / 2f));
+                int py = offsetY + Mathf.RoundToInt(y * triHeight);
 
                 int w = Mathf.RoundToInt(triSize);
                 int h = Mathf.RoundToInt(triHeight);
 
-                // 範囲外チェック
                 if (px + w > srcTex.width || py + h > srcTex.height || px < 0 || py < 0) continue;
 
-                // 💡 CreateTriangleTextureで生成されたTexture2Dをファイルに保存
                 Texture2D triTex = CreateTriangleTexture(srcTex, px, py, w, h, pointingUp);
 
                 string fileName = $"tri_{y}_{x}.png";
-                string fullPath = Path.Combine(saveFolder, fileName);
-                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
+                string assetPath = $"{saveDirectory}/{fileName}";
                 
-                File.WriteAllBytes(fullPath, triTex.EncodeToPNG());
-                
+                File.WriteAllBytes(assetPath, triTex.EncodeToPNG());
                 importList.Add((x, y, assetPath));
-                
-                // 💡 メモリ上のTexture2Dを破棄
                 Object.DestroyImmediate(triTex);
             }
         }
         
-        // === 2️⃣ アセットデータベースの更新と再インポート ===
-        
-        // 全ファイルの書き込み後、一度アセットデータベースを更新してファイル群を認識させる
+        // === インポート設定 ===
         AssetDatabase.Refresh(); 
 
         foreach (var item in importList)
@@ -129,143 +125,134 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
             {
                 importer.textureType = TextureImporterType.Sprite;
                 importer.alphaIsTransparency = true;
-                importer.isReadable = false; // 読み込み不要なのでOFFに戻す
+                importer.isReadable = false;
                 importer.spriteImportMode = SpriteImportMode.Single;
-                
                 importer.SaveAndReimport();
+            }
+
+            // Addressableに登録
+            if (group != null && settings != null)
+            {
+                var guid = AssetDatabase.AssetPathToGUID(item.assetPath);
+                settings.CreateOrMoveEntry(guid, group);
             }
         }
         
-        AssetDatabase.Refresh(); // Spriteアセットが確実に生成されるのを待つ
+        AssetDatabase.Refresh();
 
-        // === 3️⃣ UI配置とSprite紐付け ===
+        // === UI配置 ===
+        RectTransform parentRT = _splitImage.GetComponent<RectTransform>();
+        Vector2 parentSize = parentRT.rect.size;
+        
+        float uiSquare = Mathf.Min(parentSize.x, parentSize.y) * (targetPercent * fixTargetPercentCellSize / 100f);
+        float uiTriSize = uiSquare / Mathf.Max(rows, cols);
+        float uiTriHeight = Mathf.Sqrt(3f) / 2f * uiTriSize;
+        
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < cols; x++)
             {
                 bool pointingUp = ((x + y) % 2 == 0);
-
-                string fileName = $"tri_{y}_{x}.png";
-                string assetPath = Path.Combine(relativeSaveFolder, fileName).Replace('\\', '/');
-
-                // 💡 永続アセットのロード
-                Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
                 
+                string fileName = $"tri_{y}_{x}.png";
+                string assetPath = $"{saveDirectory}/{fileName}";
+                
+                Sprite sp = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
                 if (sp == null)
                 {
-                    // ファイルがロードできない場合はスキップ
-                    Debug.LogError($"Spriteアセットのロード失敗。ファイルを確認してください: {assetPath}");
+                    Debug.LogError($"Spriteロード失敗: {assetPath}");
                     continue;
                 }
-
+                
                 GameObject answerObj = new GameObject($"answer_{y}_{x}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(UnityEngine.UI.Outline));
-                GameObject cellObj   = new GameObject($"cell_{y}_{x}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(TriangleCellCopyHandler));
-
                 answerObj.transform.SetParent(this.transform, false);
+                
+                GameObject cellObj = new GameObject($"cell_{y}_{x}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
                 cellObj.transform.SetParent(this.transform, false);
-                cellObj.transform.SetAsFirstSibling(); // CellをAnswerより手前に配置
 
-                // 💡 Sprite引数を追加し、SetupRectAndSpriteを呼び出す
-                SetupRectAndSprite(answerObj, _splitImage, sp, triSize, triHeight, x, y);
-                SetupRectAndSprite(cellObj,   _splitImage, sp, triSize, triHeight, x, y);
+                // RectTransform設定
+                float offsetUiX = x * (uiTriSize / 2f) - (cols - 1) * (uiTriSize / 4f);
+                float offsetUiY = y * uiTriHeight - (rows - 1) * (uiTriHeight / 2f);
 
-                GridCell answerCell = answerObj.AddComponent<GridCell>();
-                answerCell.isUpSide = pointingUp;
-                answerCell.gridX = x;
-                answerCell.gridY = y;
+                RectTransform ansRT = answerObj.GetComponent<RectTransform>();
+                ansRT.sizeDelta = new Vector2(uiTriSize, uiTriHeight);
+                ansRT.anchoredPosition = new Vector2(offsetUiX, offsetUiY);
+
+                RectTransform cellRT = cellObj.GetComponent<RectTransform>();
+                cellRT.sizeDelta = new Vector2(uiTriSize, uiTriHeight);
+                cellRT.anchoredPosition = new Vector2(offsetUiX, offsetUiY);
+                cellRT.SetAsFirstSibling();
+
+                // ★ GridCellBatchUpdaterと同じ設定を適用
+                SplitImageHelper.ApplyStandardGridCellSettings(answerObj, _param);
+                
+                Image cellImg = cellObj.GetComponent<Image>();
+                cellImg.sprite = sp;
+                Image answerImg = answerObj.GetComponent<Image>();
+                answerImg.sprite = sp;
+                if(_param != null) cellImg.material = _param.CellsMaterial;
+                
+                // AddressableImageLoaderを生成時に追加
+                AddressableImageLoader loader = cellObj.AddComponent<AddressableImageLoader>();
+                loader.addressName = assetPath;
+
+                // コンポーネント追加
+                GridCell gridCell = answerObj.AddComponent<GridCell>();
+                gridCell.gridX = x;
+                gridCell.gridY = y;
                 
                 AnswerGridPos ansPos = cellObj.AddComponent<AnswerGridPos>();
                 ansPos.answerGrid = answerObj;
                 ansPos.x = x;
                 ansPos.y = y;
-                ansPos.isUpSide = pointingUp;
                 ansPos.InitPos = cellObj.transform.position;
+                ansPos.isUpSide = pointingUp; // 三角形の上下向きを設定
+                
+                // TriangleCellCopyHandlerを追加（cell_copy調整用）
+                TriangleCellCopyHandler triHandler = cellObj.AddComponent<TriangleCellCopyHandler>();
+                triHandler.CellPos = new Vector2Int(x, y);
+                triHandler.IsUpSide = ansPos.isUpSide;
+                triHandler.Scale = 1.1f;
 
-                // === パラメーター付与 ===
+                CreateShadow(ansPos, new Vector2(uiTriSize, uiTriHeight));
+                
+                // コピー表示用オブジェクト（三角形はアウトラインなし）
+                GameObject copyObj = new GameObject("cell_copy", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                copyObj.transform.SetParent(cellObj.transform, false);
+                
+                RectTransform copyRT = copyObj.GetComponent<RectTransform>();
+                copyRT.localScale = new Vector3(1.1f, 1.1f, 1.1f);
+                copyRT.localPosition = new Vector3(0, 0, 10);
+                ansPos.outLine = copyRT;
+                copyRT.sizeDelta = new Vector2(uiTriSize, uiTriHeight);
+                
+                // TriangleCellCopyHandlerにCellCopyを設定
+                triHandler.CellCopy = copyRT;
+
+                Image copyImg = copyObj.GetComponent<Image>();
+                copyImg.sprite = sp;
+                if (cellCopyMaterial != null) copyImg.material = cellCopyMaterial;
                 if(_param != null)
                 {
-                    Image answerImg = answerObj.GetComponent<Image>();
-                    answerImg.material = _param.AnswerMaterial;
-                    answerImg.color = _param.AnswerColor;
-                    Image cellImg = cellObj.GetComponent<Image>();
-                    cellImg.material = _param.CellsMaterial;
+                    copyImg.color = _param.OutLineColor;
+                    copyImg.material = _param.OutLineMaterial;
                 }
 
-                TriangleCellCopyHandler copyHnandler = cellObj.gameObject.GetComponent<TriangleCellCopyHandler>();
-                copyHnandler.IsUpSide = pointingUp;
-                copyHnandler.CellPos = new Vector2Int(x, y);
-
-                UnityEngine.UI.Outline outline = answerObj.GetComponent<UnityEngine.UI.Outline>();
-                // UnityEngine.UI.Outline outline2 = answerObj.AddComponent<UnityEngine.UI.Outline>();
-                UnityEngine.UI.Outline outline2 = null;
-                if((outline != null || outline2 != null ) && _param != null)
-                {
-                    outline.effectColor = _param.OutLineColor;
-                    // outline2.effectColor = _param.OutLineColor;
-                }
-                outline.effectDistance = Vector2.one * 1f;
-                // outline2.effectDistance = Vector2.one * 3f;
+                // Addressable化対象として登録
+                objectsToAddressable.Add((answerObj, assetPath));
+                objectsToAddressable.Add((cellObj, assetPath));
             }
         }
         
-        // === 4️⃣ コピー表示用オブジェクト生成 ===
-        // UI生成ループからコピー生成処理を分離し、後でまとめて実行
-        CreateCellCopies();
-
-        // 💡 最終的に変更をUnityに保存させる
-        EditorUtility.SetDirty(this.gameObject);
-        AssetDatabase.SaveAssets();
-
-        Debug.Log($"三角形分割が完了！保存先: {saveFolder}");
+        // === 最終処理（Addressable化とプレハブ保存） ===
+        SplitImageHelper.FinalizeAfterSplitImage(this, objectsToAddressable);
+        
+        Debug.Log($"✅ Triangle画像分割完了（Addressable統合版）: {groupName}");
     }
 
-    void CreateCellCopies()
-    {
-        List<TriangleCellCopyHandler> copyHnandlers = new List<TriangleCellCopyHandler>();
-        foreach (Transform child in transform)
-        {
-            if (child.name.StartsWith("cell_"))
-            {
-                Image cellImg = child.GetComponent<Image>();
-                if (cellImg == null || cellImg.sprite == null) continue;
-
-                
-                GameObject copyObj = new GameObject("cell_copy", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-                AnswerGridPos ansPos = child.GetComponent<AnswerGridPos>();
-                CreateShadow(ansPos, child.GetComponent<RectTransform>().sizeDelta);
-                copyObj.transform.SetParent(child, false);
-                float posY = -22f;
-                if (!ansPos.isUpSide)
-                    posY *= -1f;
-
-                TriangleCellCopyHandler copyHnandler = child.GetComponent<TriangleCellCopyHandler>();
-                copyHnandlers.Add(copyHnandler);
-                copyHnandler.CellCopy = copyObj.transform;
-
-                RectTransform copyRT = copyObj.GetComponent<RectTransform>();
-                copyRT.localPosition = new Vector3(0, posY, 10);
-                copyRT.localScale = new Vector3(1.1f, 1.1f, 1.1f);
-                copyRT.sizeDelta = child.GetComponent<RectTransform>().sizeDelta;
-
-                Image copyImg = copyObj.GetComponent<Image>();
-                copyImg.sprite = cellImg.sprite;
-
-                if (cellCopyMaterial != null)
-                {
-                    copyImg.material = cellCopyMaterial;
-                }
-                if (_param != null)
-                {
-                    copyImg.material = _param.OutLineMaterial;
-                    copyImg.color = _param.OutLineColor;
-                }
-            }
-        }
-        copyHnandlers[0].UpdateAllCellCopyTransform(copyHnandlers);
-        Debug.Log("CellCopy生成完了！");
-    }
-
-
+    /// <summary> 
+    /// 三角形マスク付きテクスチャを生成
+    /// </summary>
     Texture2D CreateTriangleTexture(Texture2D srcTex, int px, int py, int w, int h, bool pointingUp)
     {
         Color[] pixels = srcTex.GetPixels(px, py, w, h);
