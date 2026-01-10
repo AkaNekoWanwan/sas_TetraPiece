@@ -200,6 +200,7 @@ public class GridImageSplitterTriangle : AbstractGridImageSplitter
                 GridCell gridCell = answerObj.AddComponent<GridCell>();
                 gridCell.gridX = x;
                 gridCell.gridY = y;
+                gridCell.isUpSide = pointingUp; // 三角形の上下向きを設定
                 
                 AnswerGridPos ansPos = cellObj.AddComponent<AnswerGridPos>();
                 ansPos.answerGrid = answerObj;

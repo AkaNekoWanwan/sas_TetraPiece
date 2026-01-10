@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 using System.Linq;
 using System.Collections;
@@ -16,13 +18,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Image))]
 public class GridImageSplitterHexCompat : GridImageSplitter
 {
+#if UNITY_EDITOR
     private void Awake()
     {
         // 常にHexとして動作
         SetShapeType(ShapeType.Hex);
     }
 
-#if UNITY_EDITOR
     private void Reset()
     {
         SetShapeType(ShapeType.Hex);

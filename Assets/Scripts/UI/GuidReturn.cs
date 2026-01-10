@@ -7,7 +7,8 @@ public class GuidReturn : MonoBehaviour
     [SerializeField, Tooltip("CanvasGroup")] private CanvasGroup _canvasGroup = null;
 
     static public GuidReturn instance;
-
+    private const float SHOW_DELAY_TIME = 3f;
+    private const float SHOW_FADE_DURATION = 1f;
     private const int MAX_SHOW_COUNT = 3;
     private int _returnCount = 0;
 
@@ -29,7 +30,7 @@ public class GuidReturn : MonoBehaviour
         _canvasGroup.alpha = 0f;
     }
 
-    public void ShowGuidReturn(float delay = 1f)
+    public void ShowGuidReturn(float delay = SHOW_DELAY_TIME)
     {
         if(MAX_SHOW_COUNT <= _returnCount)
             return;
@@ -40,7 +41,8 @@ public class GuidReturn : MonoBehaviour
 
     public void AddReturnCount()
     {
-        _returnCount++;
+        if(_canvasGroup.alpha > 0f)
+            _returnCount++;
     }
 
     public void HideGuidReturn(float delay = 0f)
@@ -50,14 +52,14 @@ public class GuidReturn : MonoBehaviour
         StartCoroutine(FadeOut(delay));
     }
 
-    private IEnumerator FadeIn(float delay = 3f)
+    private IEnumerator FadeIn(float delay = SHOW_DELAY_TIME)
     {
         if (delay > 0f)
         {
             yield return new WaitForSeconds(delay);
         }
 
-        float duration = 1f; // フェードインにかける時間（秒）
+        float duration = SHOW_FADE_DURATION; // フェードインにかける時間（秒）
         float elapsed = 0f;
 
         while (elapsed < duration)
