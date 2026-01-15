@@ -45,6 +45,9 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
     private GridPieceListController _gridPieceListController = default;
 
     protected Coroutine _createPieceCoriutine = null;
+    
+    // プレハブアンパック前のパスを保持（再接続用）
+    private string _originalPrefabPath = null;
 
     [Header("TriangleParam")]
     public Vector2 _trimShift = Vector2.zero;
@@ -218,17 +221,45 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         
         // ピースセルをいい感じに組み合わせてピースとしてまとめる
         OnUpdateProgressBar?.Invoke(33, 100, "ピース生成中...");
+        
+        // ★ ピース配置処理の前にプレハブインスタンスをアンパック
+        // （セルの親変更が必要なため、プレハブインスタンスのままでは実行できない）
+        GameObject stageRoot = this.transform.parent.parent.gameObject;
+        bool wasPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
+        _originalPrefabPath = null;
+        
+        if (wasPrefabInstance)
+        {
+            var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+            _originalPrefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            Debug.Log($"[CreatePiece] Prefabインスタンスをアンパックしました: {_originalPrefabPath}");
+        }
+        
         Split(isStatic: true, shouldClearCells: !isReSetPiecesOnly);
         
         // ピースのセットアップとPrefab保存
         OnUpdateProgressBar?.Invoke(67, 100, "ピース設定とプレハブ保存中...");
-        AfterSplit();
+        AfterSplit(stageRoot);
     }
 
     public async Task CreatePieceAsync()
     {
         // 1. メインスレッドで実行する必要がある前処理 (Unity APIを含む)
         SplitImageProcess(); 
+        
+        // ★ プレハブインスタンスをアンパック
+        GameObject stageRoot = this.transform.parent.parent.gameObject;
+        bool wasPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
+        _originalPrefabPath = null;
+        
+        if (wasPrefabInstance)
+        {
+            var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+            _originalPrefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            Debug.Log($"[CreatePieceAsync] Prefabインスタンスをアンパックしました: {_originalPrefabPath}");
+        }
         
         // 2. ピース配置計算に必要なデータを取得 (これもメインスレッドで行う)
         // List<AnswerGridPos> cells = this.gameObject.GetComponentsInChildren<AnswerGridPos>().ToList();
@@ -249,7 +280,7 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         // RegisterCellsAsPieces(pieceList, cells);
         
         // 4. メインスレッドに戻り、後処理（UI更新、Prefab保存など）
-        AfterSplit(); 
+        AfterSplit(stageRoot); 
     }
 
         // ステージ作成に必要な一連の流れを実行
@@ -258,9 +289,23 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         yield return null;
         SplitImageProcess();
         yield return null;
+        
+        // ★ プレハブインスタンスをアンパック
+        GameObject stageRoot = this.transform.parent.parent.gameObject;
+        bool wasPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
+        _originalPrefabPath = null;
+        
+        if (wasPrefabInstance)
+        {
+            var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+            _originalPrefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+            Debug.Log($"[CreatePieceCoroutine] Prefabインスタンスをアンパックしました: {_originalPrefabPath}");
+        }
+        
         Split(false);
         yield return null;
-        AfterSplit();
+        AfterSplit(stageRoot);
         yield break;
     }
 
@@ -444,48 +489,57 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
         else
         {
             // ピースセルをいい感じにピースリストに配置
-            _myCellSplitter = new CellSplitter2(GetShapeType());
-            _myCellSplitter.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, PieceCreateSeed, avoidPatternSeeds );
-            PieceCreateSeed = _myCellSplitter.PatternSeed;
+            var cellSplitter2 = new CellSplitter2(GetShapeType());
+            cellSplitter2.CellSplit( cols, rows, ref _pieceNum, _cells, _gridPieceListController, PieceCreateSeed, avoidPatternSeeds );
+            PieceCreateSeed = cellSplitter2.PatternSeed;
         }
     }
-    // メイン処理の後処理
-    private void AfterSplit()
+    
+    private void AfterSplit(GameObject stageRoot)
     {
-        if (string.IsNullOrEmpty(backUpPieceCreateSeed))
-            backUpPieceCreateSeed = PieceCreateSeed;
-
-        isSkip = true;
+        // CreatePieceで保存したprefabPathを使用（アンパック前のパス）
+        string prefabPath = _originalPrefabPath;
         
-        GameObject stageRoot = this.transform.parent.parent.gameObject;
-        
-        // Prefabインスタンスの場合、Unpackして通常のGameObjectに変換
-        bool isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
-        string prefabPath = null;
-        
-        if (isPrefabInstance)
+        // _originalPrefabPathが設定されていない場合のみ、従来の方法で取得を試みる
+        if (string.IsNullOrEmpty(prefabPath))
         {
-            // Prefabアセットのパスを取得
-            var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
-            prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+            bool isPrefabInstance = PrefabUtility.IsPartOfPrefabInstance(stageRoot);
             
-            // Prefabインスタンスを通常のGameObjectに変換（親子関係変更を可能にする）
-            PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-            Debug.Log($"Prefabインスタンスをアンパックしました: {prefabPath}");
+            if (isPrefabInstance)
+            {
+                // まだアンパックされていない場合（CreatePieceCoroutineから呼ばれた場合など）
+                var prefabAsset = PrefabUtility.GetCorrespondingObjectFromSource(stageRoot);
+                prefabPath = AssetDatabase.GetAssetPath(prefabAsset);
+                PrefabUtility.UnpackPrefabInstance(stageRoot, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                Debug.Log($"[AfterSplit] Prefabインスタンスをアンパックしました: {prefabPath}");
+            }
+            else
+            {
+                Debug.LogWarning("[AfterSplit] Prefabパスを取得できませんでした。プレハブ再接続をスキップします。");
+            }
+        }
+        else
+        {
+            Debug.Log($"[AfterSplit] 保存済みのPrefabパスを使用します: {prefabPath}");
         }
         
         // シーン上のインスタンスのピース設定を更新（セルの親子関係変更）
         _gridPieceListController.SetUpChildrenPieceDragController();
         
-        // 一時的なコピーを作成して画像をクリアして保存
-        GameObject tempCopy = GameObject.Instantiate(stageRoot);
-        tempCopy.name = stageRoot.name;
+        // ★ RectTransformの座標計算を強制的に完了させる（プレハブ保存前に座標を確定）
+        Canvas.ForceUpdateCanvases();
+        UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
         
-        // コピーの画像をクリア（AddressableImageLoaderがついているもののみ）
-        SplitImageHelper.ClearAddressableImageSprites(tempCopy);
-        
-        if (isPrefabInstance)
+        // プレハブとして保存する必要がある場合
+        if (!string.IsNullOrEmpty(prefabPath))
         {
+            // 一時的なコピーを作成して画像をクリアして保存
+            GameObject tempCopy = GameObject.Instantiate(stageRoot);
+            tempCopy.name = stageRoot.name;
+            
+            // コピーの画像をクリア（AddressableImageLoaderがついているもののみ）
+            SplitImageHelper.ClearAddressableImageSprites(tempCopy);
+            
             // Prefabとして保存
             PrefabUtility.SaveAsPrefabAsset(tempCopy, prefabPath);
             Debug.Log($"Prefabに保存しました: {prefabPath}");
@@ -513,22 +567,13 @@ public abstract class AbstractGridImageSplitter : MonoBehaviour
                 newSplitter.RecollectCellsFromPieces();
             }
             
-            Debug.Log($"Prefabインスタンスを再接続しました");
+            // 一時コピーを削除
+            DestroyImmediate(tempCopy);
         }
         else
         {
-            // 通常のオブジェクトの場合
-            SaveAsPrefab.Save(tempCopy, PrefabSavePath);
-            Debug.Log($"通常オブジェクトをPrefabとして保存しました");
-        }
-        
-        // コピーを削除
-        DestroyImmediate(tempCopy);
-        
-        // プレハブ保存後、GridPieceListController配下から_cellsを再収集（参照切れ対策）
-        if (!isPrefabInstance)
-        {
-            RecollectCellsFromPieces();
+            // Prefabとして保存する必要がない場合（通常のGameObject）
+            Debug.Log("通常のGameObjectのため、プレハブ保存をスキップします");
         }
     }
     

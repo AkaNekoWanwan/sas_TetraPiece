@@ -1343,6 +1343,9 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             children[i].SetParent(transform, true);
             children[i].position = FixZ(savedWorldPos[i]);
         }
+        
+        // ★ RectTransformの座標計算を強制的に完了させる
+        Canvas.ForceUpdateCanvases();
 
         Debug.Log($"Recentered {gameObject.name} to children center at {center}");
 

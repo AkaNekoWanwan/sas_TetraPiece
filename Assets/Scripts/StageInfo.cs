@@ -187,7 +187,7 @@ public class StageInfo : MonoBehaviour
                     wordGenerator.gameObject.SetActive(false);
                 }
             }
-            Debug.Log("オブジェクトが選択されました。");
+            // Debug.Log("オブジェクトが選択されました。");
             generator.gameObject.SetActive(true);
 
             // 選択されているすべてのStageInfoコンポーネントを取得

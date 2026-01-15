@@ -388,7 +388,9 @@ public static class CellSplitter
                 AnswerGridPos cell = FindCell(cells, x, y);
                 if (cell != null)
                 {
-                    cell.transform.parent = piece;
+                    // ワールド位置を保持するためSetParentを使用（第2引数true）
+                    cell.transform.SetParent(piece, true);
+                    
                     TriangleCellCopyHandler triCellCopy = cell.gameObject.GetComponent<TriangleCellCopyHandler>();
                     if (triCellCopy != null)
                         triCellCopyList.Add(triCellCopy);
@@ -403,6 +405,9 @@ public static class CellSplitter
                 triCellCopyList[0].UpdateAllCellCopyTransform(triCellCopyList);
             }
         }
+        
+        // ★ 全てのセルの親変更が完了した後、RectTransformの座標計算を強制的に完了
+        Canvas.ForceUpdateCanvases();
     }
 
     // 指定のX,Yのセルを見つける
