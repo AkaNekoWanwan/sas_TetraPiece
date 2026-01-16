@@ -89,6 +89,8 @@ public class UserSegment : MonoBehaviour
     {
         switch (key)
         {
+            case UserSegmentKey.A_B:
+                return "A_B";
             case UserSegmentKey.AdInterval:
                 return "Ad_Interval";
             case UserSegmentKey.IsMove:
@@ -122,21 +124,25 @@ public class UserSegment : MonoBehaviour
     {
         _cachedABTestParameters = new List<Firebase.Analytics.Parameter>();
 
-        foreach (UserSegmentKey key in System.Enum.GetValues(typeof(UserSegmentKey)))
-        {
-            string keyString = GetKeyString(key);
+        string value = ((byte)GetValue<int>(UserSegmentKey.AdInterval)).ToString();
+        _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(GetKeyString(UserSegmentKey.AdInterval), value));
+        value = ((byte)GetValue<int>(UserSegmentKey.IsMove)).ToString();
+        _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(GetKeyString(UserSegmentKey.IsMove), value));
+        // foreach (UserSegmentKey key in System.Enum.GetValues(typeof(UserSegmentKey)))
+        // {
+        //     string keyString = GetKeyString(key);
             
-            // ABテスト中（valueListのCountが2以上）のキーのみ追加
-            if (_userPropertyDic.ContainsKey(keyString))
-            {
-                List<int> valueList = _userPropertyDic[keyString];
-                if (valueList.Count >= 2)
-                {
-                    int value = PlayerPrefs.GetInt(keyString, -1);
-                    _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(keyString, value));
-                }
-            }
-        }
+        //     // ABテスト中（valueListのCountが2以上）のキーのみ追加
+        //     if (_userPropertyDic.ContainsKey(keyString))
+        //     {
+        //         List<int> valueList = _userPropertyDic[keyString];
+        //         if (valueList.Count >= 2)
+        //         {
+        //             int value = PlayerPrefs.GetInt(keyString, -1);
+        //             _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(keyString, value));
+        //         }
+        //     }
+        // }
     }
 
     /// <summary>
@@ -162,39 +168,49 @@ public class UserSegment : MonoBehaviour
     {
         if (value == -1)
         {
-            value = PlayerPrefs.GetInt(propertyName, -1);
+            value = PlayerPrefs.GetInt(GetKeyString(UserSegmentKey.A_B), -1);
         }
         
-        if (!_userPropertyDic.ContainsKey(propertyName))
-        {
-            Debug.LogError($"未設定のプロパティ: {propertyName}");
-            return default(T);
-        }
+        // if (!_userPropertyDic.ContainsKey(propertyName))
+        // {
+        //     Debug.LogError($"未設定のプロパティ: {propertyName}");
+        //     return default(T);
+        // }
 
         switch (propertyName)
         {
-            case "Ad_Interval":  // UserSegmentKey.AdInterval
-                float ret = 60f;
+            case "A_B":  // UserSegmentKey.A_B
+                string ret = "A";
                 if(value == 1)
-                    ret = 90f;
+                    ret = "B";
+
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)(object)ret;
+                }
+                break;
+            case "Ad_Interval":  // UserSegmentKey.AdInterval
+                float fret = 60f;
+                if(value == 1)
+                    fret = 90f;
 
                 if (typeof(T) == typeof(float))
                 {
                     // 0 → 60秒, 1 → 90秒
-                    return (T)(object)ret;
+                    return (T)(object)fret;
                 }
                 else if (typeof(T) == typeof(string))
                 {
-                    return (T)(object)(ret + "秒");
+                    return (T)(object)(fret + "秒");
                 }
                 else if (typeof(T) == typeof(int))
                 {
-                    return (T)(object)((int)ret);
+                    return (T)(object)((int)fret);
                 }
                 break;
             
             case "IsMove":  // UserSegmentKey.IsMove
-                bool boolValue = (value == 1);
+                bool boolValue = (value == 0);  // 0 → 移動制限有り(true), 1 → 移動制限無し(false)
 
                 if (typeof(T) == typeof(bool))
                 {
@@ -204,6 +220,10 @@ public class UserSegment : MonoBehaviour
                 else if (typeof(T) == typeof(string))
                 {
                     return (T)(object)GetValueStringToBool(boolValue);
+                }
+                else if (typeof(T) == typeof(int))
+                {
+                    return (T)(object)(value);
                 }
                 break;
         }
@@ -222,9 +242,9 @@ public class UserSegment : MonoBehaviour
             // A_Bグループ
             _userPropertyDic.Add(GetKeyString(UserSegmentKey.A_B), new List<int>{ 0, 1}); // 0:Aグループ, 1:Bグループ
             // 広告表示間隔
-            _userPropertyDic.Add(GetKeyString(UserSegmentKey.AdInterval), new List<int>{ 0, 1}); // 0:短い, 1:長い
-            // 移動アニメーションの有無
-            _userPropertyDic.Add(GetKeyString(UserSegmentKey.IsMove), new List<int>{ 0, 1}); // 0:無し, 1:有り
+            // _userPropertyDic.Add(GetKeyString(UserSegmentKey.AdInterval), new List<int>{ 0, 1}); // 0:短い, 1:長い
+            // // 移動アニメーションの有無
+            // _userPropertyDic.Add(GetKeyString(UserSegmentKey.IsMove), new List<int>{ 0, 1}); // 0:無し, 1:有り
 
             _isResetUserPropertyDic = false;
         }

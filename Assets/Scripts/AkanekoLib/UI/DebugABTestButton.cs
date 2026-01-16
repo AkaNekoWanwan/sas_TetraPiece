@@ -14,6 +14,7 @@ public class DebugABTestButton : MonoBehaviour
     [SerializeField, Tooltip("ボタン：パラメータ変更")] private Button _buttonChangeParam = default;
     [SerializeField, Tooltip("テキスト：プロパティ名")] private Text _textPropertyName = default;
     [SerializeField, Tooltip("テキスト：ボタンに表示するパラメータ")] private Text _textButtonNum = default;
+    [SerializeField, Tooltip("テキスト：サブプロパティ")] private Text _textSubParam = default;
     private string _propertyName = "";
     private List<int> _propertyList;
     // ---------- クラス変数宣言 ----------
@@ -57,5 +58,10 @@ public class DebugABTestButton : MonoBehaviour
         _textButtonNum.text = currentParam.ToString();
         // パラメータ名更新
         _textPropertyName.text = _propertyName + " : " + status;
+
+        _textSubParam.text = "";
+
+        _textSubParam.text += UserSegment.GetKeyString(UserSegmentKey.AdInterval) + " : " + UserSegment.instance.GetValue<string>(UserSegmentKey.AdInterval, currentParam) + "\n";
+        _textSubParam.text += UserSegment.GetKeyString(UserSegmentKey.IsMove) + " : " + UserSegment.instance.GetValue<string>(UserSegmentKey.IsMove, currentParam) + "\n";
     }
 }
