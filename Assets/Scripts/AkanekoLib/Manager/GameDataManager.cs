@@ -195,4 +195,15 @@ public static class GameDataManager
             }
         }
     }
+
+    public static event System.Action OnUpdateUserSegment;
+    
+    // OnUpdateUserSegmentイベントを発火させるメソッド
+    public static void InvokeUpdateUserSegment()
+    {
+        OnUpdateUserSegment?.Invoke();
+    }
+
+    // デバッグビューを閉じてもシーンを更新しても一部デバッグUIの表示を維持するためのフラグ
+    public static bool IsShowKeepDebugText = false;
 }

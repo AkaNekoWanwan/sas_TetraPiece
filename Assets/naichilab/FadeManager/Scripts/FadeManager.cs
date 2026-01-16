@@ -47,8 +47,8 @@ public class FadeManager : MonoBehaviour
 	private bool isFading = false;
 	/// <summary>フェード色</summary>
 	public Color fadeColor = Color.black;
-	private float rotateDelay = 0.1f;
-	private float rotateTimer = 0.0f;
+	private float _rotateDelay = 0.1f;
+	private float _rotateTimer = 0.0f;
 
 
 	public void Awake ()
@@ -61,13 +61,21 @@ public class FadeManager : MonoBehaviour
 		DontDestroyOnLoad (this.gameObject);
 	}
 
-	private void FixedUpdate() {
-		if (this.isFading && _loadingImage != null && _canvasGroup != null)
+	private void Update() {
+		if (this.isFading && _canvasGroup != null)
 		{
-			rotateTimer += Time.fixedDeltaTime;
-			if (rotateTimer < rotateDelay)
+			UpdateLoadingImage();
+		}
+	}
+
+	private void UpdateLoadingImage()
+	{
+		if(_loadingImage != null)
+		{
+			_rotateTimer += Time.deltaTime;
+			if (_rotateTimer < _rotateDelay)
 				return;
-			rotateTimer = 0f;
+			_rotateTimer = 0f;
 			_loadingImage.Rotate(0f, 0f, -45f);
 		}
 	}
@@ -186,14 +194,26 @@ public class FadeManager : MonoBehaviour
 			yield return StartCoroutine(FadeInCoroutine( ()=>{} , FadeInInterval, false));
 		}
 
-		//シーン切替 .
-		SceneManager.LoadScene (scene);
+		//シーン切替（Async版でフレーム分割）
+		// バックグラウンドロードの優先度を下げてフレームレートを優先
+		var originalPriority = Application.backgroundLoadingPriority;
+		Application.backgroundLoadingPriority = ThreadPriority.Low;
+		
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
+		// ロード優先度を下げてフレーム更新を優先
+		asyncLoad.priority = (int)ThreadPriority.Low;
+		UpdateLoadingImage();
+
 		while (!asyncLoad.isDone)
         {
             Debug.Log($"TransScene:読み込み中... {asyncLoad.progress * 100}%");
-            yield return null; // 次のフレームまで待機
+			UpdateLoadingImage();
+            yield return null; // 次のフレームまで待機（ここでローディング画像の回転が継続）
         }
+		
+		// 優先度を元に戻す
+		Application.backgroundLoadingPriority = originalPriority;
+		
 		Debug.Log($"TransScene:フェードアウト");
 		
 		if(FadeOutInterval == 0f)

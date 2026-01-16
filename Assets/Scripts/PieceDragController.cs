@@ -198,7 +198,7 @@ public class PieceDragController : MonoBehaviour,
             _rt.position = smoothedPosition;
             // lastEventData
         }
-        if(GameDataManager.IsCreativeMode)
+        if(GameDataManager.IsCreativeMode || _stageManager.MoveCount <= 0)
         {
             if(_isOnPointer && !_isTaping && draggingPiece == null)
             {
@@ -313,7 +313,7 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(GameDataManager.IsCreativeMode )
+        if(GameDataManager.IsCreativeMode || _stageManager.MoveCount <= 0)
         {
             return;
         }
@@ -323,7 +323,8 @@ public class PieceDragController : MonoBehaviour,
     public void OnDragExecute()
     {
         // Debug.Log($"OnDragExecute:{eventData.position}, {GameDataManager.GetMousePosition()}, {eventData.pressEventCamera}");
-
+        if(_stageManager.MoveCount <= 0)
+            return;
         if (isLocked) return;
         
         // マウス位置を取得
@@ -341,6 +342,9 @@ public class PieceDragController : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if(_stageManager.MoveCount <= 0 && !GameDataManager.IsCreativeMode)
+            return;
+
         if(GameDataManager.IsCreativeMode && draggingPiece == null)
         {
             _isOnPointer = true;
@@ -352,6 +356,8 @@ public class PieceDragController : MonoBehaviour,
     }
     public void OnPointerDownExecute()
     {
+        if(_stageManager.MoveCount <= 0)
+            return;
         if (isLocked) return;
         _isTaping = true;
         draggingPiece = this;

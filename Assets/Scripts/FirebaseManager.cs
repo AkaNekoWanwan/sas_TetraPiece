@@ -65,7 +65,7 @@ public class FirebaseManager : MonoBehaviour
         int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
 
         //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Start",
+        LogEventWithUserSegments("Stage_Start",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("Move_Limit", GetMove_Limit()),
                             new Parameter("Move_Count", 0),
@@ -87,7 +87,7 @@ public class FirebaseManager : MonoBehaviour
         int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
 
         //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Clear",
+        LogEventWithUserSegments("Stage_Clear",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("Move_Limit", GetMove_Limit()),
                             new Parameter("Move_Count", GetMove_Limit() - Move_Count),
@@ -112,7 +112,7 @@ public class FirebaseManager : MonoBehaviour
         PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Failure_count", Failure_count);
         int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
         //GoalControllerに入れる　→　スキンに入れちゃうとバナナマンとスティックマンの解除のタイミングでおかしくなりかねない
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Failure",
+        LogEventWithUserSegments("Stage_Failure",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("Move_Limit", GetMove_Limit()),
                             new Parameter("Move_Count", GetMove_Limit() - Move_Count),
@@ -130,7 +130,7 @@ public class FirebaseManager : MonoBehaviour
         int Undo_Count = PlayerPrefs.GetInt(IsDailyPrefsSTR() + "Undo_Count", 0);
         Undo_Count++;
         PlayerPrefs.SetInt(IsDailyPrefsSTR() + "Undo_Count", Undo_Count);
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Stage_Failure",
+        LogEventWithUserSegments("Stage_Undo",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("Move_Limit", GetMove_Limit()),
                             new Parameter("Move_Count", GetMove_Limit() - Move_Count),
@@ -144,7 +144,7 @@ public class FirebaseManager : MonoBehaviour
     }
     public void TapCount(string stageName, bool isTouch)
     {
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Tap_Count",
+        LogEventWithUserSegments("Tap_Count",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("StageName", stageName),
@@ -153,7 +153,7 @@ public class FirebaseManager : MonoBehaviour
     }
     public void RewindMove(string stageName)
     {
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Rewind_Move",
+        LogEventWithUserSegments("Rewind_Move",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("StageName", stageName)
@@ -162,7 +162,7 @@ public class FirebaseManager : MonoBehaviour
   public void Withdrwal(float pureElapsedTime)
     {
         Debug.Log("FirebaseManager Withdrwal");
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Withdrawal",
+        LogEventWithUserSegments("Withdrawal",
                          new Parameter("Stage", GetCurrentStage()),
                          new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("engagement_time", pureElapsedTime) // リバイブしたかどうか
@@ -173,7 +173,7 @@ public class FirebaseManager : MonoBehaviour
     {
         string canWatch = CanWatch ? "True" : "False";
         Debug.Log("FirebaseManager WatchInsta" + canWatch + " eCPM: " + eCPM);
-        Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Inste",
+        LogEventWithUserSegments("Watch_Inste",
                             new Parameter("Stage", GetCurrentStage() - 1),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("Stage_Name", stageName),
@@ -184,7 +184,7 @@ public class FirebaseManager : MonoBehaviour
 
     public void EventWatchBanner(bool isWatch)
     {
-        FirebaseAnalytics.LogEvent("Watch_Banner", 
+        LogEventWithUserSegments("Watch_Banner", 
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()));
@@ -197,7 +197,7 @@ public class FirebaseManager : MonoBehaviour
             watchRewardCount = PlayerPrefs.GetInt("WatchRewardCount", 1);
         }
 
-        FirebaseAnalytics.LogEvent("Watch_Reward", 
+        LogEventWithUserSegments("Watch_Reward", 
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()),
@@ -211,7 +211,7 @@ public class FirebaseManager : MonoBehaviour
     public void RevenueBanner(float eCPM)
     {
         Debug.Log("FirebaseManager RevenueBanner"+ eCPM);
-            Firebase.Analytics.FirebaseAnalytics.LogEvent("Watch_Banner",
+            LogEventWithUserSegments("Watch_Banner",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("eCPM", eCPM));
@@ -243,5 +243,23 @@ public class FirebaseManager : MonoBehaviour
     private string IsDailyPrefsSTR()
     {
         return IsDailyStage() ? "DAILY" : "NORMAL";
+    }
+
+    /// <summary>
+    /// ユーザーセグメントパラメータを自動追加してFirebaseイベントをログ
+    /// </summary>
+    /// <param name="eventName">イベント名</param>
+    /// <param name="baseParameters">基本パラメータ</param>
+    private void LogEventWithUserSegments(string eventName, params Parameter[] baseParameters)
+    {
+        var parameterList = new List<Parameter>(baseParameters);
+        
+        // UserSegmentがinstance化されていればABテストパラメータを追加
+        if (UserSegment.instance != null)
+        {
+            parameterList.AddRange(UserSegment.instance.GetABTestParameters());
+        }
+        
+        Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameterList.ToArray());
     }
 }

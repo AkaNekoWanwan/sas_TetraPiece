@@ -32,10 +32,11 @@ public class StageManager : MonoBehaviour
     public int clearBuffer;
     public int startBuffer;
     public int picCount;
-    public int _moveCount;
+    [SerializeField, Tooltip("移動回数")] private int _moveCount;
     public int goalPicCount;
     public ParticleSystem ps;
     public Text levelText;
+    public RectTransform levelFrame;
     public Text _moveCountText;
     public Text _moveText;
     public Image _imageLevelBack;
@@ -71,6 +72,7 @@ public class StageManager : MonoBehaviour
                 }
             }
         }}
+    public int MoveCount => _MoveCount;
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -146,6 +148,42 @@ public class StageManager : MonoBehaviour
         // PlayerPrefs.SetInt("Stage", 305); // デバッグ用に総レベル数を306に設定
         InitlializeColoutine();
         GameDataManager.piecePutComboCount = 0;
+        GameDataManager.OnUpdateUserSegment += UpdateMoveCountView;
+        UpdateMoveCountView();
+    }
+
+    private void OnDisable() {
+        GameDataManager.OnUpdateUserSegment -= UpdateMoveCountView;
+        AdsManager.instance.OnInterstitialHidden -= OnInterstitialHidden;
+    }
+
+    private void UpdateMoveCountView()
+    {
+        _moveText.gameObject.SetActive( IsActiveMoveLimit() );
+        _moveCountText.gameObject.SetActive( IsActiveMoveLimit() );
+
+        levelFrame.localScale = new Vector3( 0.24f, 0.21f, 1f );
+        if(IsActiveMoveLimit())
+        {
+            levelFrame.anchoredPosition = new Vector2( 0f, -66f );
+        }
+        else
+        {
+            levelFrame.anchoredPosition = new Vector2( 0f, -96f );
+            levelFrame.localScale *= 1.2f;
+        }
+    }
+
+    private bool IsActiveMoveLimit()
+    {
+        bool isMove = UserSegment.instance.GetValue<bool>(UserSegmentKey.IsMove);
+        return isMove;
+    }
+    private float GetAdsInterval()
+    {
+        float returnInterval = UserSegment.instance.GetValue<float>(UserSegmentKey.AdInterval);
+        Debug.Log($"Ads Interval: {returnInterval}秒");
+        return returnInterval;
     }
 
     private async Task InitlializeColoutine()
@@ -470,10 +508,14 @@ public class StageManager : MonoBehaviour
     }
     public void CountDownMove()
     {
+        if(!IsActiveMoveLimit())
+            return;
         if(_moveCountText == null)
             return;
         if(!GameDataManager.IsCreativeMode)
             _MoveCount--;
+        if(_MoveCount < 0)
+            _MoveCount = 0;
         if (_MoveCount <= 0 && !isClear && !isGameOver)
         {
             isGameOver = true;
@@ -514,9 +556,10 @@ public class StageManager : MonoBehaviour
         if(isGoHome)
             GameDataManager.isPlayHomePieceAnimation = true; // ホームのステージ進行アニメーション実行
         // 広告再生の判定
-        Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
+        // Debug.Log($"AdsCheck:Timer:{ AdsTimerManager.instance.ElapsedTime }, stage:{ PlayerPrefs.GetInt("totalLevel", 1) }");
         // 60秒以上かつ6ステージ以上クリアでインタースティシャル広告を表示(指定ステージ+1の値を入れる)
-        if( 60 <= AdsTimerManager.instance.ElapsedTime && 7 <= PlayerPrefs.GetInt("totalLevel", 1) && !GameDataManager.IsCreativeMode)
+        // Debug.Log($"インタースティシャル広告表示チェック: 間隔{GetAdsInterval()}秒, 経過時間{AdsTimerManager.instance.ElapsedTime}秒, 総レベル数{PlayerPrefs.GetInt("totalLevel", 1)}, クリエイティブモード{GameDataManager.IsCreativeMode}");
+        if( GetAdsInterval() <= AdsTimerManager.instance.ElapsedTime && 7 <= PlayerPrefs.GetInt("totalLevel", 1) && !GameDataManager.IsCreativeMode)
         {
             AdsTimerManager.instance.ElapsedTime = 0f;
             AdsTimerManager.instance.IsCounter = false;
@@ -543,9 +586,6 @@ public class StageManager : MonoBehaviour
         ClearGame(true);
     }
 
-    private void OnDisable() {
-        AdsManager.instance.OnInterstitialHidden -= OnInterstitialHidden;
-    }
     private void OnInterstitialHidden()
     {
         FadeManager.Instance.FadeOut(0.25f); 

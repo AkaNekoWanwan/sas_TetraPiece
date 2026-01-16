@@ -13,12 +13,15 @@ public class DebugUIManager : MonoBehaviour
     public Text _buttonText = default;
     public InputField _inputField = default;
     public TMPro.TextMeshProUGUI _textFrameRate = null;
+    public TMPro.TextMeshProUGUI _textAdsTimer = null;
 
     public List<int> _currentCommand = default;
 
     public event System.Action<bool> onDebugViewToggled;
-    private bool _isShowTextFrameRate = true;  // デバッグビューを閉じてもFPS表示を維持するためのフラグ
-
+    private bool _isFirstShow = false;
+    
+    [SerializeField, Tooltip("ABテストボタンリスト親")] private RectTransform _abTestButtonContents = default;
+    [SerializeField, Tooltip("ABテストボタンプレハブ")] private DebugABTestButton _abTestButtonPrefab = default;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -48,12 +51,45 @@ public class DebugUIManager : MonoBehaviour
         else
             _textFrameRate.color = Color.black;
         _textFrameRate.text = "FPS: " + fps.ToString("F2");
+        _textAdsTimer.text = "AdsTimer: " + AdsTimerManager.instance.ElapsedTime.ToString("F2");
     }
 
     public void Initialize()
     {
         _view.SetActive(GameDataManager.IsDebugView);
-        _textFrameRate.gameObject.SetActive(GameDataManager.IsDebugView);
+        _textFrameRate.gameObject.SetActive(GameDataManager.IsShowKeepDebugText);
+        _textAdsTimer.gameObject.SetActive(GameDataManager.IsShowKeepDebugText);
+
+        SerializedDictionary<List<int>> userPropertyDic;
+        // ABテストボタン初期化
+        foreach (Transform child in _abTestButtonContents)
+        {
+            Destroy(child.gameObject);
+        }
+        var _userPropertyDic = UserSegment.instance.DebugGetUserPropertyDictionary();
+
+        Debug.Log("ユーザープロパティの数:" + _userPropertyDic.Keys.Count);
+        foreach( string key in _userPropertyDic.Keys )
+        {
+            List<int> paramList = _userPropertyDic[key];
+            if( 1 <= paramList.Count )
+            {
+                DebugABTestButton button = Instantiate(_abTestButtonPrefab);
+                button.transform.parent = _abTestButtonContents;
+                button.transform.localScale = Vector3.one;
+                button.transform.localPosition = Vector3.zero;
+                button.Initialize(key, _userPropertyDic[key], ()=>{
+                    // ユーザープロパティ更新後の処理
+                    // _stageManager.ResetStageBundle();
+                    // ResetStageSelectButtons();
+                    // _inGameManager.UndoInGame();
+                    // GameDataManager.UpdatekillShockStrength();
+                    // UpdateText();
+                    // PlayerPrefs.SetInt(key, randomValue);
+                    GameDataManager.InvokeUpdateUserSegment();
+                });
+            }
+        }
     }
 
     public void OnSwitchCreativeMode()
@@ -66,9 +102,9 @@ public class DebugUIManager : MonoBehaviour
 
     public void ToggleFrameRateText(bool value)
     {
-        _isShowTextFrameRate = value;
-        Debug.Log($"DebugUIManager: ToggleFrameRateText: {_isShowTextFrameRate}");
-        // _textFrameRate.gameObject.SetActive(_isShowTextFrameRate);
+        GameDataManager.IsShowKeepDebugText = value;
+        Debug.Log($"DebugUIManager: ToggleFrameRateText: {GameDataManager.IsShowKeepDebugText}");
+        // _textFrameRate.gameObject.SetActive(GameDataManager.IsShowKeepDebugText);
     }
 
     // _inputFieldの値が変更されたときに呼ばれる
@@ -82,8 +118,11 @@ public class DebugUIManager : MonoBehaviour
         _view.SetActive(false);
         GameDataManager.IsDebugView = false;
         onDebugViewToggled?.Invoke(false);
-        if(!_isShowTextFrameRate)
+        if(!GameDataManager.IsShowKeepDebugText)
+        {
             _textFrameRate.gameObject.SetActive(false);
+            _textAdsTimer.gameObject.SetActive(false);
+        }
     }
 
     public void OnSetTotalLevel()
@@ -122,11 +161,20 @@ public class DebugUIManager : MonoBehaviour
                 if(isActive)
                 {
                     _textFrameRate.gameObject.SetActive(true);
+                    _textAdsTimer.gameObject.SetActive(true);
+                    if(!_isFirstShow)
+                    {
+                        _isFirstShow = true;
+                        GameDataManager.IsShowKeepDebugText = true;
+                    }
                 }
                 else
                 {
-                    if(!_isShowTextFrameRate)
+                    if(!GameDataManager.IsShowKeepDebugText)
+                    {
                         _textFrameRate.gameObject.SetActive(false);
+                        _textAdsTimer.gameObject.SetActive(false);
+                    }
                 }
             }
             return true;
