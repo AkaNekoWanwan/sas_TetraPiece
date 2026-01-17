@@ -326,10 +326,12 @@ public class StageManager : MonoBehaviour
         autoSaveRoutine = StartCoroutine(AutoSaveElapsedTime());
 
         GameDataManager.IsStageStarted = false;
-        if(!GameDataManager.IsHome)
+        if(!GameDataManager.IsHome )
         {
+            // Debug.Log("FirebaseManager LogEventWithUserSegments test1");
             _hardEfffectManager.PlayHardAnimation(isHard);
-            FirebaseManager.instance.StageStart();
+            if(GameConst.FIRST_HOME_STAGE_AFTER_CLEAR < PlayerPrefs.GetInt("totalLevel", 1))
+                FirebaseManager.instance.StageStart();
             GameDataManager.IsStageStarted = true;
         }
 
@@ -344,6 +346,7 @@ public class StageManager : MonoBehaviour
         // ホーム画面を介さず直接ステージが始まるなら、ステージの読み込みを待ってからフェードアウト
         if(PlayerPrefs.GetInt("totalLevel", 1) <= GameConst.FIRST_HOME_STAGE_AFTER_CLEAR || GameDataManager.IsCreativeMode)
         {
+            // Debug.Log("FirebaseManager LogEventWithUserSegments test2");
             FadeManager.Instance.FadeOut(0.5f);
             if(Guidance.Instance != null && GameDataManager.IsCreativeMode == false && PlayerPrefs.GetInt("totalLevel", 1) == 1)
                 Guidance.Instance.ShowGuidance();   // ガイダンスの表示

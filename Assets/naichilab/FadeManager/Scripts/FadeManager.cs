@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 /// <summary>
 /// シーン遷移時のフェードイン・アウトを制御するためのクラス .
@@ -14,7 +15,7 @@ public class FadeManager : MonoBehaviour
 	[SerializeField, Tooltip("ローディング画像")] private Transform _loadingImage = default;
     [SerializeField, Tooltip("透明度")] private CanvasGroup _canvasGroup = default;
     [SerializeField, Tooltip("フェード時間")] private float _fadeDuration = 0.5f;
-	[SerializeField, Tooltip("起動時用Loadingテキスト")] private GameObject _loadingText = default;
+	[SerializeField, Tooltip("起動時用Loadingテキスト")] private Text _loadingText = default;
 	
 
 	#region Singleton
@@ -47,7 +48,7 @@ public class FadeManager : MonoBehaviour
 	private bool isFading = false;
 	/// <summary>フェード色</summary>
 	public Color fadeColor = Color.black;
-	private float _rotateDelay = 0.1f;
+	private float _rotateDelay = 0.5f;
 	private float _rotateTimer = 0.0f;
 
 
@@ -58,6 +59,7 @@ public class FadeManager : MonoBehaviour
 			return;
 		}
 
+		_loadingText.text = "Loading...";
 		DontDestroyOnLoad (this.gameObject);
 	}
 
@@ -76,7 +78,15 @@ public class FadeManager : MonoBehaviour
 			if (_rotateTimer < _rotateDelay)
 				return;
 			_rotateTimer = 0f;
-			_loadingImage.Rotate(0f, 0f, -45f);
+			// _loadingImage.Rotate(0f, 0f, -45f);
+			if(_loadingText != null)
+			{
+				if(_loadingText.text == "Loading...")
+					_loadingText.text = "Loading";
+				else
+					_loadingText.text += ".";
+			}
+			
 		}
 	}
 
@@ -171,9 +181,10 @@ public class FadeManager : MonoBehaviour
 
 	private void SetisShowLoadingText(bool isShow)
 	{
+		isShow = true; // 常に_loadingTextを表示するように変更
 		if(_loadingText != null)
 		{
-			_loadingText.SetActive(isShow);
+			_loadingText.gameObject.SetActive(isShow);
 			_loadingImage.gameObject.SetActive(!isShow);
 		}
 	}

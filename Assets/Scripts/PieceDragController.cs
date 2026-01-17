@@ -1249,8 +1249,8 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
             Vector2 setSize = cellRT.sizeDelta;
             if(_listCtrl.ShapeType == ShapeType.Hex)
             {
-                setSize.x += 13f;
-                setSize.y += 13f;
+                setSize.x += 6.5f;
+                setSize.y += 6.5f;
             }
             if(_listCtrl.ShapeType == ShapeType.Square)
             {

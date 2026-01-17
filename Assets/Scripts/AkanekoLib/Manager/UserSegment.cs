@@ -125,8 +125,10 @@ public class UserSegment : MonoBehaviour
         _cachedABTestParameters = new List<Firebase.Analytics.Parameter>();
 
         string value = ((byte)GetValue<int>(UserSegmentKey.AdInterval)).ToString();
+        // Debug.Log("ABTestパラメータキャッシュ作成: " + GetKeyString(UserSegmentKey.AdInterval) + " = " + value);
         _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(GetKeyString(UserSegmentKey.AdInterval), value));
         value = ((byte)GetValue<int>(UserSegmentKey.IsMove)).ToString();
+        // Debug.Log("ABTestパラメータキャッシュ作成: " + GetKeyString(UserSegmentKey.IsMove) + " = " + value);
         _cachedABTestParameters.Add(new Firebase.Analytics.Parameter(GetKeyString(UserSegmentKey.IsMove), value));
         // foreach (UserSegmentKey key in System.Enum.GetValues(typeof(UserSegmentKey)))
         // {

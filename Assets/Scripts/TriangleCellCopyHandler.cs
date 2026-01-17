@@ -95,7 +95,7 @@ public class TriangleCellCopyHandler : MonoBehaviour
         float posX = 0f;
         float posY = 0f;
         float posZ = 1f;
-        float addSize = 23f;
+        float addSize = 13f;
 
         Vector2 sizeDelta = rect.sizeDelta;
         Vector2 outlineSizeDelta = outlineRect.sizeDelta;

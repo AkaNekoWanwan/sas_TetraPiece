@@ -191,8 +191,11 @@ public class HomeManager : MonoBehaviour
         _homeParent.gameObject.SetActive(false);
         _hardEfffectManager.PlayHardAnimation(GameDataManager.IsHard);
 
-        if(!GameDataManager.IsStageStarted)
+        if(!GameDataManager.IsStageStarted && GameConst.FIRST_HOME_STAGE_AFTER_CLEAR < PlayerPrefs.GetInt("totalLevel", 1))
+        {
+            // Debug.Log("FirebaseManager LogEventWithUserSegments ホーム画面からステージ開始");
             FirebaseManager.instance.StageStart();
+        }
     }
     public void ShowView()
     {

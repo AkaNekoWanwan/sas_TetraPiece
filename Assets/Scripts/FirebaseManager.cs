@@ -259,7 +259,13 @@ public class FirebaseManager : MonoBehaviour
         {
             parameterList.AddRange(UserSegment.instance.GetABTestParameters());
         }
-        
+
+        string debugParamStr = "";
+        // foreach(var param in parameterList)
+        // {
+        //     debugParamStr += $"{param.name}:{param.value}, ";
+        // }
+        // Debug.Log($"FirebaseManager LogEventWithUserSegments: {eventName}, ParamsCount: {parameterList.Count}, Params: {debugParamStr}");
         Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, parameterList.ToArray());
     }
 }
