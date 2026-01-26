@@ -124,6 +124,9 @@ public class PieceDragController : MonoBehaviour,
     private StageManager _stageManager = default;
     private bool _isMove = false;
     private bool _isTaping = false;
+    private Tween _moveAfterDelayedCall = null;
+    private Tween _moveAfterDelayedCall2 = null;
+    private List<Tween> _dragAfterChildMoveTweens = null;
 
     private void OnValidate()
     {
@@ -361,6 +364,14 @@ public class PieceDragController : MonoBehaviour,
         if (isLocked) return;
         _isTaping = true;
         draggingPiece = this;
+
+        _moveAfterDelayedCall?.Kill();
+        _moveAfterDelayedCall2?.Kill();
+        // foreach (var tween in _dragAfterChildMoveTweens ?? new List<Tween>())
+        // {
+        //     tween.Complete();
+        // }
+
         transform.SetAsLastSibling();
         var hand = FindAnyObjectByType<HandCursorController>();
         originalPos = _rt.position;
@@ -485,8 +496,9 @@ public class PieceDragController : MonoBehaviour,
             }
             return;
         }
-        DOVirtual.DelayedCall(0.4f, () =>
+        _moveAfterDelayedCall2 = DOVirtual.DelayedCall(0.4f, () =>
         {
+            // Debug.Log($"OnEndDrag.snapStarted:スナップ後の配置チェック:{CheckAnswer()}, isCreative:{isCreative}");
             var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
             if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
 
@@ -758,6 +770,8 @@ bool SnapChildrenToGridsAndRecenterParent()
         children[i].position = currentWorldPositions[i];
     }
 
+    _dragAfterChildMoveTweens = new List<Tween>();
+
     // ★ 子を回転させて、ワールド座標でアニメーション
     for (int i = 0; i < children.Count; i++)
     {
@@ -766,11 +780,12 @@ bool SnapChildrenToGridsAndRecenterParent()
         child.rotation = Quaternion.Euler(0, 0, targetAngle);
         
         // ★ ワールド座標でアニメーション（親はもう正しい位置にいる）
-        child.DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear).SetLink(child.gameObject);
+        Tween tween = child.DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear).SetLink(child.gameObject);
+        _dragAfterChildMoveTweens.Add(tween);
     }
 
     // ★ アニメーション完了後にセルをマーク
-    DOVirtual.DelayedCall(0.3f, () =>
+    _moveAfterDelayedCall = DOVirtual.DelayedCall(0.3f, () =>
     {
         MarkCells(children, targetCells, true);
         Debug.Log($"スナップ完了: {gameObject.name}");
@@ -831,23 +846,23 @@ GridCell FindNearestAnswerGrid(Vector3 worldPos, Transform child)
 }
     void ApplyCellsAfterMaterial()
     {
-        Material cellsAfterMaterial = Resources.Load<Material>("Materials/CellsAfter");
+        // Material cellsAfterMaterial = Resources.Load<Material>("Materials/CellsAfter");
         
-        if (cellsAfterMaterial == null)
-        {
-            Debug.LogWarning("CellsAfterマテリアルが見つかりません。パス: Resources/Materials/CellsAfter");
-            return;
-        }
+        // if (cellsAfterMaterial == null)
+        // {
+        //     Debug.LogWarning("CellsAfterマテリアルが見つかりません。パス: Resources/Materials/CellsAfter");
+        //     return;
+        // }
 
-        foreach (Transform child in transform)
-        {
-            Image img = child.GetComponent<Image>();
-            if (img != null)
-            {
-                img.material = cellsAfterMaterial;
-                Debug.Log($"Applied CellsAfter material to {child.name}");
-            }
-        }
+        // foreach (Transform child in transform)
+        // {
+        //     Image img = child.GetComponent<Image>();
+        //     if (img != null)
+        //     {
+        //         img.material = cellsAfterMaterial;
+        //         Debug.Log($"Applied CellsAfter material to {child.name}");
+        //     }
+        // }
     }
 
     void ResetChildren(List<Transform> children, List<Vector3> savedWorldPos, Vector3 parentBefore)
