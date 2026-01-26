@@ -165,11 +165,11 @@ public class StageManager : MonoBehaviour
         levelFrame.localScale = new Vector3( 0.24f, 0.21f, 1f );
         if(IsActiveMoveLimit())
         {
-            levelFrame.anchoredPosition = new Vector2( 0f, -66f );
+            levelFrame.anchoredPosition = new Vector2( 0f, GameConst.LevelFramePosY_A );
         }
         else
         {
-            levelFrame.anchoredPosition = new Vector2( 0f, -96f );
+            levelFrame.anchoredPosition = new Vector2( 0f, GameConst.LevelFramePosY_B );
             levelFrame.localScale *= 1.2f;
         }
     }

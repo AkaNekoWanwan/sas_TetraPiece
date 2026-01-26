@@ -168,10 +168,11 @@ public class UserSegment : MonoBehaviour
     /// </summary>
     public T GetValue<T>(string propertyName, int value = -1)
     {
-        if (value == -1)
-        {
-            value = PlayerPrefs.GetInt(GetKeyString(UserSegmentKey.A_B), -1);
-        }
+        // if (value == -1)
+        // {
+        //     value = PlayerPrefs.GetInt(GetKeyString(UserSegmentKey.A_B), -1);
+        // }
+        value = 1; // 現状A_BテストはBグループのみで運用
         
         // if (!_userPropertyDic.ContainsKey(propertyName))
         // {
@@ -242,7 +243,7 @@ public class UserSegment : MonoBehaviour
         {
             _userPropertyDic = new SerializedDictionary<List<int>>();
             // A_Bグループ
-            _userPropertyDic.Add(GetKeyString(UserSegmentKey.A_B), new List<int>{ 0, 1}); // 0:Aグループ, 1:Bグループ
+            _userPropertyDic.Add(GetKeyString(UserSegmentKey.A_B), new List<int>{1}); // 0:Aグループ, 1:Bグループ。今はBグループのみで運用
             // 広告表示間隔
             // _userPropertyDic.Add(GetKeyString(UserSegmentKey.AdInterval), new List<int>{ 0, 1}); // 0:短い, 1:長い
             // // 移動アニメーションの有無

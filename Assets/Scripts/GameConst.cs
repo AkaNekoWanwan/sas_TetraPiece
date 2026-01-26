@@ -17,6 +17,9 @@ public static class GameConst
 
     public const int FIRST_HOME_STAGE_AFTER_CLEAR = 5;   // クリア後初めてホームに戻るステージ番号
 
+    public const float LevelFramePosY_A = -66f;
+    public const float LevelFramePosY_B = -106f;
+
     public static bool IsCreativeMode()
     {
         // if(!Debug.isDebugBuild)
