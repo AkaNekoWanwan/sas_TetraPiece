@@ -124,8 +124,7 @@ public class PieceDragController : MonoBehaviour,
     private StageManager _stageManager = default;
     private bool _isMove = false;
     private bool _isTaping = false;
-    private Tween _moveAfterDelayedCall = null;
-    private Tween _moveAfterDelayedCall2 = null;
+    private List<Tween> _moveAfterDelayedCalls = null;
     private List<Tween> _dragAfterChildMoveTweens = null;
 
     private void OnValidate()
@@ -161,12 +160,20 @@ public class PieceDragController : MonoBehaviour,
             //     _answerGridPoses[i].shadowTransform.gameObject.SetActive(false);
 		}
         _stageManager = FindAnyObjectByType<StageManager>();
+
+        _moveAfterDelayedCalls = new List<Tween>();
     }
 
     void OnDestroy()
     {
         // オブジェクト破棄時にドラッグ状態から削除
         DragStateManager.UnregisterDrag(this);
+    }
+    
+    private void OnDisable() {
+        // オブジェクト無効化時にドラッグ状態から削除
+        DragStateManager.UnregisterDrag(this);
+
     }
 
     void Update()
@@ -365,12 +372,16 @@ public class PieceDragController : MonoBehaviour,
         _isTaping = true;
         draggingPiece = this;
 
-        _moveAfterDelayedCall?.Kill();
-        _moveAfterDelayedCall2?.Kill();
-        // foreach (var tween in _dragAfterChildMoveTweens ?? new List<Tween>())
-        // {
-        //     tween.Complete();
-        // }
+        foreach (var tween in _dragAfterChildMoveTweens ?? new List<Tween>())
+        {
+            tween.Complete();
+        }
+        _dragAfterChildMoveTweens = new List<Tween>();
+        foreach (var tween in _moveAfterDelayedCalls ?? new List<Tween>())
+        {
+            tween.Kill();
+        }
+        _moveAfterDelayedCalls = new List<Tween>();
 
         transform.SetAsLastSibling();
         var hand = FindAnyObjectByType<HandCursorController>();
@@ -496,7 +507,7 @@ public class PieceDragController : MonoBehaviour,
             }
             return;
         }
-        _moveAfterDelayedCall2 = DOVirtual.DelayedCall(0.4f, () =>
+        Tween tween = DOVirtual.DelayedCall(0.4f, () =>
         {
             // Debug.Log($"OnEndDrag.snapStarted:スナップ後の配置チェック:{CheckAnswer()}, isCreative:{isCreative}");
             var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
@@ -536,6 +547,7 @@ public class PieceDragController : MonoBehaviour,
 
             // TryMergeNearbyPieces();
         });
+        _moveAfterDelayedCalls.Add(tween);
         if(_isMove)
             _stageManager.CountDownMove();
     }
@@ -762,8 +774,6 @@ bool SnapChildrenToGridsAndRecenterParent()
     else
         _isMove = true;
 
-    _lastSnappedPos = newParentCenter;
-
     // ★ 子のワールド座標を元の位置に戻す（親が動いたのでローカル座標が変わっているため）
     for (int i = 0; i < children.Count; i++)
     {
@@ -772,6 +782,7 @@ bool SnapChildrenToGridsAndRecenterParent()
 
     _dragAfterChildMoveTweens = new List<Tween>();
 
+    Tween tween = null;
     // ★ 子を回転させて、ワールド座標でアニメーション
     for (int i = 0; i < children.Count; i++)
     {
@@ -780,18 +791,25 @@ bool SnapChildrenToGridsAndRecenterParent()
         child.rotation = Quaternion.Euler(0, 0, targetAngle);
         
         // ★ ワールド座標でアニメーション（親はもう正しい位置にいる）
-        Tween tween = child.DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear).SetLink(child.gameObject);
+        tween = child.DOMove(finalWorldPositions[i], 0.3f).SetEase(Ease.Linear).SetLink(child.gameObject);
         _dragAfterChildMoveTweens.Add(tween);
     }
 
     // ★ アニメーション完了後にセルをマーク
-    _moveAfterDelayedCall = DOVirtual.DelayedCall(0.3f, () =>
+    tween = DOVirtual.DelayedCall(0.3f, () =>
     {
-        MarkCells(children, targetCells, true);
-        Debug.Log($"スナップ完了: {gameObject.name}");
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
     }).SetLink(gameObject);
+    _moveAfterDelayedCalls.Add(tween);
+
+    tween = DOVirtual.DelayedCall(0.4f, () =>
+    {
+        // ★ セルを占有状態にマーク
+        MarkCells(children, targetCells, true);
+        _lastSnappedPos = newParentCenter;
+    }).SetLink(gameObject);
+    _moveAfterDelayedCalls.Add(tween);
 
     return true;
 }
