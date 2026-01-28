@@ -548,7 +548,7 @@ public class PieceDragController : MonoBehaviour,
                 RestoreChildrenMaterials();
                 SetOutlineAlpha(1f, 0f);
             }
-
+            RecenterParentToChildren();
             // TryMergeNearbyPieces();
         });
         _moveAfterDelayedCalls.Add(tween);

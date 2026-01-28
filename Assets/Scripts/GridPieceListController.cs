@@ -109,11 +109,9 @@ public class GridPieceListController : MonoBehaviour
         _queue = queue;
         _initQueueCount = _queue.Count;
 
-        // AlignAll(withDelay: false);
-        AlignAll(withDelay: false, onComplete: () => {
-            UpdateSelectability();
-        });
-        // UpdateSelectability();
+        // 初期配置（即座に実行）
+        AlignAll(withDelay: false);
+        UpdateSelectability();
 
         if(!IsSetShapeType)
         {
@@ -200,23 +198,45 @@ public class GridPieceListController : MonoBehaviour
     }
 
     // ピースが盤面に置かれた時の整列処理
-   void AlignAll(bool withDelay, System.Action onComplete = null) // ★ onComplete パラメータを追加
+    void AlignAll(bool withDelay, System.Action onComplete = null)
     {
-        if(isCreative)
+        // Delegate to the unified animator, pass through completion callback
+        AnimateQueuePositions(null, false, withDelay, onComplete);
+    }
+
+    // 共通: queue の位置をアニメーション/設定するヘルパー
+    // focusedIndex: 任意で注目ピースのインデックス（シェイク等の特殊処理を行う）
+    // shakeFocused: 注目ピースを戻す際にシェイクするか
+    // withDelay: false の場合は即時位置設定
+    private Sequence AnimateQueuePositions(int? focusedIndex = null, bool shakeFocused = false, bool withDelay = true, System.Action onAllCompleted = null)
+    {
+        if (isCreative)
+            return null;
+
+        // 既存アニメーションを確定
+        _alignSequence?.Kill(complete: true);
+        _alignSequence = null;
+
+        Sequence masterSeq = DOTween.Sequence();
+        masterSeq.SetLink(this.gameObject);
+
+        if (!withDelay)
         {
-            onComplete?.Invoke(); // クリエイティブモードでは即時完了
-            return;
+            for (int i = 0; i < queue.Count; i++)
+            {
+                var rt0 = queue[i].GetComponent<RectTransform>();
+                if (rt0 == null) continue;
+                float tx0 = i >= selectableCount ? hiddenX : baseX + spacing * i;
+                rt0.position = new Vector3(tx0, baseY, 0);
+            }
+            onAllCompleted?.Invoke();
+            return masterSeq;
         }
 
-        // 既存のシーケンスがあれば、念のため終了させる
-        _alignSequence?.Kill(complete: false);
-        _alignSequence = DOTween.Sequence(); // 新しいシーケンスを作成
-        _alignSequence.SetLink(this.gameObject);
-        
-        // ★ ピース移動処理をシーケンスに追加
         for (int i = 0; i < queue.Count; i++)
         {
-            var rt = queue[i].GetComponent<RectTransform>();
+            var pc = queue[i];
+            var rt = pc.GetComponent<RectTransform>();
             if (rt == null) continue;
 
             float tx, ty;
@@ -236,59 +256,69 @@ public class GridPieceListController : MonoBehaviour
             Vector3 target = new Vector3(tx, ty, 0);
 
             bool wasHidden = rt.position.x > baseX + spacing * (selectableCount - 1) + 0.1f
-                            || rt.position.x >= hiddenX - 10f;
+                             || rt.position.x >= hiddenX - 10f;
 
-            if (withDelay)
+            // 既存のアニメーションを強制完了して位置を確定
+            DOTween.Kill(rt, complete: true);
+
+            // 注目ピースの特殊処理
+            if (focusedIndex.HasValue && i == focusedIndex.Value)
             {
-                // ★ 変更1: 連続操作時の不整合を防ぐため、ピースごとの遅延 (0.1f * i) を廃止または調整
-                // ピースが抜けた直後の整列では、全てのピースが同時に動き始める方が安全かつ自然
-                float delay = 0f; // ピースごとの遅延を削除
-                float duration = shiftTime;
-                
-                // ★ 変更2: 既存のアニメーションを強制的に完了/停止させる (位置を確定させる)
-                // 完全にKillすることで、以前のトゥイーンの影響を排除します
-                DOTween.Kill(rt, complete: true); 
-
-                if (!isHidden && wasHidden)
+                bool isReturningToVisibleSlot = i < selectableCount;
+                if (isReturningToVisibleSlot && shakeFocused)
                 {
-                    // 今回画面内に入ってくるピース（ワープ→DO）
-                    rt.position = new Vector3(hiddenX*0.5f, baseY, 0);
-                    duration = shiftTime * 1.5f;
-
-                    // MoveアニメーションをシーケンスにJoin
-                    _alignSequence.Join(rt.DOMove(target, duration)
-                        .SetDelay(delay) // delayは 0f のまま
-                        .SetEase(Ease.OutQuad));
+                    Sequence seq = DOTween.Sequence();
+                    seq.SetLink(this.gameObject);
+                    seq.Append(rt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
+                    seq.Append(rt.DOMove(target, shiftTime).SetEase(Ease.OutQuad));
+                    seq.Join(pc.ReturnToList());
+                    masterSeq.Join(seq);
                 }
-                else if ((rt.position - target).sqrMagnitude > 0.001f)
+                else
                 {
-                    // 通常移動
-                    _alignSequence.Join(rt.DOMove(target, duration)
-                        .SetDelay(delay) // delayは 0f のまま
-                        .SetEase(Ease.OutQuad));
+                    Tween t = rt.DOMove(target, shiftTime).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+                    rt.DOScale(Vector3.one * _PieceDragControllersScale, 0.15f).SetEase(Ease.OutBack).SetLink(rt.gameObject);
+                    masterSeq.Join(t);
                 }
             }
             else
             {
-                // withDelay=false の場合は即時位置設定
-                rt.position = target;
+                // 通常移動
+                if (!isHidden && wasHidden)
+                {
+                    rt.position = new Vector3(hiddenX * 0.5f, baseY, 0);
+                    Tween t = rt.DOMove(target, shiftTime * 1.5f).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+                    masterSeq.Join(t);
+                }
+                else if ((rt.position - target).sqrMagnitude > 0.001f)
+                {
+                    Tween t = rt.DOMove(target, shiftTime).SetEase(Ease.OutQuad).SetLink(rt.gameObject);
+                    masterSeq.Join(t);
+                }
             }
         }
-        
-        // ★ シーケンスが完了したら、外部から渡されたコールバックを実行
-        // ... (OnComplete のロジックはそのまま) ...
-        if (withDelay)
+
+        // マスターシーケンスの完了で最終整合チェックを実行
+        masterSeq.OnComplete(() =>
         {
-            _alignSequence.OnComplete(() =>
+            // 最終位置を厳密に補正して内部状態と見た目を一致させる
+            for (int j = 0; j < queue.Count; j++)
             {
-                onComplete?.Invoke();
-                _alignSequence = null;
-            });
-        }
-        else
-        {
-            onComplete?.Invoke();
-        }
+                var r0 = queue[j].GetComponent<RectTransform>();
+                if (r0 == null) continue;
+                float tx0 = j >= selectableCount ? hiddenX : baseX + spacing * j;
+                Vector3 final = new Vector3(tx0, baseY, 0);
+                if ((r0.position - final).sqrMagnitude > 0.01f)
+                {
+                    r0.position = final;
+                }
+            }
+            onAllCompleted?.Invoke();
+        });
+
+        // 保持
+        _alignSequence = masterSeq;
+        return masterSeq;
     }
 
 
@@ -345,217 +375,56 @@ public class GridPieceListController : MonoBehaviour
             queue.Insert(insertIndex, piece);
         }
         
-        // ★ AlignAllを実行し、そのアニメーションが完了した後に選択性を更新する
-        AlignAll(withDelay: true, onComplete: () => {
-            UpdateSelectability();
-        });
+        // ★ 状態を即座に更新（アニメーション完了を待たない）
+        UpdateSelectability();
         
-        // 旧: UpdateSelectability(); // アニメーションと同時に実行されていた
+        // アニメーションは並行実行（他のピースの操作をブロックしない）
+        AlignAll(withDelay: true);
     }
-
-    // GridPieceListController.cs
 
     /// <summary>
     /// ピースが戻ったとき呼ぶ（シェイク付き）
     /// </summary>
     public void NotifyReturned(PieceDragController piece, bool shouldShake = true)
     {
-        // shiftTime = 5f;
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
-        Debug.Log($"queueDebug1:{queue.Count}");
-        // ★ 念のため、戻ってきたピースの占有を解除
+        
+        // ★ 戻ってきたピースの占有を解除
         piece.ReleaseOccupiedCells();
-        // 戻ってきたピースをキューに加える
-        if (!queue.Contains(piece))
-        {
-            queue.Add(piece);
-        }
-        Debug.Log($"queueDebug2:{queue.Count}");
-
-        // --- ★ 修正箇所: ソートロジックの再調整 ★ ---
         
-        // 1. 戻ってきたピース（D）を除く、リスト内の他のピース（A, B, C）を取得し、X座標でソート
-        //    (この時点でのソートは、A, B, C がリストから抜けたピース D の穴を埋めるために
-        //     左にシフトした状態で並んでいることを確認するため)
-        // var otherPieces = queue.Where(p => p != piece).OrderBy(p => p.transform.position.x).ToList();
-        var otherPieces = queue.Where(p => p != piece).ToList();
+        // ★ queueに既にある場合は削除（重複防止）
+        queue.Remove(piece);
         
-        // 2. 戻ってきたピース D の挿入位置を決定
-        
-        // D がリストの可視領域（selectableCount = 3）に戻るかどうかを、そのX座標で判断する。
-        // 可視領域の最も右端のデフォルト位置（インデックス2）のX座標
-        float visibleRightX = baseX + spacing * (selectableCount - 1);
-        
-        // 戻ってきたピースの現在のX位置
+        // ★ シンプルな挿入ロジック：現在のX座標に基づいて適切な位置に挿入
         float currentPieceX = piece.transform.position.x;
+        int insertIndex = 0;
         
-        // ★ リストの再構築
-        queue.Clear();
-        Debug.Log($"queueDebug3:{queue.Count}, {otherPieces.Count}");
-        
-        if (otherPieces.Count < selectableCount)
-        {
-            // (A, B) のようにリストに空きがある場合:
-            // 戻ってきたピース (D) は、他のピースの X 座標の間に挿入されようとするが、
-            // PieceSorter の順序を維持するため、現在の X 座標に最も近いインデックスに挿入する。
-
-            // 戻ってきたピースの X 座標に最も近い他のピースのインデックスを見つける
-            int nearestIndex = -1;
-            float minDistance = float.MaxValue;
-            
-            for (int i = 0; i < otherPieces.Count; i++)
-            {
-                float dist = Mathf.Abs(otherPieces[i].transform.position.x - piece.transform.position.x);
-                if (dist < minDistance)
-                {
-                    minDistance = dist;
-                    nearestIndex = i;
-                }
-            }
-            
-            // 挿入位置を決定（最も近いピースの右側または左側）
-            int insertIndex = (nearestIndex == -1 || piece.transform.position.x > otherPieces[nearestIndex].transform.position.x)
-                            ? otherPieces.Count
-                            : nearestIndex;
-
-            // 挿入して queue を再構築
-            otherPieces.Insert(insertIndex, piece);
-            queue.AddRange(otherPieces);
-            Debug.Log($"queueDebug4:{queue.Count}");
-        }
-        else
-        {
-            // (A, B, C) のようにリストが埋まっている場合 (前回の修正ロジックを維持)
-            // ... (前回の修正コードの通り、画面外へ押し出すロジックをそのまま使用) ...
-            
-            if (currentPieceX > visibleRightX + 0.1f)
-            {
-                queue.AddRange(otherPieces.Take(selectableCount - 1));
-                queue.Add(piece);
-                queue.Add(otherPieces[selectableCount - 1]);
-                Debug.Log($"queueDebug5:{queue.Count}");
-            }
-            else if (currentPieceX < baseX - 0.1f)
-            {
-                queue.Add(piece);
-                queue.AddRange(otherPieces);
-                Debug.Log($"queueDebug6:{queue.Count}");
-            }
-            else
-            {
-                // X 座標の順序を尊重しつつ、最も右のピース C を画面外へ押し出す
-                var visiblePieces = otherPieces.Take(selectableCount - 1).ToList();
-                var tempQueue = new List<PieceDragController>(visiblePieces);
-                tempQueue.Add(piece);
-                queue.AddRange(tempQueue.OrderBy(p => p.transform.position.x));
-                queue.Add(otherPieces[selectableCount - 1]);
-                Debug.Log($"queueDebug7:{queue.Count}");
-            }
-            queue.AddRange(otherPieces.Skip(selectableCount).ToList());
-            Debug.Log($"queueDebug8-1:{queue.Count}");
-        }
-        
-        // --- 修正箇所ここまで ---
-
-
-        // ★ 戻ってきたピースのインデックスを取得
-        int returnedIdx = queue.IndexOf(piece);
-
-        // ★ 戻ってきたピースのターゲット位置
-        float targetX = baseX + spacing * returnedIdx;
-        float targetY = baseY;
-        Vector3 targetPos = new Vector3(targetX, targetY, 0);
-
-        // ★ 画面内（3番目まで）に戻るかどうかの判定
-        bool isReturningToVisibleSlot = returnedIdx < selectableCount; // Dはインデックス2なので true
-
-
-        // 1. 全ピースの移動処理（戻ってきたピースを除く）
+        // 他のピースのX座標と比較して挿入位置を決定
         for (int i = 0; i < queue.Count; i++)
         {
-            // 戻ってきたピースは次のステップで個別に処理するためスキップ
-            if (i == returnedIdx) continue; 
-
-            var pc = queue[i]; // C, B, A のいずれか
-            var rt = pc.GetComponent<RectTransform>();
-            if (rt == null) continue;
-
-            float tx, ty;
-            bool isHidden = i >= selectableCount; // C は i=3 なので isHidden=true
-
-            if (isHidden)
+            if (currentPieceX > queue[i].transform.position.x)
             {
-                tx = hiddenX;
-                ty = baseY;
+                insertIndex = i + 1;
             }
             else
             {
-                tx = baseX + spacing * i;
-                ty = baseY;
-            }
-
-            Vector3 target = new Vector3(tx, ty, 0);
-
-            // ピース D の移動によって C が画面外に移動したり、A, B が左に詰めるアニメーションを実行
-            bool wasHidden = rt.position.x > baseX + spacing * (selectableCount - 1) + 0.1f
-                             || rt.position.x >= hiddenX - 10f;
-
-
-            // DOTweenアニメーションを強制停止してから再開
-            DOTween.Kill(rt, complete: false);
-
-            if (!isHidden && wasHidden)
-            {
-                // 画面内に入ってくるピースは、一瞬ワープしてからDO
-                rt.position = new Vector3(hiddenX * 0.5f, baseY, 0); 
-                rt.DOMove(target, shiftTime * 1.5f)
-                    .SetDelay(0.1f * i) 
-                    .SetEase(Ease.OutQuad);
-            }
-            else if ((rt.position - target).sqrMagnitude > 0.001f)
-            {
-                // 通常移動（C が画面外へ、A, B はそのまま、または左にシフトする場合など）
-                rt.DOMove(target, shiftTime)
-                    .SetDelay(0.1f * i) 
-                    .SetEase(Ease.OutQuad);
+                break;
             }
         }
-
-
-        // 2. 戻ってきたピースの特殊処理（Shakeと移動）
-        var returnedRt = piece.GetComponent<RectTransform>();
-        if (returnedRt != null)
-        {
-            DOTween.Kill(returnedRt, complete: false); 
-
-            if (isReturningToVisibleSlot)
-            {
-                // 画面内に戻る場合 (D が C の位置に戻る): Shake → ターゲット位置へ
-                Sequence seq = DOTween.Sequence();
-                seq.SetLink(this.gameObject);
-                if (shouldShake)
-                {
-                    seq.Append(returnedRt.DOShakePosition(shakeDuration, new Vector3(shakeStrength, 0, 0), shakeVibrato, 90, false, true));
-                }
-                seq.Append(returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad));
-                seq.Join(piece.ReturnToList());
-            }
-            else
-            {
-                // 画面外に戻る場合 (このロジックでは D は画面内に戻るため、通常は実行されない)
-                returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad).OnComplete(()=>
-                {
-                    UpdateSelectability();
-                });
-                // originalScale を直接使用
-                returnedRt.DOScale(Vector3.one * _PieceDragControllersScale, 0.15f).SetEase(Ease.OutBack);
-            }
-        }
-
-        UpdateSelectability();
+        
+        // リストに挿入
+        queue.Insert(insertIndex, piece);
         _queue = queue;
-        Debug.Log($"queueDebug8:{queue.Count}");
+        
+        // ★ 状態を即座に更新（アニメーション完了を待たない）
+        UpdateSelectability();
+        
+        // ★ アニメーションは共通ヘルパーで実行（完了時に最終整合チェックを行う）
+        AnimateQueuePositions(insertIndex, shouldShake, true, () => {
+            // 最終確認: 選択性を再適用して内部状態を安定化
+            UpdateSelectability();
+        });
     }
 
     public bool IsSelectable(PieceDragController pc)
