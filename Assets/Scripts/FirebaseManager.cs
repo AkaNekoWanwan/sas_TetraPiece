@@ -5,12 +5,7 @@ using Firebase.Analytics;
 
 public class FirebaseManager : MonoBehaviour
 {
-    public int isB;
-    public float ssa = 0.5f;
     public int isInit;
-    public double rot;
-    public int isGimmick;
-    public int attackBuffer;
 
     //DontDestroyにする
     public static FirebaseManager instance;
@@ -39,17 +34,6 @@ public class FirebaseManager : MonoBehaviour
         //SRCountはステージ内で何回タップし続け破壊を発生させてしまったか
         //FailCountはテージクリアまでにFailになった回数
         //StanCountはテージクリアまでにパトカーと当たったになった回数
-    }
-    public void FixedUpdate()
-    {
-        if (attackBuffer > 0)
-        {
-            attackBuffer++;
-            if (attackBuffer > 20)
-            {
-                attackBuffer = 0;
-            }
-        }
     }
     //PlayerPrefs.GetInt("Skin", 0)
     public void AddOpen()
@@ -159,7 +143,7 @@ public class FirebaseManager : MonoBehaviour
                             new Parameter("StageName", stageName)
                         );
     }
-  public void Withdrwal(float pureElapsedTime)
+    public void Withdrwal(float pureElapsedTime)
     {
         Debug.Log("FirebaseManager Withdrwal");
         LogEventWithUserSegments("Withdrawal",
@@ -184,7 +168,7 @@ public class FirebaseManager : MonoBehaviour
 
     public void EventWatchBanner(bool isWatch)
     {
-        LogEventWithUserSegments("Watch_Banner", 
+        LogEventWithUserSegments("Watch_Banner",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()));
@@ -192,17 +176,17 @@ public class FirebaseManager : MonoBehaviour
     public void EventWatchReward(bool isWatch)
     {
         int watchRewardCount = -1;
-        if(isWatch)
+        if (isWatch)
         {
             watchRewardCount = PlayerPrefs.GetInt("WatchRewardCount", 1);
         }
 
-        LogEventWithUserSegments("Watch_Reward", 
+        LogEventWithUserSegments("Watch_Reward",
                             new Parameter("Stage", GetCurrentStage()),
                             new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
                             new Parameter("CanWatch", isWatch.ToString()),
                             new Parameter("WatchRewardCount", watchRewardCount));
-        if(isWatch)
+        if (isWatch)
         {
             watchRewardCount++;
             PlayerPrefs.SetInt("WatchRewardCount", watchRewardCount);
@@ -210,18 +194,18 @@ public class FirebaseManager : MonoBehaviour
     }
     public void RevenueBanner(float eCPM)
     {
-        Debug.Log("FirebaseManager RevenueBanner"+ eCPM);
-            LogEventWithUserSegments("Watch_Banner",
-                            new Parameter("Stage", GetCurrentStage()),
-                            new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
-                            new Parameter("eCPM", eCPM));
+        Debug.Log("FirebaseManager RevenueBanner" + eCPM);
+        LogEventWithUserSegments("Watch_Banner",
+                        new Parameter("Stage", GetCurrentStage()),
+                        new Parameter("IsDaily", IsDailyStage() ? "TRUE" : "FALSE"),
+                        new Parameter("eCPM", eCPM));
 
     }
 
     private int GetCurrentStage()
     {
         int stage = PlayerPrefs.GetInt("totalLevel", 1);
-        if(IsDailyStage())
+        if (IsDailyStage())
         {
             stage = PlayerPrefs.GetInt("DailyStage", -1) + 1;
         }
@@ -230,7 +214,7 @@ public class FirebaseManager : MonoBehaviour
     private int GetMove_Limit()
     {
         int Move_Limit = GameDataManager.InitMoveCount;
-        if(IsDailyStage())
+        if (IsDailyStage())
         {
             Move_Limit = GameDataManager.DailyInitMoveCount;
         }
@@ -253,7 +237,7 @@ public class FirebaseManager : MonoBehaviour
     private void LogEventWithUserSegments(string eventName, params Parameter[] baseParameters)
     {
         var parameterList = new List<Parameter>(baseParameters);
-        
+
         // UserSegmentがinstance化されていればABテストパラメータを追加
         if (UserSegment.instance != null)
         {

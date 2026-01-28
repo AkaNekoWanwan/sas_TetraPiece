@@ -91,12 +91,11 @@ namespace com.adjust.sdk
 
         void Awake()
         {
+            DontDestroyOnLoad(transform.gameObject);
             if (IsEditor())
             {
                 return;
             }
-
-            DontDestroyOnLoad(transform.gameObject);
 
 #if UNITY_ANDROID && UNITY_2019_2_OR_NEWER
             Application.deepLinkActivated += Adjust.appWillOpenUrl;

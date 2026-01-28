@@ -950,6 +950,8 @@ public class AbstractGridImageSplitterEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         DrawDefaultInspector();
 
         AbstractGridImageSplitter script = (AbstractGridImageSplitter)target;

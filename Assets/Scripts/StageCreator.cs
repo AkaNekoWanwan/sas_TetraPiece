@@ -809,6 +809,8 @@ public class StageCreatorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         StageCreator script = (StageCreator)target;
 
         GUILayout.Space(10);

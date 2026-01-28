@@ -366,6 +366,8 @@ public class PieceDragController : MonoBehaviour,
     }
     public void OnPointerDownExecute()
     {
+        RecenterParentToChildren();
+        
         if(_stageManager.MoveCount <= 0)
             return;
         if (isLocked) return;
@@ -481,6 +483,7 @@ public class PieceDragController : MonoBehaviour,
             if (_lastSnappedPos != UNSNAPPED_POSITION && GameDataManager.GetMousePosition().y > RETURN_LIST_POS_Y) 
             {
                 // 1. 盤面に一度置かれたことがある場合
+                Debug.Log("スナップ失敗：盤面元の位置に戻る");
                 ReturnToLastSnappedPosition(); // 盤面の最後位置に戻る (シェイクあり)
             }
             else
@@ -504,11 +507,12 @@ public class PieceDragController : MonoBehaviour,
                     _stageManager.CountDownMove();
                     _lastSnappedPos = UNSNAPPED_POSITION;
                 }
+                Debug.Log("スナップ失敗：リストに戻る");
             }
             return;
         }
         Tween tween = DOVirtual.DelayedCall(0.4f, () =>
-        {
+        {   
             // Debug.Log($"OnEndDrag.snapStarted:スナップ後の配置チェック:{CheckAnswer()}, isCreative:{isCreative}");
             var listCtrlSuccess = GetComponentInParent<GridPieceListController>();
             if (listCtrlSuccess != null) listCtrlSuccess.NotifySnapped(this);
@@ -1548,6 +1552,8 @@ public class PieceDragControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         base.OnInspectorGUI();
 
         PieceDragController controller = (PieceDragController)target;

@@ -70,6 +70,8 @@ public class HomePuzzleCreatorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         DrawDefaultInspector();
 
         HomePuzzleCreator script = (HomePuzzleCreator)target;

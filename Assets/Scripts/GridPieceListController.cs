@@ -199,6 +199,7 @@ public class GridPieceListController : MonoBehaviour
         _queue = queue;
     }
 
+    // ピースが盤面に置かれた時の整列処理
    void AlignAll(bool withDelay, System.Action onComplete = null) // ★ onComplete パラメータを追加
     {
         if(isCreative)
@@ -359,12 +360,13 @@ public class GridPieceListController : MonoBehaviour
     /// </summary>
     public void NotifyReturned(PieceDragController piece, bool shouldShake = true)
     {
+        // shiftTime = 5f;
         // バイブレーション
         VibratorManager.Vibrate(70, 40);
         Debug.Log($"queueDebug1:{queue.Count}");
         // ★ 念のため、戻ってきたピースの占有を解除
         piece.ReleaseOccupiedCells();
-        
+        // 戻ってきたピースをキューに加える
         if (!queue.Contains(piece))
         {
             queue.Add(piece);
@@ -542,7 +544,10 @@ public class GridPieceListController : MonoBehaviour
             else
             {
                 // 画面外に戻る場合 (このロジックでは D は画面内に戻るため、通常は実行されない)
-                returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad);
+                returnedRt.DOMove(targetPos, shiftTime).SetEase(Ease.OutQuad).OnComplete(()=>
+                {
+                    UpdateSelectability();
+                });
                 // originalScale を直接使用
                 returnedRt.DOScale(Vector3.one * _PieceDragControllersScale, 0.15f).SetEase(Ease.OutBack);
             }
@@ -633,6 +638,8 @@ public class GridPieceListControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
+        if(UnityEditor.EditorApplication.isPlaying)
+            return;
         DrawDefaultInspector();
         GridPieceListController script = (GridPieceListController)target;
         GUILayout.Space(10);

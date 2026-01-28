@@ -69,13 +69,15 @@ public class HomePanelsManager : MonoBehaviour
     [CustomEditor(typeof(HomePanelsManager))]
     public class HomePanelsManagerEditor : Editor
     {
-        public void OnEnable()
-        {
-            // OnEnableで設定することでエラーが解消されます
-            // base.canEditMultipleObjects = true; 
-        }
+        // public void OnEnable()
+        // {
+        //     // OnEnableで設定することでエラーが解消されます
+        //     // base.canEditMultipleObjects = true; 
+        // }
         public override void OnInspectorGUI()
         {
+            if(UnityEditor.EditorApplication.isPlaying)
+                return;
             base.OnInspectorGUI();
 
             HomePanelsManager generator = (HomePanelsManager)target;

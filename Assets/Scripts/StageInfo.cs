@@ -116,13 +116,15 @@ public class StageInfo : MonoBehaviour
     [CanEditMultipleObjects]
     public class StageInfoEditor : Editor
     {
-        public void OnEnable()
-        {
-            // OnEnableで設定することでエラーが解消されます
-            // base.canEditMultipleObjects = true; 
-        }
+        // public void OnEnable()
+        // {
+        //     // OnEnableで設定することでエラーが解消されます
+        //     // base.canEditMultipleObjects = true; 
+        // }
         public override void OnInspectorGUI()
         {
+            if(UnityEditor.EditorApplication.isPlaying)
+                return;
             base.OnInspectorGUI();
 
             StageInfo generator = (StageInfo)target;
